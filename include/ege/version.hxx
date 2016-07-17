@@ -9,4 +9,16 @@
 #define EGE_VERSION_BUILD       0
 
 
+#include <cstdint>
+
+
+namespace ege
+{
+        namespace version
+        {
+                void get( uint32_t* major, uint32_t* minor, uint32_t* build );
+        }
+}
+
+
 #endif

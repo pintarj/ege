@@ -3,5 +3,6 @@ PROJECT( ege CXX )
 
 INCLUDE_DIRECTORIES( include )
 
-ADD_LIBRARY( ege SHARED source/version.cxx )
+ADD_LIBRARY( ege SHARED source/version.cxx source/graphic/clearer.cxx )
 SET_PROPERTY( TARGET ege PROPERTY CXX_STANDARD 14 )
+TARGET_LINK_LIBRARIES( ege GLEW )

@@ -4,8 +4,13 @@
 #define EGE_SCENARIO_HXX
 
 
+#include <ege/engine.hxx>
+
+
 namespace ege
 {
+        struct EngineResources;
+
         class Scenario
         {
                 private:
@@ -13,11 +18,13 @@ namespace ege
                         bool nextScenarioAvailable;
 
                 protected:
+                        EngineResources* engineResources;
+
+                        Scenario();
                         void setNextScenario( Scenario* scenario );
                         void setEndAsNextScenario();
 
                 public:
-                        Scenario();
                         virtual ~Scenario() {};
                         bool isNextScenarioAvailable();
                         Scenario* getNextScenario();

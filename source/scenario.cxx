@@ -8,6 +8,7 @@ Scenario::Scenario()
 {
         nextScenario = nullptr;
         nextScenarioAvailable = false;
+        engineResources = Engine::getReference().getResources();
 }
 
 

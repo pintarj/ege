@@ -7,6 +7,13 @@ using namespace ege::graphic;
 
 Canvas::Canvas( size_t width, size_t height )
 {
+        if ( width == 0 && height == 0 )
+        {
+                glTexture = 0;
+                glFrameBuffer = 0;
+                return;
+        }
+
         glGenTextures( 1, &glTexture );
         glBindTexture( GL_TEXTURE_2D, glTexture );
         glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, ( int ) width, ( int ) height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL );

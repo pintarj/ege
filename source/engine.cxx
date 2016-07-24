@@ -8,6 +8,10 @@
 
 
 using namespace ege;
+using namespace ege::graphic;
+
+
+static Engine* engine;
 
 
 Engine::Engine()
@@ -22,11 +26,24 @@ Engine::Engine()
         glfwMakeContextCurrent( CAST_WIN );
         glewExperimental = GL_TRUE;
         glewInit();
+        resources = new EngineResources;
+        resources->screen = new Canvas( 0, 0 );
+}
+
+
+Engine& Engine::getReference()
+{
+        if ( engine == nullptr )
+                engine = new Engine;
+
+        return *engine;
 }
 
 
 Engine::~Engine()
 {
+        delete resources->screen;
+        delete resources;
         glfwDestroyWindow( CAST_WIN );
         glfwTerminate();
 }
@@ -62,4 +79,10 @@ void Engine::start( Scenario* initialScenario )
                 glfwSwapBuffers( CAST_WIN );
                 std::this_thread::sleep_for( std::chrono::milliseconds( 30 ) );
         }
+}
+
+
+EngineResources* Engine::getResources()
+{
+        return resources;
 }

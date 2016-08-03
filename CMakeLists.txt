@@ -3,6 +3,13 @@ PROJECT( ege CXX )
 
 INCLUDE_DIRECTORIES( include )
 
-ADD_LIBRARY( ege SHARED source/engine.cxx source/scenario.cxx source/version.cxx source/graphic/clearer.cxx source/graphic/canvas.cxx source/graphic/painter.cxx )
+ADD_LIBRARY( ege SHARED
+        source/engine.cxx
+        source/scenario.cxx
+        source/version.cxx
+        source/graphic/canvas.cxx
+        source/graphic/clearer.cxx
+        source/graphic/painter.cxx
+        )
 SET_PROPERTY( TARGET ege PROPERTY CXX_STANDARD 14 )
 TARGET_LINK_LIBRARIES( ege GLEW glfw )

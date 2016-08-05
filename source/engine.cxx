@@ -11,6 +11,18 @@ using namespace ege;
 using namespace ege::graphic;
 
 
+class DefaultCanvas: public Canvas
+{
+        public:
+                DefaultCanvas( size_t width, size_t height ): Canvas( true, width, height )
+                {
+
+                }
+
+                ~DefaultCanvas() {}
+};
+
+
 static Engine* engine;
 
 
@@ -27,7 +39,7 @@ Engine::Engine()
         glewExperimental = GL_TRUE;
         glewInit();
         resources = new EngineResources;
-        resources->screen = new Canvas( 0, 0 );
+        resources->screen = new DefaultCanvas( ( size_t ) videoMode->width, ( size_t ) videoMode->height );
 }
 
 

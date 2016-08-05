@@ -10,6 +10,9 @@ ADD_LIBRARY( ege SHARED
         source/graphic/canvas.cxx
         source/graphic/clearer.cxx
         source/graphic/painter.cxx
+        source/resource/image.cxx
+        source/resource/manager.cxx
+        source/resource/resource.cxx
         )
 SET_PROPERTY( TARGET ege PROPERTY CXX_STANDARD 14 )
 TARGET_LINK_LIBRARIES( ege GLEW glfw )

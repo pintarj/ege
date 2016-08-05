@@ -5,6 +5,7 @@
 
 
 #include <ege/resource/resource.hxx>
+#include <ege/resource/root.hxx>
 #include <map>
 #include <string>
 
@@ -16,11 +17,11 @@ namespace ege
                 class Manager
                 {
                         private:
-                                char* resourcesRootPath;
+                                Root* root;
                                 std::map< std::string, Resource* > resources[ numberOfTypes ];
 
                         public:
-                                Manager( const char* resourcesRootPath );
+                                Manager( Root* root );
                                 virtual ~Manager();
                                 Resource* getResource( Type type, const char* idString );
                 };

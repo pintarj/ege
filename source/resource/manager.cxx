@@ -6,18 +6,15 @@
 using namespace ege::resource;
 
 
-Manager::Manager( const char* resourcesRootPath )
+Manager::Manager( Root* root ): root( root )
 {
-        size_t len = std::strlen( resourcesRootPath );
-        this->resourcesRootPath = new char[ len + 1 ];
-        std::memcpy( this->resourcesRootPath, resourcesRootPath, len );
-        this->resourcesRootPath[ len ] = '\0';
+
 }
 
 
 Manager::~Manager()
 {
-        delete resourcesRootPath;
+
 }
 
 

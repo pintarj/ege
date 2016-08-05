@@ -38,6 +38,7 @@ Engine::Engine()
         glfwMakeContextCurrent( CAST_WIN );
         glewExperimental = GL_TRUE;
         glewInit();
+        glGetError();
         resources = new EngineResources;
         resources->screen = new DefaultCanvas( ( size_t ) videoMode->width, ( size_t ) videoMode->height );
 }

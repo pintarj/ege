@@ -10,6 +10,7 @@ ADD_LIBRARY( ege SHARED
         source/graphic/canvas.cxx
         source/graphic/clearer.cxx
         source/graphic/painter.cxx
+        source/engine/configuration.cxx
         source/resource/image.cxx
         source/resource/manager.cxx
         source/resource/resource.cxx

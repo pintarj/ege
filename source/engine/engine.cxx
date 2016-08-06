@@ -1,17 +1,13 @@
-#include <ege/engine.hxx>
+#include <ege/engine/engine.hxx>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <thread>
 
 
-#define CAST_WIN ( ( GLFWwindow* ) win )
-
-
 using namespace ege;
-using namespace ege::graphic;
 
 
-class DefaultCanvas: public Canvas
+class DefaultCanvas: public ege::graphic::Canvas
 {
         public:
                 DefaultCanvas( size_t width, size_t height ): Canvas( true, width, height )
@@ -23,10 +19,12 @@ class DefaultCanvas: public Canvas
 };
 
 
-static Engine* engine;
+engine::Configuration ege::engine::configuration;
+engine::Resources ege::engine::resources;
+static GLFWwindow* win;
 
 
-Engine::Engine()
+void ege::engine::initialize()
 {
         glfwInit();
         glfwDefaultWindowHints();
@@ -35,34 +33,16 @@ Engine::Engine()
         GLFWmonitor* primary = glfwGetPrimaryMonitor();
         const GLFWvidmode* videoMode = glfwGetVideoMode( primary );
         win = glfwCreateWindow( videoMode->width, videoMode->height, "", primary, NULL );
-        glfwMakeContextCurrent( CAST_WIN );
+        glfwMakeContextCurrent( win );
         glewExperimental = GL_TRUE;
         glewInit();
         glGetError();
-        resources = new EngineResources;
-        resources->screen = new DefaultCanvas( ( size_t ) videoMode->width, ( size_t ) videoMode->height );
+        resources.screen = new DefaultCanvas( ( size_t ) videoMode->width, ( size_t ) videoMode->height );
+        resources.resourcesManager = new resource::Manager( &configuration.root );
 }
 
 
-Engine& Engine::getReference()
-{
-        if ( engine == nullptr )
-                engine = new Engine;
-
-        return *engine;
-}
-
-
-Engine::~Engine()
-{
-        delete resources->screen;
-        delete resources;
-        glfwDestroyWindow( CAST_WIN );
-        glfwTerminate();
-}
-
-
-void Engine::start( Scenario* initialScenario )
+void ege::engine::start( Scenario* initialScenario )
 {
         Scenario* current = initialScenario;
 
@@ -70,7 +50,7 @@ void Engine::start( Scenario* initialScenario )
         {
                 glfwPollEvents();
 
-                if ( glfwWindowShouldClose( CAST_WIN ) )
+                if ( glfwWindowShouldClose( win ) )
                 {
                         current->shouldClose();
 
@@ -89,13 +69,15 @@ void Engine::start( Scenario* initialScenario )
                                 break;
                 }
 
-                glfwSwapBuffers( CAST_WIN );
+                glfwSwapBuffers( win );
                 std::this_thread::sleep_for( std::chrono::milliseconds( 30 ) );
         }
 }
 
 
-EngineResources* Engine::getResources()
+void ege::engine::destroy()
 {
-        return resources;
+        glfwDestroyWindow( win );
+        delete resources.screen;
+        glfwTerminate();
 }

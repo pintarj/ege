@@ -4,7 +4,7 @@
 #define EGE_SCENARIO_HXX
 
 
-#include <ege/engine.hxx>
+#include <ege/engine/engine.hxx>
 
 
 namespace ege
@@ -18,8 +18,6 @@ namespace ege
                         bool nextScenarioAvailable;
 
                 protected:
-                        EngineResources* engineResources;
-
                         Scenario();
                         void setNextScenario( Scenario* scenario );
                         void setEndAsNextScenario();

@@ -18,6 +18,13 @@ namespace ege
                         public:
                                 const float* getMatrix();
                 };
+
+                class OrthoProjection: public Projection
+                {
+                        public:
+                                OrthoProjection( float left, float right, float bottom, float top, float near, float far );
+                                OrthoProjection( float left, float right, float bottom, float top );
+                };
         }
 }
 

@@ -37,5 +37,6 @@ void Painter::removeBrushStrokes()
 void Painter::paint()
 {
         glBindFramebuffer( GL_DRAW_FRAMEBUFFER, canvas->getId() );
+        glViewport( 0, 0, ( int ) canvas->getWidth(), ( int ) canvas->getHeight() );
         method();
 }

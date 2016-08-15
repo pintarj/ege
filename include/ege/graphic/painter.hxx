@@ -5,7 +5,7 @@
 
 
 #include <ege/graphic/canvas.hxx>
-#include <ege/graphic/brush-stroke.hxx>
+#include <ege/graphic/layer.hxx>
 #include <functional>
 
 
@@ -22,8 +22,8 @@ namespace ege
                         public:
                                 Painter();
                                 void setCanvas( Canvas* canvas );
-                                void setBrushStrokes( BrushStroke* brushStrokes, size_t count );
-                                void removeBrushStrokes();
+                                void setLayers( Layer* layers, size_t count );
+                                void removeLayers();
                                 void paint();
                 };
         }

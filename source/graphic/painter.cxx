@@ -8,7 +8,7 @@ using namespace ege::graphic;
 Painter::Painter()
 {
         canvas = nullptr;
-        removeBrushStrokes();
+        removeLayers();
 }
 
 
@@ -18,17 +18,22 @@ void Painter::setCanvas( Canvas* canvas )
 }
 
 
-void Painter::setBrushStrokes( BrushStroke* brushStrokes, size_t count )
+void Painter::setLayers( Layer* layers, size_t count )
 {
-        method = [ brushStrokes, count ] ()
+        method = [ layers, count ] ()
                 {
                         for ( size_t i = 0; i < count; ++i )
-                                brushStrokes[ i ].perform();
+                        {
+                                Layer& layer = layers[ i ];
+
+                                for ( size_t j = 0; j < layer.numberOfBrushStrokes; ++j )
+                                        layer.brushStrokes[ j ].perform();
+                        }
                 };
 }
 
 
-void Painter::removeBrushStrokes()
+void Painter::removeLayers()
 {
         method = [] () {};
 }

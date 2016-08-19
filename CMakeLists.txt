@@ -7,10 +7,10 @@ ADD_LIBRARY( ege SHARED
         source/scenario.cxx
         source/version.cxx
         source/graphic/canvas.cxx
-        source/graphic/clearer.cxx
-        source/graphic/projection.cxx
         source/graphic/image.cxx
         source/graphic/painter.cxx
+        source/graphic/projection.cxx
+        source/graphic/step/clear.cxx
         source/graphic/vertices.cxx
         source/engine/configuration.cxx
         source/engine/engine.cxx

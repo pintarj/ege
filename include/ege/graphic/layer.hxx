@@ -5,7 +5,7 @@
 
 
 #include <cstddef>
-#include <ege/graphic/brush-stroke.hxx>
+#include <ege/graphic/step/step.hxx>
 #include <ege/graphic/projection.hxx>
 
 
@@ -15,8 +15,8 @@ namespace ege
         {
                 struct Layer
                 {
-                        BrushStroke* brushStrokes;
-                        size_t numberOfBrushStrokes;
+                        step::Step* steps;
+                        size_t stepsNumber;
                         Projection* projection;
                 };
         }

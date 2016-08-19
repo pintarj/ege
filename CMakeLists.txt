@@ -1,7 +1,7 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 3.1 )
 PROJECT( ege CXX )
 
-INCLUDE_DIRECTORIES( include )
+INCLUDE_DIRECTORIES( include private/include )
 
 ADD_LIBRARY( ege SHARED
         source/scenario.cxx

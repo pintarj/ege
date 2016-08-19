@@ -35,6 +35,7 @@ GLuint shader::compile( GLenum type, const char* source )
                 glGetShaderInfoLog( id, len, NULL, log );
                 clearLastShaderCompileLog();
                 lastShaderCompileLog = log;
+                glDeleteShader( id );
                 return 0;
         }
 

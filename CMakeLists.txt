@@ -19,6 +19,7 @@ ADD_LIBRARY( ege SHARED
         source/resource/manager.cxx
         source/resource/resource.cxx
         source/resource/root.cxx
+        private/source/graphic/geometry/projection.cxx
         private/source/graphic/opengl/program.cxx
         private/source/graphic/opengl/shader.cxx
         )

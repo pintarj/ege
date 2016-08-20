@@ -6,7 +6,7 @@
 
 #include <cstddef>
 #include <ege/graphic/step/step.hxx>
-#include <ege/graphic/projection.hxx>
+#include <ege/graphic/geometry/projection.hxx>
 
 
 namespace ege
@@ -17,7 +17,7 @@ namespace ege
                 {
                         step::Step** steps;
                         size_t stepsNumber;
-                        Projection* projection;
+                        geometry::Projection* projection;
                 };
         }
 }

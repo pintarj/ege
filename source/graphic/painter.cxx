@@ -1,8 +1,10 @@
 #include <ege/graphic/painter.hxx>
+#include <ege_private/graphic/geometry/projection.hxx>
 #include <GL/glew.h>
 
 
 using namespace ege::graphic;
+using namespace ege_private::graphic::geometry;
 
 
 Painter::Painter()
@@ -25,6 +27,7 @@ void Painter::setLayers( Layer* layers, size_t count )
                         for ( size_t i = 0; i < count; ++i )
                         {
                                 Layer& layer = layers[ i ];
+                                projection = layer.projection;
 
                                 for ( size_t j = 0; j < layer.stepsNumber; ++j )
                                         layer.steps[ j ]->perform();

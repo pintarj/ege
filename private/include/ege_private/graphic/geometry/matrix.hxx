@@ -51,6 +51,26 @@ namespace ege_private
                                         matrix[ 14 ] = 0.0f;
                                         matrix[ 15 ] = 1.0f;
                                 }
+
+                                static inline void scale( float* matrix, float x, float y, float z )
+                                {
+                                        matrix[  0 ] = x;
+                                        matrix[  1 ] = 0.0f;
+                                        matrix[  2 ] = 0.0f;
+                                        matrix[  3 ] = 0.0f;
+                                        matrix[  4 ] = 0.0f;
+                                        matrix[  5 ] = y;
+                                        matrix[  6 ] = 0.0f;
+                                        matrix[  7 ] = 0.0f;
+                                        matrix[  8 ] = 0.0f;
+                                        matrix[  9 ] = 0.0f;
+                                        matrix[ 10 ] = z;
+                                        matrix[ 11 ] = 0.0f;
+                                        matrix[ 12 ] = 0.0f;
+                                        matrix[ 13 ] = 0.0f;
+                                        matrix[ 14 ] = 0.0f;
+                                        matrix[ 15 ] = 1.0f;
+                                }
                         }
                 }
         }

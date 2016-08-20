@@ -34,6 +34,7 @@ void ege::engine::initialize()
         const GLFWvidmode* videoMode = glfwGetVideoMode( primary );
         win = glfwCreateWindow( videoMode->width, videoMode->height, "", primary, NULL );
         glfwMakeContextCurrent( win );
+        glfwSwapInterval( 1 );
         glewExperimental = GL_TRUE;
         glewInit();
         glGetError();
@@ -70,7 +71,7 @@ void ege::engine::start( Scenario* initialScenario )
                 }
 
                 glfwSwapBuffers( win );
-                std::this_thread::sleep_for( std::chrono::milliseconds( 30 ) );
+                std::this_thread::sleep_for( std::chrono::milliseconds( 8 ) );
         }
 }
 

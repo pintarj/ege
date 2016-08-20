@@ -19,13 +19,14 @@ Vertices::~Vertices()
 }
 
 
-void Vertices::allocate( size_t count )
+void Vertices::allocate( size_t count, uint8_t vectorDimension )
 {
         deallocate();
         this->count = count;
+        this->vectorDimension = vectorDimension;
         glGenBuffers( 1, &glBuffer );
         glBindBuffer( GL_ARRAY_BUFFER, glBuffer );
-        glBufferData( GL_ARRAY_BUFFER, count * sizeof( float ), NULL, GL_DYNAMIC_DRAW );
+        glBufferData( GL_ARRAY_BUFFER, count * vectorDimension * sizeof( float ), NULL, GL_DYNAMIC_DRAW );
 }
 
 
@@ -43,7 +44,8 @@ float* Vertices::map( size_t offset, size_t count )
 {
         unmap();
         glBindBuffer( GL_ARRAY_BUFFER, glBuffer );
-        pointer = ( float* ) glMapBufferRange( GL_ARRAY_BUFFER, offset, count, GL_MAP_WRITE_BIT );
+        const size_t factor = vectorDimension * sizeof( float );
+        pointer = ( float* ) glMapBufferRange( GL_ARRAY_BUFFER, factor * offset, factor * count, GL_MAP_WRITE_BIT );
         return pointer;
 }
 
@@ -62,6 +64,18 @@ void Vertices::unmap()
                 glUnmapBuffer( GL_ARRAY_BUFFER );
                 pointer = nullptr;
         }
+}
+
+
+uint8_t Vertices::getDimension()
+{
+        return vectorDimension;
+}
+
+
+size_t Vertices::getCount()
+{
+        return count;
 }
 
 

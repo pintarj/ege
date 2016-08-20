@@ -107,6 +107,56 @@ namespace ege_private
                                         matrix[ 14 ] = 0.0f;
                                         matrix[ 15 ] = 1.0f;
                                 }
+
+                                static inline void ortho( float* matrix, float left, float right, float bottom, float top, float near, float far )
+                                {
+                                        float rml = right - left;
+                                        float tmb = top - bottom;
+                                        float fmn = far - near;
+
+                                        matrix[  0 ] = 2.0f / rml;
+                                        matrix[  1 ] = 0.0f;
+                                        matrix[  2 ] = 0.0f;
+                                        matrix[  3 ] = 0.0f;
+                                        matrix[  4 ] = 0.0f;
+                                        matrix[  5 ] = 2.0f / tmb;
+                                        matrix[  6 ] = 0.0f;
+                                        matrix[  7 ] = 0.0f;
+                                        matrix[  8 ] = 0.0f;
+                                        matrix[  9 ] = 0.0f;
+                                        matrix[ 10 ] = -2.0f / fmn;
+                                        matrix[ 11 ] = 0.0f;
+                                        matrix[ 12 ] = -( ( right + left ) / rml );
+                                        matrix[ 13 ] = -( ( top + bottom ) / tmb );
+                                        matrix[ 14 ] = -( ( far + near ) / fmn );
+                                        matrix[ 15 ] = 1.0f;
+                                }
+
+                                static inline void ortho2D( float* matrix, float left, float right, float bottom, float top )
+                                {
+                                        float rml = right - left;
+                                        float tmb = top - bottom;
+
+                                        matrix[  0 ] = 2.0f / rml;
+                                        matrix[  1 ] = 0.0f;
+                                        matrix[  2 ] = 0.0f;
+                                        matrix[  3 ] = 0.0f;
+
+                                        matrix[  4 ] = 0.0f;
+                                        matrix[  5 ] = 2.0f / tmb;
+                                        matrix[  6 ] = 0.0f;
+                                        matrix[  7 ] = 0.0f;
+
+                                        matrix[  8 ] = 0.0f;
+                                        matrix[  9 ] = 0.0f;
+                                        matrix[ 10 ] = -1.0f;
+                                        matrix[ 11 ] = 0.0f;
+
+                                        matrix[ 12 ] = -( ( right + left ) / rml );
+                                        matrix[ 13 ] = -( ( top + bottom ) / tmb );
+                                        matrix[ 14 ] = 0.0f;
+                                        matrix[ 15 ] = 1.0f;
+                                }
                         }
                 }
         }

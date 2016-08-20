@@ -9,7 +9,7 @@ ADD_LIBRARY( ege SHARED
         source/graphic/canvas.cxx
         source/graphic/image.cxx
         source/graphic/painter.cxx
-        source/graphic/projection.cxx
+        source/graphic/geometry/projection.cxx
         source/graphic/geometry/transform.cxx
         source/graphic/step/clear.cxx
         source/graphic/vertices.cxx
@@ -19,7 +19,6 @@ ADD_LIBRARY( ege SHARED
         source/resource/manager.cxx
         source/resource/resource.cxx
         source/resource/root.cxx
-        private/source/graphic/opengl/matrix.cxx
         private/source/graphic/opengl/program.cxx
         private/source/graphic/opengl/shader.cxx
         )

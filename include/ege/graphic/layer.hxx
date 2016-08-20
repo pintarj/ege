@@ -15,7 +15,7 @@ namespace ege
         {
                 struct Layer
                 {
-                        step::Step* steps;
+                        step::Step** steps;
                         size_t stepsNumber;
                         Projection* projection;
                 };

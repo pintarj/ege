@@ -27,7 +27,7 @@ void Painter::setLayers( Layer* layers, size_t count )
                                 Layer& layer = layers[ i ];
 
                                 for ( size_t j = 0; j < layer.stepsNumber; ++j )
-                                        layer.steps[ j ].perform();
+                                        layer.steps[ j ]->perform();
                         }
                 };
 }

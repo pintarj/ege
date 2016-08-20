@@ -19,8 +19,9 @@ ADD_LIBRARY( ege SHARED
         source/resource/manager.cxx
         source/resource/resource.cxx
         source/resource/root.cxx
-        private/source/opengl/program.cxx
-        private/source/opengl/shader.cxx
+        private/source/graphic/opengl/matrix.cxx
+        private/source/graphic/opengl/program.cxx
+        private/source/graphic/opengl/shader.cxx
         )
 SET_PROPERTY( TARGET ege PROPERTY CXX_STANDARD 14 )
 TARGET_LINK_LIBRARIES( ege GLEW glfw )

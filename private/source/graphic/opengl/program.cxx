@@ -1,7 +1,7 @@
-#include <ege_private/opengl/program.hxx>
+#include <ege_private/graphic/opengl/program.hxx>
 
 
-using namespace ege_private::opengl;
+using namespace ege_private::graphic::opengl;
 
 
 static char* lastProgramLinkLog = nullptr;

@@ -1,7 +1,7 @@
-#include <ege_private/opengl/shader.hxx>
+#include <ege_private/graphic/opengl/shader.hxx>
 
 
-using namespace ege_private::opengl;
+using namespace ege_private::graphic::opengl;
 
 
 static char* lastShaderCompileLog = nullptr;

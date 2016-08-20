@@ -10,6 +10,7 @@ ADD_LIBRARY( ege SHARED
         source/graphic/image.cxx
         source/graphic/painter.cxx
         source/graphic/projection.cxx
+        source/graphic/geometry/transform.cxx
         source/graphic/step/clear.cxx
         source/graphic/vertices.cxx
         source/engine/configuration.cxx

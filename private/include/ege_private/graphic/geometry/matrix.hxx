@@ -4,6 +4,9 @@
 #define EGE_PRIVATE_GRAPHIC_GEOMETRY_MATRIX_HXX
 
 
+#include <cmath>
+
+
 namespace ege_private
 {
         namespace graphic
@@ -65,6 +68,39 @@ namespace ege_private
                                         matrix[  8 ] = 0.0f;
                                         matrix[  9 ] = 0.0f;
                                         matrix[ 10 ] = z;
+                                        matrix[ 11 ] = 0.0f;
+                                        matrix[ 12 ] = 0.0f;
+                                        matrix[ 13 ] = 0.0f;
+                                        matrix[ 14 ] = 0.0f;
+                                        matrix[ 15 ] = 1.0f;
+                                }
+
+                                static inline void rotate( float* matrix, float radians, float x, float y, float z )
+                                {
+                                        float sin       = std::sin( radians );
+                                        float cos       = std::cos( radians );
+                                        float mcos      = 1.0f - cos;
+                                        float xmcos     = x * mcos;
+                                        float ymcos     = y * mcos;
+                                        float zmcos     = z * mcos;
+                                        float xymcos    = x * ymcos;
+                                        float yzmcos    = y * zmcos;
+                                        float zxmcos    = z * xmcos;
+                                        float xsin      = x * sin;
+                                        float ysin      = y * sin;
+                                        float zsin      = z * sin;
+
+                                        matrix[  0 ] = x * xmcos + cos;
+                                        matrix[  1 ] = xymcos + zsin;
+                                        matrix[  2 ] = zxmcos - ysin;
+                                        matrix[  3 ] = 0.0f;
+                                        matrix[  4 ] = xymcos - zsin;
+                                        matrix[  5 ] = y * ymcos + cos;
+                                        matrix[  6 ] = yzmcos + xsin;
+                                        matrix[  7 ] = 0.0f;
+                                        matrix[  8 ] = zxmcos + ysin;
+                                        matrix[  9 ] = yzmcos - xsin;
+                                        matrix[ 10 ] = z * zmcos + cos;
                                         matrix[ 11 ] = 0.0f;
                                         matrix[ 12 ] = 0.0f;
                                         matrix[ 13 ] = 0.0f;

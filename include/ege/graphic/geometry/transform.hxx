@@ -4,6 +4,9 @@
 #define EGE_GRAPHIC_GEOMETRY_TRANSFORM_HXX
 
 
+#include <cstddef>
+
+
 namespace ege
 {
         namespace graphic
@@ -44,6 +47,18 @@ namespace ege
                                 public:
                                         void setVector( float* vector );
                                         void setVector( float x, float y, float z );
+
+                                        void calculate();
+                        };
+
+                        class TransformationPipeline: public Transformation
+                        {
+                                private:
+                                        Transformation** transformations;
+                                        size_t count;
+
+                                public:
+                                        void setTransformations( Transformation** transformations, size_t count );
 
                                         void calculate();
                         };

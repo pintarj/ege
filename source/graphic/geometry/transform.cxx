@@ -17,8 +17,8 @@ const float* Transformation::getMatrix()
 {
         if ( dirty )
         {
-                calculate();
                 dirty = false;
+                calculate();
         }
 
         return ( const float* ) matrix;
@@ -73,4 +73,27 @@ void TranslateTransformation::setVector( float x, float y, float z )
 void TranslateTransformation::calculate()
 {
         matrix::translate( matrix, vector[ 0 ], vector[ 1 ], vector[ 2 ] );
+}
+
+
+void TransformationPipeline::setTransformations( Transformation** transformations, size_t count )
+{
+        this->transformations = transformations;
+        this->count = count;
+        dirty = true;
+}
+
+
+void TransformationPipeline::calculate()
+{
+        std::memcpy( matrix, transformations[ 0 ]->getMatrix(), 16 * sizeof( float ) );
+
+        for ( size_t i = 1; i < count; ++i )
+        {
+                float out[ 16 ];
+                matrix::multiply( out, matrix, transformations[ i ]->getMatrix() );
+                std::memcpy( matrix, out, 16 * sizeof( float ) );
+        }
+
+        dirty = true;
 }

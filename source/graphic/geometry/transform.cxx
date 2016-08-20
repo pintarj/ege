@@ -1,5 +1,6 @@
 #include <ege/graphic/geometry/transform.hxx>
 #include <ege_private/graphic/geometry/matrix.hxx>
+#include <cstring>
 
 
 using namespace ege::graphic::geometry;
@@ -50,4 +51,26 @@ void RotateTransformation::setVector( float x, float y, float z )
 void RotateTransformation::calculate()
 {
         matrix::rotate( matrix, radians, vector[ 0 ], vector[ 1 ], vector[ 2 ] );
+}
+
+
+void TranslateTransformation::setVector( float* vector )
+{
+        this->vector[ 0 ] = vector[ 0 ];
+        this->vector[ 1 ] = vector[ 1 ];
+        this->vector[ 2 ] = vector[ 2 ];
+        dirty = true;
+}
+
+
+void TranslateTransformation::setVector( float x, float y, float z )
+{
+        float vector[] = { x, y, z };
+        setVector( vector );
+}
+
+
+void TranslateTransformation::calculate()
+{
+        matrix::translate( matrix, vector[ 0 ], vector[ 1 ], vector[ 2 ] );
 }

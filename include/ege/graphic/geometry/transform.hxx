@@ -35,6 +35,18 @@ namespace ege
 
                                         void calculate();
                         };
+
+                        class TranslateTransformation: public Transformation
+                        {
+                                private:
+                                        float vector[ 3 ];
+
+                                public:
+                                        void setVector( float* vector );
+                                        void setVector( float x, float y, float z );
+
+                                        void calculate();
+                        };
                 }
         }
 }

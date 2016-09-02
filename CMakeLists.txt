@@ -14,6 +14,7 @@ ADD_LIBRARY( ege SHARED
         source/graphic/step/clear.cxx
         source/graphic/texture/texture.cxx
         source/graphic/vertices.cxx
+        source/hardware/monitor.cxx
         source/engine/configuration.cxx
         source/engine/engine.cxx
         source/resource/image.cxx

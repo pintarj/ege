@@ -12,6 +12,7 @@ ADD_LIBRARY( ege SHARED
         source/graphic/geometry/projection.cxx
         source/graphic/geometry/transform.cxx
         source/graphic/geometry/vertex/buffer.cxx
+        source/graphic/program/program.cxx
         source/graphic/step/clear.cxx
         source/graphic/texture/texture.cxx
         source/graphic/vertices.cxx

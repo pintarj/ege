@@ -18,6 +18,7 @@ namespace ege
                                 protected:
                                         const size_t glProgramId;
                                         Program( size_t glProgramId );
+                                        Program( const char* vertexShader, const char* fragmentShader );
 
                                 public:
                                         virtual ~Program();

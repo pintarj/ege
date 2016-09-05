@@ -1,7 +1,10 @@
 #include <ege/graphic/program/program.hxx>
+#include <ege/exception.hxx>
 #include <GL/glew.h>
+#include <cstring>
 
 
+using namespace ege;
 using namespace ege::graphic::program;
 
 
@@ -61,12 +64,67 @@ static inline GLuint linkProgram( size_t* shadersId, size_t shadersCount, char**
 }
 
 
+#define BUILD_ERROR_MESSAGE( message, pieces ) \
+        size_t length = 0; \
+        size_t count = sizeof( pieces ) / sizeof( char* ); \
+        size_t lengths[ count ]; \
+        for( size_t i = 0; i < count; ++i ) \
+        { \
+                lengths[ i ] = std::strlen( pieces[ i ] ); \
+                length += lengths[ i ]; \
+         } \
+        char message[ length + 1 ]; \
+        message[ length ] = '\0'; \
+        char* destination = message; \
+        for( size_t i = 0; i < count; ++i ) \
+        { \
+                std::memcpy( destination, pieces[ i ], lengths[ i ] ); \
+                destination += lengths[ i ]; \
+        } \
+
+
 static inline size_t compileProgramFromVertexAndFragmentShader( const char* vertexShader, const char* fragmentShader )
 {
+        static const char* piecesShader[ 4 ] = { "could not compile ", "", " shader: \n", "" };
+        static const char* piecesProgram[ 2 ] = { "could not link program: \n", "" };
         size_t shaders[ 2 ];
-        shaders[ 0 ] = compileShader( GL_VERTEX_SHADER, vertexShader );
-        shaders[ 1 ] = compileShader( GL_FRAGMENT_SHADER, fragmentShader );
-        GLuint program = linkProgram( shaders, 2 );
+        char* log;
+
+        shaders[ 0 ] = compileShader( GL_VERTEX_SHADER, vertexShader, &log );
+
+        if ( shaders[ 0 ] == 0 )
+        {
+                piecesShader[ 1 ] = "vertex";
+                piecesShader[ 3 ] = log;
+                BUILD_ERROR_MESSAGE( message, piecesShader )
+                delete log;
+                exception::throwNew( message );
+        }
+
+        shaders[ 1 ] = compileShader( GL_FRAGMENT_SHADER, fragmentShader, &log );
+
+        if ( shaders[ 1 ] == 0 )
+        {
+                piecesShader[ 1 ] = "fragment";
+                piecesShader[ 3 ] = log;
+                BUILD_ERROR_MESSAGE( message, piecesShader )
+                glDeleteShader( ( GLuint ) shaders[ 0 ] );
+                delete log;
+                exception::throwNew( message );
+        }
+
+        GLuint program = linkProgram( shaders, 2, &log );
+        glDeleteShader( ( GLuint ) shaders[ 1 ] );
+        glDeleteShader( ( GLuint ) shaders[ 2 ] );
+
+        if ( program == 0 )
+        {
+                piecesProgram[ 1 ] = log;
+                BUILD_ERROR_MESSAGE( message, piecesProgram )
+                delete log;
+                exception::throwNew( message );
+        }
+
         return program;
 }
 

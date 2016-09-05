@@ -9,6 +9,7 @@ Array::Array( ArrayAttribute* attributes, size_t count )
 {
         GLuint id;
         glGenVertexArrays( 1, &id );
+        glVertexArrayId = id;
         glBindVertexArray( id );
 
         for ( size_t i = 0; i < count; ++i )

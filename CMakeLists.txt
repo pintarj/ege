@@ -16,6 +16,7 @@ ADD_LIBRARY( ege SHARED
         source/graphic/program/program.cxx
         source/graphic/render/targetable.cxx
         source/graphic/step/clear.cxx
+        source/graphic/texture/sampler.cxx
         source/graphic/texture/texture.cxx
         source/graphic/vertices.cxx
         source/hardware/monitor.cxx

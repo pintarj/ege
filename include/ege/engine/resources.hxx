@@ -8,7 +8,6 @@
 #include <ege/hardware/monitor.hxx>
 #include <ege/util/fps/analyzer.hxx>
 #include <ege/util/fps/moderator.hxx>
-#include <ege/resource/manager.hxx>
 
 
 namespace ege
@@ -21,7 +20,6 @@ namespace ege
                         hardware::Monitor* monitor;
                         util::fps::Analyzer* fpsAnalyzer;
                         util::fps::Moderator* fpsModerator;
-                        resource::Manager* resourcesManager;
                 };
         }
 }

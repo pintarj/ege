@@ -50,7 +50,6 @@ void ege::engine::initialize()
         resources.monitor = new hardware::Monitor( ( size_t ) videoMode->width, ( size_t ) videoMode->height );
         resources.fpsAnalyzer = new fps::Analyzer();
         resources.fpsModerator = new fps::Moderator( *resources.fpsAnalyzer, ( float ) monitorRefreshRate, true );
-        resources.resourcesManager = new resource::Manager( &configuration.root );
 }
 
 

@@ -7,11 +7,6 @@ ADD_LIBRARY( ege SHARED
         source/exception.cxx
         source/scenario.cxx
         source/version.cxx
-        source/graphic/canvas.cxx
-        source/graphic/image.cxx
-        source/graphic/painter.cxx
-        source/graphic/geometry/projection.cxx
-        source/graphic/geometry/transform.cxx
         source/graphic/geometry/vertex/buffer.cxx
         source/graphic/geometry/vertex/array.cxx
         source/graphic/program/extension.cxx
@@ -24,17 +19,12 @@ ADD_LIBRARY( ege SHARED
         source/graphic/step/clear.cxx
         source/graphic/texture/sampler.cxx
         source/graphic/texture/texture.cxx
-        source/graphic/vertices.cxx
         source/hardware/monitor.cxx
         source/engine/configuration.cxx
         source/engine/engine.cxx
-        source/resource/image.cxx
-        source/resource/manager.cxx
-        source/resource/resource.cxx
         source/resource/root.cxx
         source/util/fps/analyzer.cxx
         source/util/fps/moderator.cxx
-        private/source/graphic/geometry/projection.cxx
         )
 SET_PROPERTY( TARGET ege PROPERTY CXX_STANDARD 14 )
 TARGET_LINK_LIBRARIES( ege GLEW glfw )

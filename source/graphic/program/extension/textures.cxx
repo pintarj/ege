@@ -31,5 +31,5 @@ Textures::~Textures()
 
 void Textures::uniformTextureAt( size_t index, size_t value )
 {
-        glUniform1i( ( GLint ) texturesLocation[ index ], ( GLint ) value );
+        glProgramUniform1i( ( GLuint ) program.getProgramId(), ( GLint ) texturesLocation[ index ], ( GLint ) value );
 }

@@ -31,6 +31,13 @@ Texture::~Texture()
 }
 
 
+void Texture::useAtUnit( size_t unit )
+{
+        glActiveTexture( GL_TEXTURE0 + ( GLuint ) unit );
+        glBindTexture( GL_TEXTURE_2D, ( GLuint ) textureId );
+}
+
+
 void Texture::getDimensions( size_t* width, size_t* height )
 {
         *width = this->width;

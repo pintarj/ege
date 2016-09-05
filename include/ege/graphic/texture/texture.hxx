@@ -25,6 +25,7 @@ namespace ege
                                         Texture( size_t width, size_t height, const void* pixels = nullptr );
                                         size_t getTextureId();
                                         virtual ~Texture();
+                                        void useAtUnit( size_t unit );
 
                                         void getDimensions( size_t* width, size_t* height );
                                         size_t getFrameBufferId();

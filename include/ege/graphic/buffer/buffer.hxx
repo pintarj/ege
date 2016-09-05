@@ -32,6 +32,7 @@ namespace ege
                                 private:
                                         size_t size;
                                         size_t glBufferId;
+                                        BufferUsage usage;
 
                                 public:
                                         Buffer( size_t sizeInBytes, const void* data = nullptr, BufferUsage usage = BufferUsage::STATIC );
@@ -40,6 +41,8 @@ namespace ege
                                         size_t getBufferId();
                                         void* map( size_t offset, size_t length, std::initializer_list< BufferMapAccess > access = {} );
                                         void unmap();
+                                        void invalidateData();
+                                        void orphan();
                         };
                 }
         }

@@ -28,6 +28,8 @@ Buffer::Buffer( size_t sizeInBytes, const void* data, BufferUsage usage )
         glBindBuffer( GL_ARRAY_BUFFER, id );
         glBufferData( GL_ARRAY_BUFFER, sizeInBytes, data, toGlUsage( usage ) );
         glBufferId = id;
+        this->usage = usage;
+        size = sizeInBytes;
 }
 
 
@@ -66,4 +68,17 @@ void Buffer::unmap()
 {
         glBindBuffer( GL_ARRAY_BUFFER, ( GLuint ) glBufferId );
         glUnmapBuffer( GL_ARRAY_BUFFER );
+}
+
+
+void Buffer::invalidateData()
+{
+        glBindBuffer( GL_ARRAY_BUFFER, ( GLuint ) glBufferId );
+        glBufferData( GL_ARRAY_BUFFER, size, NULL, toGlUsage( usage ) );
+}
+
+
+void Buffer::orphan()
+{
+        invalidateData();
 }

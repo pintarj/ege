@@ -64,6 +64,7 @@ void ege::engine::start( Scenario* initialScenario )
                                 break;
                 }
 
+                current->render();
                 glfwSwapBuffers( win );
                 resources.fpsModerator->moderate();
                 resources.fpsAnalyzer->markTimePoint();

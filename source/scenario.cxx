@@ -42,6 +42,12 @@ void Scenario::update( float delta )
 }
 
 
+void Scenario::render()
+{
+
+}
+
+
 void Scenario::shouldClose()
 {
         setEndAsNextScenario();

@@ -27,6 +27,7 @@ namespace ege
                         bool isNextScenarioAvailable();
                         Scenario* getNextScenario();
                         virtual void update( float delta );
+                        virtual void render();
                         virtual void shouldClose();
         };
 }

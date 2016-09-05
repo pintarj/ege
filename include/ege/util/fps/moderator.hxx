@@ -23,7 +23,7 @@ namespace ege
                                         float periodFactor;
 
                                 public:
-                                        Moderator( Analyzer& analyzer, float fps = 60.0f, bool vSyncEnabled );
+                                        Moderator( Analyzer& analyzer, float fps = 60.0f, bool vSyncEnabled = false );
                                         void setFPS( float fps );
                                         void moderate();
                                         void setVSyncEnabled( bool vSyncEnabled );

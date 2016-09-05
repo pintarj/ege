@@ -4,7 +4,7 @@
 #define EGE_GRAPHIC_GEOMETRY_VERTEX_ARRAY_HXX
 
 
-#include <ege/graphic/geometry/vertex/buffer.hxx>
+#include <ege/graphic/buffer/buffer.hxx>
 #include <cstdint>
 
 
@@ -22,7 +22,7 @@ namespace ege
                                         uint8_t vectorSize;
                                         size_t stride;
                                         size_t offsetInBuffer;
-                                        Buffer* buffer;
+                                        buffer::Buffer* buffer;
                                 };
 
                                 class Array

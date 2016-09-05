@@ -8,8 +8,8 @@ ADD_LIBRARY( ege-core SHARED
         source/version.cxx
         source/engine/configuration.cxx
         source/engine/engine.cxx
+        source/graphic/buffer/buffer.cxx
         source/graphic/geometry/vertex/array.cxx
-        source/graphic/geometry/vertex/buffer.cxx
         source/graphic/program/extension.cxx
         source/graphic/program/mvp-texture-program.cxx
         source/graphic/program/program.cxx

@@ -1,8 +1,8 @@
-#include <ege/graphic/geometry/vertex/buffer.hxx>
+#include <ege/graphic/buffer/buffer.hxx>
 #include <GL/glew.h>
 
 
-using namespace ege::graphic::geometry::vertex;
+using namespace ege::graphic::buffer;
 
 
 static inline GLenum toGlUsage( BufferUsage usage )

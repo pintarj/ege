@@ -15,6 +15,7 @@ ADD_LIBRARY( ege SHARED
         source/graphic/geometry/vertex/buffer.cxx
         source/graphic/geometry/vertex/array.cxx
         source/graphic/program/extension.cxx
+        source/graphic/program/mvp-texture-program.cxx
         source/graphic/program/program.cxx
         source/graphic/program/extension/model-view-projection-matrix.cxx
         source/graphic/program/extension/textures.cxx

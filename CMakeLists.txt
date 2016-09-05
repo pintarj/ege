@@ -7,21 +7,21 @@ ADD_LIBRARY( ege SHARED
         source/exception.cxx
         source/scenario.cxx
         source/version.cxx
-        source/graphic/geometry/vertex/buffer.cxx
+        source/engine/configuration.cxx
+        source/engine/engine.cxx
         source/graphic/geometry/vertex/array.cxx
+        source/graphic/geometry/vertex/buffer.cxx
         source/graphic/program/extension.cxx
         source/graphic/program/mvp-texture-program.cxx
         source/graphic/program/program.cxx
         source/graphic/program/extension/model-view-projection-matrix.cxx
         source/graphic/program/extension/textures.cxx
-        source/graphic/render/targetable.cxx
         source/graphic/render/draw.cxx
+        source/graphic/render/targetable.cxx
         source/graphic/step/clear.cxx
         source/graphic/texture/sampler.cxx
         source/graphic/texture/texture.cxx
         source/hardware/monitor.cxx
-        source/engine/configuration.cxx
-        source/engine/engine.cxx
         source/resource/root.cxx
         source/util/fps/analyzer.cxx
         source/util/fps/moderator.cxx

@@ -48,3 +48,22 @@ size_t Buffer::getBufferId()
 {
         return glBufferId;
 }
+
+
+void* Buffer::map( size_t offset, size_t length, std::initializer_list< BufferMapAccess > access )
+{
+        GLenum flags = GL_MAP_WRITE_BIT;
+
+        for ( auto flag : access )
+                flags |= ( GLenum ) flag;
+
+        glBindBuffer( GL_ARRAY_BUFFER, ( GLuint ) glBufferId );
+        return glMapBufferRange( GL_ARRAY_BUFFER, offset, length, flags );
+}
+
+
+void Buffer::unmap()
+{
+        glBindBuffer( GL_ARRAY_BUFFER, ( GLuint ) glBufferId );
+        glUnmapBuffer( GL_ARRAY_BUFFER );
+}

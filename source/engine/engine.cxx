@@ -1,7 +1,6 @@
 #include <ege/engine/engine.hxx>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include <thread>
 
 
 using namespace ege;
@@ -31,6 +30,7 @@ void ege::engine::initialize()
         glGetError();
         resources.monitor = new hardware::Monitor( ( size_t ) videoMode->width, ( size_t ) videoMode->height );
         resources.fpsAnalyzer = new fps::Analyzer();
+        resources.fpsModerator = new fps::Moderator( *resources.fpsAnalyzer, ( float ) monitorRefreshRate, true );
         resources.resourcesManager = new resource::Manager( &configuration.root );
 }
 
@@ -65,7 +65,7 @@ void ege::engine::start( Scenario* initialScenario )
                 }
 
                 glfwSwapBuffers( win );
-                std::this_thread::sleep_for( std::chrono::milliseconds( 8 ) );
+                resources.fpsModerator->moderate();
                 resources.fpsAnalyzer->markTimePoint();
         }
 }
@@ -76,5 +76,6 @@ void ege::engine::destroy()
         glfwDestroyWindow( win );
         delete resources.monitor;
         delete resources.fpsAnalyzer;
+        delete resources.fpsModerator;
         glfwTerminate();
 }

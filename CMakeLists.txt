@@ -30,6 +30,7 @@ ADD_LIBRARY( ege SHARED
         source/resource/resource.cxx
         source/resource/root.cxx
         source/util/fps/analyzer.cxx
+        source/util/fps/moderator.cxx
         private/source/graphic/geometry/projection.cxx
         )
 SET_PROPERTY( TARGET ege PROPERTY CXX_STANDARD 14 )

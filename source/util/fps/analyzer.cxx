@@ -19,6 +19,13 @@ void Analyzer::markTimePoint()
 }
 
 
+float Analyzer::calculateDelta()
+{
+        lastDelta = std::chrono::system_clock::now() - lastTimePoint;
+        return lastDelta.count();
+}
+
+
 void Analyzer::setLastDelta( float lastDelta )
 {
         this->lastDelta = std::chrono::duration< float >( lastDelta );

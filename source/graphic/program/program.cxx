@@ -129,13 +129,13 @@ static inline size_t compileProgramFromVertexAndFragmentShader( const char* vert
 }
 
 
-Program::Program( size_t glProgramId ): glProgramId( glProgramId )
+Program::Program( size_t glProgramId, bool deleteGlProgram ): glProgramId( glProgramId ), deleteGlProgram( deleteGlProgram )
 {
 
 }
 
 
-Program::Program( const char* vertexShader, const char* fragmentShader ): Program( compileProgramFromVertexAndFragmentShader( vertexShader, fragmentShader ) )
+Program::Program( const char* vertexShader, const char* fragmentShader ): Program( compileProgramFromVertexAndFragmentShader( vertexShader, fragmentShader ), true )
 {
 
 }
@@ -143,7 +143,8 @@ Program::Program( const char* vertexShader, const char* fragmentShader ): Progra
 
 Program::~Program()
 {
-
+        if ( deleteGlProgram )
+                glDeleteProgram( ( GLuint ) glProgramId );
 }
 
 

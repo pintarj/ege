@@ -15,9 +15,12 @@ namespace ege
                 {
                         class Program
                         {
+                                private:
+                                        const bool deleteGlProgram;
+
                                 protected:
                                         const size_t glProgramId;
-                                        Program( size_t glProgramId );
+                                        Program( size_t glProgramId, bool deleteGlProgram = false );
                                         Program( const char* vertexShader, const char* fragmentShader );
 
                                 public:

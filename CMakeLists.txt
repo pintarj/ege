@@ -1,7 +1,7 @@
 CMAKE_MINIMUM_REQUIRED( VERSION 3.1 )
 PROJECT( ege CXX )
 
-INCLUDE_DIRECTORIES( include private/include )
+INCLUDE_DIRECTORIES( include )
 
 ADD_LIBRARY( ege-core SHARED
         source/exception.cxx

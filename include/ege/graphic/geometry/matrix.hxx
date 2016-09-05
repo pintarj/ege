@@ -95,6 +95,75 @@ namespace ege
                                         matrix[ 15 ] = 1.0f;
                                 }
 
+                                static inline void rotateX( float* matrix, float radians )
+                                {
+                                        float sin       = sinf( radians );
+                                        float cos       = cosf( radians );
+
+                                        matrix[  0 ] = 1.0f;
+                                        matrix[  1 ] = 0.0f;
+                                        matrix[  2 ] = 0.0f;
+                                        matrix[  3 ] = 0.0f;
+                                        matrix[  4 ] = 0.0f;
+                                        matrix[  5 ] = cos;
+                                        matrix[  6 ] = sin;
+                                        matrix[  7 ] = 0.0f;
+                                        matrix[  8 ] = 0.0f;
+                                        matrix[  9 ] = -sin;
+                                        matrix[ 10 ] = cos;
+                                        matrix[ 11 ] = 0.0f;
+                                        matrix[ 12 ] = 0.0f;
+                                        matrix[ 13 ] = 0.0f;
+                                        matrix[ 14 ] = 0.0f;
+                                        matrix[ 15 ] = 1.0f;
+                                }
+
+                                static inline void rotateY( float* matrix, float radians )
+                                {
+                                        float sin       = sinf( radians );
+                                        float cos       = cosf( radians );
+
+                                        matrix[  0 ] = cos;
+                                        matrix[  1 ] = 0.0f;
+                                        matrix[  2 ] = -sin;
+                                        matrix[  3 ] = 0.0f;
+                                        matrix[  4 ] = 0.0f;
+                                        matrix[  5 ] = 1.0f;
+                                        matrix[  6 ] = 0.0f;
+                                        matrix[  7 ] = 0.0f;
+                                        matrix[  8 ] = sin;
+                                        matrix[  9 ] = 0.0f;
+                                        matrix[ 10 ] = cos;
+                                        matrix[ 11 ] = 0.0f;
+                                        matrix[ 12 ] = 0.0f;
+                                        matrix[ 13 ] = 0.0f;
+                                        matrix[ 14 ] = 0.0f;
+                                        matrix[ 15 ] = 1.0f;
+                                }
+
+                                static inline void rotateZ( float* matrix, float radians )
+                                {
+                                        float sin       = sinf( radians );
+                                        float cos       = cosf( radians );
+
+                                        matrix[  0 ] = cos;
+                                        matrix[  1 ] = sin;
+                                        matrix[  2 ] = 0.0f;
+                                        matrix[  3 ] = 0.0f;
+                                        matrix[  4 ] = -sin;
+                                        matrix[  5 ] = cos;
+                                        matrix[  6 ] = 0.0f;
+                                        matrix[  7 ] = 0.0f;
+                                        matrix[  8 ] = 0.0f;
+                                        matrix[  9 ] = 0.0f;
+                                        matrix[ 10 ] = 1.0f;
+                                        matrix[ 11 ] = 0.0f;
+                                        matrix[ 12 ] = 0.0f;
+                                        matrix[ 13 ] = 0.0f;
+                                        matrix[ 14 ] = 0.0f;
+                                        matrix[ 15 ] = 1.0f;
+                                }
+
                                 static inline void rotate( float* matrix, float radians, float x, float y, float z )
                                 {
                                         float sin       = std::sin( radians );

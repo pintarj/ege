@@ -36,6 +36,12 @@ void Sampler::setMinFilter( SamplerFilter filter )
 }
 
 
+void Sampler::useAtUnit( size_t unit )
+{
+        glBindSampler( ( GLuint ) unit, glSamplerId );
+}
+
+
 size_t Sampler::getSamplerId()
 {
         return glSamplerId;

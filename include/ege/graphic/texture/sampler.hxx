@@ -29,6 +29,7 @@ namespace ege
                                         virtual ~Sampler();
                                         void setMagFilter( SamplerFilter filter );
                                         void setMinFilter( SamplerFilter filter );
+                                        void useAtUnit( size_t unit );
                                         size_t getSamplerId();
                         };
                 }

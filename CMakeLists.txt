@@ -3,7 +3,7 @@ PROJECT( ege CXX )
 
 INCLUDE_DIRECTORIES( include private/include )
 
-ADD_LIBRARY( ege SHARED
+ADD_LIBRARY( ege-core SHARED
         source/exception.cxx
         source/scenario.cxx
         source/version.cxx
@@ -26,5 +26,5 @@ ADD_LIBRARY( ege SHARED
         source/util/fps/analyzer.cxx
         source/util/fps/moderator.cxx
         )
-SET_PROPERTY( TARGET ege PROPERTY CXX_STANDARD 14 )
-TARGET_LINK_LIBRARIES( ege GLEW glfw )
+SET_PROPERTY( TARGET ege-core PROPERTY CXX_STANDARD 14 )
+TARGET_LINK_LIBRARIES( ege-core GLEW glfw )

@@ -27,6 +27,7 @@ Buffer::Buffer( size_t sizeInBytes, const void* data, BufferUsage usage )
         glGenBuffers( 1, &id );
         glBindBuffer( GL_ARRAY_BUFFER, id );
         glBufferData( GL_ARRAY_BUFFER, sizeInBytes, data, toGlUsage( usage ) );
+        glBufferId = id;
 }
 
 

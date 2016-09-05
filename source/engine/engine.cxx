@@ -4,6 +4,7 @@
 
 
 using namespace ege;
+using namespace ege::scenario;
 using namespace ege::util;
 
 

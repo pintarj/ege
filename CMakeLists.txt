@@ -5,7 +5,6 @@ INCLUDE_DIRECTORIES( include )
 
 ADD_LIBRARY( ege-core SHARED
         source/exception.cxx
-        source/scenario.cxx
         source/version.cxx
         source/engine/configuration.cxx
         source/engine/engine.cxx
@@ -23,6 +22,7 @@ ADD_LIBRARY( ege-core SHARED
         source/graphic/texture/texture.cxx
         source/hardware/monitor.cxx
         source/resource/root.cxx
+        source/scenario/scenario.cxx
         source/util/fps/analyzer.cxx
         source/util/fps/moderator.cxx
         )

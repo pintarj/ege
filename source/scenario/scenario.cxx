@@ -1,7 +1,7 @@
-#include <ege/scenario.hxx>
+#include <ege/scenario/scenario.hxx>
 
 
-using namespace ege;
+using namespace ege::scenario;
 
 
 Scenario::Scenario()
@@ -21,6 +21,12 @@ void Scenario::setNextScenario( Scenario* scenario )
 void Scenario::setEndAsNextScenario()
 {
         setNextScenario( nullptr );
+}
+
+
+Scenario::~Scenario()
+{
+
 }
 
 

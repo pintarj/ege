@@ -32,6 +32,7 @@ namespace ege
 
                                         public:
                                                 Array( ArrayAttribute* attributes, size_t count );
+                                                virtual ~Array();
                                                 void use();
                                                 size_t getVertexArrayId();
                                 };

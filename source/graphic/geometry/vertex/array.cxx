@@ -32,3 +32,10 @@ size_t Array::getVertexArrayId()
 {
         return  glVertexArrayId;
 }
+
+
+Array::~Array()
+{
+        GLuint id = ( GLuint ) glVertexArrayId;
+        glDeleteVertexArrays( 1, &id );
+}

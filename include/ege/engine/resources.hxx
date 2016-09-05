@@ -4,7 +4,7 @@
 #define EGE_ENGINE_RESOURCES_HXX
 
 
-#include <ege/graphic/canvas.hxx>
+#include <ege/hardware/monitor.hxx>
 #include <ege/resource/manager.hxx>
 
 
@@ -14,7 +14,7 @@ namespace ege
         {
                 struct Resources
                 {
-                        graphic::Canvas* screen;
+                        hardware::Monitor* monitor;
                         resource::Manager* resourcesManager;
                 };
         }

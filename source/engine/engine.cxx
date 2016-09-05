@@ -7,18 +7,6 @@
 using namespace ege;
 
 
-class DefaultCanvas: public ege::graphic::Canvas
-{
-        public:
-                DefaultCanvas( size_t width, size_t height ): Canvas( true, width, height )
-                {
-
-                }
-
-                ~DefaultCanvas() {}
-};
-
-
 engine::Configuration ege::engine::configuration;
 engine::Resources ege::engine::resources;
 static GLFWwindow* win;
@@ -38,7 +26,7 @@ void ege::engine::initialize()
         glewExperimental = GL_TRUE;
         glewInit();
         glGetError();
-        resources.screen = new DefaultCanvas( ( size_t ) videoMode->width, ( size_t ) videoMode->height );
+        resources.monitor = new hardware::Monitor( ( size_t ) videoMode->width, ( size_t ) videoMode->height );
         resources.resourcesManager = new resource::Manager( &configuration.root );
 }
 
@@ -79,6 +67,6 @@ void ege::engine::start( Scenario* initialScenario )
 void ege::engine::destroy()
 {
         glfwDestroyWindow( win );
-        delete resources.screen;
+        delete resources.monitor;
         glfwTerminate();
 }

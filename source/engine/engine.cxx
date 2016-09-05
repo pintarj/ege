@@ -7,6 +7,24 @@ using namespace ege;
 using namespace ege::util;
 
 
+class EgeKeyboard: public hardware::Keyboard
+{
+        private:
+                GLFWwindow* win;
+
+        public:
+                EgeKeyboard( GLFWwindow* win )
+                {
+                        this->win = win;
+                }
+
+                bool isPressed( hardware::KeyboardKey key )
+                {
+                        return glfwGetKey( win, ( int ) key ) == GLFW_PRESS;
+                }
+};
+
+
 engine::Configuration ege::engine::configuration;
 engine::Resources ege::engine::resources;
 static GLFWwindow* win;
@@ -28,6 +46,7 @@ void ege::engine::initialize()
         glewExperimental = GL_TRUE;
         glewInit();
         glGetError();
+        resources.keyboard = new EgeKeyboard( win );
         resources.monitor = new hardware::Monitor( ( size_t ) videoMode->width, ( size_t ) videoMode->height );
         resources.fpsAnalyzer = new fps::Analyzer();
         resources.fpsModerator = new fps::Moderator( *resources.fpsAnalyzer, ( float ) monitorRefreshRate, true );
@@ -75,6 +94,7 @@ void ege::engine::start( Scenario* initialScenario )
 void ege::engine::destroy()
 {
         glfwDestroyWindow( win );
+        delete resources.keyboard;
         delete resources.monitor;
         delete resources.fpsAnalyzer;
         delete resources.fpsModerator;

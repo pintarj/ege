@@ -114,8 +114,8 @@ static inline size_t compileProgramFromVertexAndFragmentShader( const char* vert
         }
 
         GLuint program = linkProgram( shaders, 2, &log );
+        glDeleteShader( ( GLuint ) shaders[ 0 ] );
         glDeleteShader( ( GLuint ) shaders[ 1 ] );
-        glDeleteShader( ( GLuint ) shaders[ 2 ] );
 
         if ( program == 0 )
         {

@@ -18,6 +18,7 @@ namespace ege
                                 public:
                                         virtual void getDimensions( size_t* width, size_t* height ) = 0;
                                         virtual size_t getFrameBufferId() = 0;
+                                        virtual void setAsTarget();
                                         virtual ~Targetable() {};
                         };
                 }

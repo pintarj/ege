@@ -1,13 +1,13 @@
 
 
-#ifndef EGE_PRIVATE_GRAPHIC_GEOMETRY_MATRIX_HXX
-#define EGE_PRIVATE_GRAPHIC_GEOMETRY_MATRIX_HXX
+#ifndef EGE_GRAPHIC_GEOMETRY_MATRIX_HXX
+#define EGE_GRAPHIC_GEOMETRY_MATRIX_HXX
 
 
 #include <cmath>
 
 
-namespace ege_private
+namespace ege
 {
         namespace graphic
         {

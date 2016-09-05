@@ -5,11 +5,13 @@
 
 
 using namespace ege;
+using namespace ege::util;
 
 
 engine::Configuration ege::engine::configuration;
 engine::Resources ege::engine::resources;
 static GLFWwindow* win;
+static uint16_t monitorRefreshRate;
 
 
 void ege::engine::initialize()
@@ -20,6 +22,7 @@ void ege::engine::initialize()
         glfwWindowHint( GLFW_CONTEXT_VERSION_MINOR, 0 );
         GLFWmonitor* primary = glfwGetPrimaryMonitor();
         const GLFWvidmode* videoMode = glfwGetVideoMode( primary );
+        monitorRefreshRate = ( uint16_t ) videoMode->refreshRate;
         win = glfwCreateWindow( videoMode->width, videoMode->height, "", primary, NULL );
         glfwMakeContextCurrent( win );
         glfwSwapInterval( 1 );
@@ -27,6 +30,7 @@ void ege::engine::initialize()
         glewInit();
         glGetError();
         resources.monitor = new hardware::Monitor( ( size_t ) videoMode->width, ( size_t ) videoMode->height );
+        resources.fpsAnalyzer = new fps::Analyzer();
         resources.resourcesManager = new resource::Manager( &configuration.root );
 }
 
@@ -34,6 +38,8 @@ void ege::engine::initialize()
 void ege::engine::start( Scenario* initialScenario )
 {
         Scenario* current = initialScenario;
+        resources.fpsAnalyzer->markTimePoint();
+        resources.fpsAnalyzer->setLastDelta( 1.0f / ( float ) monitorRefreshRate );
 
         while ( true )
         {
@@ -47,7 +53,7 @@ void ege::engine::start( Scenario* initialScenario )
                                 goto should_close_jump;
                 }
 
-                current->update();
+                current->update( resources.fpsAnalyzer->getLastDelta() );
 
                 if ( current->isNextScenarioAvailable() )
                 {
@@ -60,6 +66,7 @@ void ege::engine::start( Scenario* initialScenario )
 
                 glfwSwapBuffers( win );
                 std::this_thread::sleep_for( std::chrono::milliseconds( 8 ) );
+                resources.fpsAnalyzer->markTimePoint();
         }
 }
 
@@ -68,5 +75,6 @@ void ege::engine::destroy()
 {
         glfwDestroyWindow( win );
         delete resources.monitor;
+        delete resources.fpsAnalyzer;
         glfwTerminate();
 }

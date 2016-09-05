@@ -5,6 +5,7 @@
 
 
 #include <ege/hardware/monitor.hxx>
+#include <ege/util/fps/analyzer.hxx>
 #include <ege/resource/manager.hxx>
 
 
@@ -15,6 +16,7 @@ namespace ege
                 struct Resources
                 {
                         hardware::Monitor* monitor;
+                        util::fps::Analyzer* fpsAnalyzer;
                         resource::Manager* resourcesManager;
                 };
         }

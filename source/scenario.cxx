@@ -36,7 +36,7 @@ Scenario* Scenario::getNextScenario()
 }
 
 
-void Scenario::update()
+void Scenario::update( float delta )
 {
 
 }

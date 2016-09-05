@@ -20,6 +20,7 @@ ADD_LIBRARY( ege SHARED
         source/graphic/program/extension/model-view-projection-matrix.cxx
         source/graphic/program/extension/textures.cxx
         source/graphic/render/targetable.cxx
+        source/graphic/render/draw.cxx
         source/graphic/step/clear.cxx
         source/graphic/texture/sampler.cxx
         source/graphic/texture/texture.cxx

@@ -4,6 +4,7 @@ PROJECT( ege CXX )
 INCLUDE_DIRECTORIES( include private/include )
 
 ADD_LIBRARY( ege SHARED
+        source/exception.cxx
         source/scenario.cxx
         source/version.cxx
         source/graphic/canvas.cxx

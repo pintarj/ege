@@ -22,6 +22,8 @@ namespace ege
 
                                         protected:
                                                 ModelViewProjectionMatrix( Program& program, const char* mvpMatrixName );
+
+                                        public:
                                                 void uniformMatrix( const float* matrix );
                                 };
                         }

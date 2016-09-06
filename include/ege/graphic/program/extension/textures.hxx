@@ -23,6 +23,8 @@ namespace ege
                                         protected:
                                                 Textures( Program& program, const char** textureNames, size_t count );
                                                 virtual ~Textures();
+
+                                        public:
                                                 void uniformTextureAt( size_t index, size_t value );
                                 };
                         }

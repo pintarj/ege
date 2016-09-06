@@ -18,9 +18,6 @@ namespace ege
                         {
                                 public:
                                         MVPTextureProgram();
-
-                                        using extension::Textures::uniformTextureAt;
-                                        using extension::ModelViewProjectionMatrix::uniformMatrix;
                         };
                 }
         }

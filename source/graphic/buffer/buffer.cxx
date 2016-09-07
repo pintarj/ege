@@ -82,3 +82,10 @@ void Buffer::orphan()
 {
         invalidateData();
 }
+
+
+void Buffer::flushRange( size_t offset, size_t length )
+{
+        glBindBuffer( GL_ARRAY_BUFFER, ( GLuint ) glBufferId );
+        glFlushMappedBufferRange( GL_ARRAY_BUFFER, offset, length );
+}

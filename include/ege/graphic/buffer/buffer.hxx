@@ -24,6 +24,7 @@ namespace ege
                         enum class BufferMapAccess
                         {
                                 INVALIDATE_RANGE = 0x0004,
+                                FLUSH_EXPLICIT = 0x0010,
                                 UNSYNCHRONIZED = 0x0020
                         };
 
@@ -43,6 +44,7 @@ namespace ege
                                         void unmap();
                                         void invalidateData();
                                         void orphan();
+                                        void flushRange( size_t offset, size_t length );
                         };
                 }
         }

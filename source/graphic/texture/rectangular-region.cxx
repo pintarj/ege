@@ -4,6 +4,12 @@
 using namespace ege::graphic::texture;
 
 
+RectangularRegion::RectangularRegion( Texture &texture ): RectangularRegion( texture, 0, 0, texture.getWidth(), texture.getHeight() )
+{
+
+}
+
+
 RectangularRegion::RectangularRegion( Texture &texture, size_t x, size_t y, size_t width, size_t height ): Region( texture )
 {
         size_t texCoord[ 2 ];

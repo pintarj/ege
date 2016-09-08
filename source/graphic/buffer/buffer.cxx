@@ -64,6 +64,12 @@ void* Buffer::map( size_t offset, size_t length, std::initializer_list< BufferMa
 }
 
 
+void* Buffer::mapAll( std::initializer_list< BufferMapAccess > access )
+{
+        return map( 0, size, access );
+}
+
+
 void Buffer::unmap()
 {
         glBindBuffer( GL_ARRAY_BUFFER, ( GLuint ) glBufferId );

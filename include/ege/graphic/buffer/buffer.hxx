@@ -41,6 +41,7 @@ namespace ege
                                         size_t getSize();
                                         size_t getBufferId();
                                         void* map( size_t offset, size_t length, std::initializer_list< BufferMapAccess > access = {} );
+                                        void* mapAll( std::initializer_list< BufferMapAccess > access = {} );
                                         void unmap();
                                         void invalidateData();
                                         void orphan();

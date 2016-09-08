@@ -61,46 +61,46 @@ void TextureRegionsStreamDrawer::draw( texture::RectangularRegion& region, float
         size_t w, h;
         region.getDimensions( &w, &h );
         const float* uv = region.getUVCoordinates();
-        const float rtx = x + ( float ) w;
-        const float rty = y + ( float ) h;
+        const float xw = x + ( float ) w;
+        const float yh = y + ( float ) h;
 
         vertex->x = x;
-        vertex->y = y + ( float ) h;
+        vertex->y = y;
         vertex->z = 0.0f;
         vertex->u = uv[ 0 ];
         vertex->v = uv[ 1 ];
         ++vertex;
 
         vertex->x = x;
-        vertex->y = y;
+        vertex->y = yh;
         vertex->z = 0.0f;
         vertex->u = uv[ 2 ];
         vertex->v = uv[ 3 ];
         ++vertex;
 
-        vertex->x = rtx;
-        vertex->y = rty;
+        vertex->x = xw;
+        vertex->y = y;
         vertex->z = 0.0f;
         vertex->u = uv[ 4 ];
         vertex->v = uv[ 5 ];
         ++vertex;
 
-        vertex->x = rtx;
-        vertex->y = rty;
+        vertex->x = xw;
+        vertex->y = y;
         vertex->z = 0.0f;
         vertex->u = uv[ 4 ];
         vertex->v = uv[ 5 ];
         ++vertex;
 
         vertex->x = x;
-        vertex->y = y;
+        vertex->y = yh;
         vertex->z = 0.0f;
         vertex->u = uv[ 2 ];
         vertex->v = uv[ 3 ];
         ++vertex;
 
-        vertex->x = x + ( float ) w;
-        vertex->y = y;
+        vertex->x = xw;
+        vertex->y = yh;
         vertex->z = 0.0f;
         vertex->u = uv[ 6 ];
         vertex->v = uv[ 7 ];

@@ -16,17 +16,17 @@ RectangularRegion::RectangularRegion( Texture &texture, size_t x, size_t y, size
         const float fh = ( float ) height;
         const float lx = fx / tw;
         const float rx = ( fx + fw ) / tw;
-        const float by = 1.0f - ( fy / th );
-        const float ty = 1.0f - ( ( fy + fh ) / th );
+        const float by = ( fy / th );
+        const float ty = ( fy + fh ) / th;
 
         uv[ 0 ] = lx;
-        uv[ 1 ] = ty;
+        uv[ 1 ] = by;
         uv[ 2 ] = lx;
-        uv[ 3 ] = by;
+        uv[ 3 ] = ty;
         uv[ 4 ] = rx;
-        uv[ 5 ] = ty;
+        uv[ 5 ] = by;
         uv[ 6 ] = rx;
-        uv[ 7 ] = by;
+        uv[ 7 ] = ty;
 
         this->width = width;
         this->height = height;

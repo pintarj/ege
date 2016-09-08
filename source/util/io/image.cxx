@@ -93,7 +93,7 @@ PixelsBuffer* image::loadPng( const char* fileName )
         png_bytep* rowPointers = new png_bytep[ height ];
 
         for ( size_t i = 0; i < height; ++i )
-                rowPointers[ i ] = &( ( uint8_t* ) mappedPixels )[ i * rowBytes ];
+                rowPointers[ height - i - 1 ] = &( ( uint8_t* ) mappedPixels )[ i * rowBytes ];
 
         png_read_image( png_ptr, rowPointers );
         delete rowPointers;

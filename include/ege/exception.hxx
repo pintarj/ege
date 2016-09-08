@@ -8,7 +8,7 @@ namespace ege
 {
         namespace exception
         {
-                void throwNew( const char* message, bool copy = true );
+                void throwNew( const char * formatted, ... );
         }
 }
 

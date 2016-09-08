@@ -2,6 +2,9 @@
 #include <exception>
 #include <cstring>
 #include <cstddef>
+#include <cstdlib>
+#include <cstdarg>
+#include <cstdio>
 
 
 using namespace ege;
@@ -10,29 +13,17 @@ using namespace ege;
 class EgeException: public std::exception
 {
         private:
-                char* message;
-                bool copy;
+                const char* message;
 
         public:
-                EgeException( const char* message, bool copy )
+                EgeException( const char* message ): message( message )
                 {
-                        if ( copy )
-                        {
-                                size_t length = std::strlen( message );
-                                this->message = new char[ length + 1 ];
-                                std::memcpy( this->message, message, length );
-                                this->message[ length ] = '\0';
-                        }
-                        else
-                        {
-                                this->message = ( char* ) message;
-                        }
+
                 }
 
                 virtual ~EgeException()
                 {
-                        if ( copy )
-                                delete message;
+                        std::free( ( void* ) message );
                 }
 
                 const char* what() const throw()
@@ -42,7 +33,12 @@ class EgeException: public std::exception
 };
 
 
-void exception::throwNew( const char* message, bool copy )
+void exception::throwNew( const char * formatted, ... )
 {
-        throw new EgeException( message, copy );
+        va_list args;
+        va_start( args, formatted );
+        char* message;
+        vasprintf( &message, formatted, args );
+        va_end( args );
+        throw new EgeException( message );
 }

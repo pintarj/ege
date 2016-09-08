@@ -17,6 +17,7 @@ ADD_LIBRARY( ege-core SHARED
         source/graphic/program/extension/textures.cxx
         source/graphic/render/draw.cxx
         source/graphic/render/targetable.cxx
+        source/graphic/render/texture-regions-stream-drawer.cxx
         source/graphic/step/clear.cxx
         source/graphic/texture/rectangular-region.cxx
         source/graphic/texture/region.cxx

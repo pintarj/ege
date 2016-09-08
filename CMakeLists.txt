@@ -18,6 +18,7 @@ ADD_LIBRARY( ege-core SHARED
         source/graphic/render/draw.cxx
         source/graphic/render/targetable.cxx
         source/graphic/step/clear.cxx
+        source/graphic/texture/region.cxx
         source/graphic/texture/sampler.cxx
         source/graphic/texture/texture.cxx
         source/hardware/monitor.cxx

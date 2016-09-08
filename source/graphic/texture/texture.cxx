@@ -38,10 +38,11 @@ Texture::Texture( size_t width, size_t height, const void* pixels, Format format
 Texture::Texture( size_t width, size_t height, Format format ): Texture( format )
 {
         glBindTexture( GL_TEXTURE_2D, ( GLuint ) textureId );
-        glTexImage2D( GL_TEXTURE_2D, 0, GL_R, ( GLsizei ) width, ( GLsizei ) height, 0, ( GLuint ) format, GL_UNSIGNED_BYTE, nullptr );
+        glTexImage2D( GL_TEXTURE_2D, 0, GL_RGB, ( GLsizei ) width, ( GLsizei ) height, 0, ( GLuint ) format, GL_UNSIGNED_BYTE, nullptr );
         this->width = width;
         this->height = height;
         frameBufferId = 0;
+        prepareForTargeting();
 }
 
 
@@ -55,6 +56,12 @@ Texture::~Texture()
 {
         GLuint id = ( GLuint ) textureId;
         glDeleteTextures( 1, &id );
+
+        if ( frameBufferId != 0 )
+        {
+                id = ( GLint ) frameBufferId;
+                glDeleteFramebuffers( 1, &id );
+        }
 }
 
 
@@ -68,6 +75,19 @@ void Texture::useAtUnit( size_t unit )
 Format Texture::getFormat()
 {
         return format;
+}
+
+
+void Texture::prepareForTargeting()
+{
+        if ( frameBufferId != 0 )
+                return;
+
+        GLuint id;
+        glGenFramebuffers( 1, &id );
+        glBindFramebuffer( GL_READ_FRAMEBUFFER, id );
+        glFramebufferTexture2D( GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, ( GLuint ) textureId, 0 );
+        frameBufferId = id;
 }
 
 

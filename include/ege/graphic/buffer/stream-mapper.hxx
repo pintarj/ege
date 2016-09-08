@@ -20,7 +20,7 @@ namespace ege
                                         size_t flushed_units;
                                         size_t next_index;
 
-                                        void prepareSector( size_t index );
+                                        void prepareSector( size_t , size_t includeNPrevUnits = 0 );
 
                                 protected:
                                         void performFlush();
@@ -29,6 +29,7 @@ namespace ege
                                         StreamMapper( size_t sectorSize = 32768, size_t sectorsCount = 2 );
                                         virtual ~StreamMapper();
                                         unit* mapNext();
+                                        unit* mapNext( size_t nUnits );
                                         void reset();
                         };
                 }
@@ -51,9 +52,9 @@ ege::graphic::buffer::StreamMapper< unit >::~StreamMapper()
 
 
 template < typename unit >
-void ege::graphic::buffer::StreamMapper< unit >::prepareSector( size_t index )
+void ege::graphic::buffer::StreamMapper< unit >::prepareSector( size_t index, size_t includeNPrevUnits )
 {
-        this->mapSector( index, { BufferMapAccess::INVALIDATE_RANGE, BufferMapAccess::UNSYNCHRONIZED, BufferMapAccess::FLUSH_EXPLICIT } );
+        this->mapSector( index, { BufferMapAccess::INVALIDATE_RANGE, BufferMapAccess::UNSYNCHRONIZED, BufferMapAccess::FLUSH_EXPLICIT }, includeNPrevUnits );
         flushed_units = 0;
         next_index = 0;
 }
@@ -79,6 +80,23 @@ unit* ege::graphic::buffer::StreamMapper< unit >::mapNext()
         }
 
         return &this->mappedArea[ next_index++ ];
+}
+
+
+template < typename unit >
+unit* ege::graphic::buffer::StreamMapper< unit >::mapNext( size_t nUnits )
+{
+        if ( ( next_index + nUnits - 1 ) >= this->unitsPerSector )
+        {
+                if ( this->mappedSector + 1 == this->sectorsCount )
+                        return nullptr;
+                else
+                        prepareSector( this->mappedSector + 1, this->unitsPerSector - next_index );
+        }
+
+        unit* mappedUnits = &this->mappedArea[ next_index ];
+        next_index += nUnits;
+        return mappedUnits;
 }
 
 

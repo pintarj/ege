@@ -5,13 +5,40 @@
 using namespace ege::graphic::texture;
 
 
-Texture::Texture( size_t width, size_t height, const void* pixels )
+Texture::Texture( Format format ): format( format )
 {
         GLuint id;
         glGenTextures( 1, &id );
-        glBindTexture( GL_TEXTURE_2D, id );
-        glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, ( GLsizei ) width, ( GLsizei ) height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels );
         textureId = id;
+}
+
+
+Texture::Texture( PixelsBuffer &pixelsBuffer, bool deleteBuffer ): Texture( pixelsBuffer.getFormat() )
+{
+        pixelsBuffer.getDimensions( &width, &height );
+        const GLenum format = ( GLenum ) pixelsBuffer.getFormat();
+        glBindBuffer( GL_PIXEL_UNPACK_BUFFER, ( GLuint ) pixelsBuffer.getPixels().getBufferId() );
+        glBindTexture( GL_TEXTURE_2D, ( GLuint ) textureId );
+        glTexImage2D( GL_TEXTURE_2D, 0, format, ( GLsizei ) width, ( GLsizei ) height, 0, format, GL_UNSIGNED_BYTE, NULL );
+        glBindBuffer( GL_PIXEL_UNPACK_BUFFER, 0 );
+        frameBufferId = 0;
+
+        if ( deleteBuffer )
+                delete &pixelsBuffer;
+}
+
+
+Texture::Texture( size_t width, size_t height, const void* pixels, Format format ):
+        Texture( *new PixelsBuffer( width, height, pixels, format ), true )
+{
+
+}
+
+
+Texture::Texture( size_t width, size_t height, Format format ): Texture( format )
+{
+        glBindTexture( GL_TEXTURE_2D, ( GLuint ) textureId );
+        glTexImage2D( GL_TEXTURE_2D, 0, GL_R, ( GLsizei ) width, ( GLsizei ) height, 0, ( GLuint ) format, GL_UNSIGNED_BYTE, nullptr );
         this->width = width;
         this->height = height;
         frameBufferId = 0;
@@ -35,6 +62,12 @@ void Texture::useAtUnit( size_t unit )
 {
         glActiveTexture( GL_TEXTURE0 + ( GLuint ) unit );
         glBindTexture( GL_TEXTURE_2D, ( GLuint ) textureId );
+}
+
+
+Format Texture::getFormat()
+{
+        return format;
 }
 
 

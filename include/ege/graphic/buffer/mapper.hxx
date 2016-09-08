@@ -27,7 +27,7 @@ namespace ege
                                         size_t mappedSector;
 
                                         Mapper( BufferUsage usage, size_t sectorSize, size_t sectorsCount );
-                                        void mapSector( size_t sector, std::initializer_list< BufferMapAccess > access );
+                                        void mapSector( size_t sector, std::initializer_list< BufferMapAccess > access, size_t includeNPrevUnits = 0 );
                                         void unmap();
                                         virtual void performFlush() = 0;
 
@@ -68,7 +68,7 @@ ege::graphic::buffer::Mapper< unit >::~Mapper()
 
 
 template < typename unit >
-void ege::graphic::buffer::Mapper< unit >::mapSector( size_t sector, std::initializer_list< BufferMapAccess > access )
+void ege::graphic::buffer::Mapper< unit >::mapSector( size_t sector, std::initializer_list< BufferMapAccess > access, size_t includeNPrevUnits )
 {
         if ( mappedArea != nullptr )
         {
@@ -76,7 +76,8 @@ void ege::graphic::buffer::Mapper< unit >::mapSector( size_t sector, std::initia
                 buffer->unmap();
         }
 
-        mappedArea = ( unit* ) buffer->map( sector * sectorSize, sectorSize, access );
+        size_t prevUnitsInBytes = includeNPrevUnits * sizeof( unit );
+        mappedArea = ( unit* ) buffer->map( sector * sectorSize - prevUnitsInBytes, sectorSize + prevUnitsInBytes, access );
         mappedSector = sector;
 }
 

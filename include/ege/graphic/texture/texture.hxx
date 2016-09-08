@@ -34,6 +34,8 @@ namespace ege
                                         void useAtUnit( size_t unit );
                                         Format getFormat();
                                         void prepareForTargeting();
+                                        size_t getWidth();
+                                        size_t getHeight();
 
                                         void getDimensions( size_t* width, size_t* height );
                                         size_t getFrameBufferId();

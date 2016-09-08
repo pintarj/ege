@@ -91,6 +91,18 @@ void Texture::prepareForTargeting()
 }
 
 
+size_t Texture::getWidth()
+{
+        return width;
+}
+
+
+size_t Texture::getHeight()
+{
+        return height;
+}
+
+
 void Texture::getDimensions( size_t* width, size_t* height )
 {
         *width = this->width;

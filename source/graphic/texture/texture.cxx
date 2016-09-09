@@ -35,14 +35,16 @@ Texture::Texture( size_t width, size_t height, const void* pixels, Format format
 }
 
 
-Texture::Texture( size_t width, size_t height, Format format ): Texture( format )
+Texture::Texture( size_t width, size_t height, Format format, bool willBeTargeted ): Texture( format )
 {
         glBindTexture( GL_TEXTURE_2D, ( GLuint ) textureId );
         glTexImage2D( GL_TEXTURE_2D, 0, GL_RGB, ( GLsizei ) width, ( GLsizei ) height, 0, ( GLuint ) format, GL_UNSIGNED_BYTE, nullptr );
         this->width = width;
         this->height = height;
         frameBufferId = 0;
-        prepareForTargeting();
+
+        if ( willBeTargeted )
+                prepareForTargeting();
 }
 
 

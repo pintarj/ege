@@ -28,7 +28,7 @@ namespace ege
                                 public:
                                         Texture( PixelsBuffer& pixelsBuffer, bool deleteBuffer = false );
                                         Texture( size_t width, size_t height, const void* pixels, Format format = Format::RGBA );
-                                        Texture( size_t width, size_t height, Format format = Format::RGBA );
+                                        Texture( size_t width, size_t height, Format format = Format::RGBA, bool willBeTargeted = true );
                                         size_t getTextureId();
                                         virtual ~Texture();
                                         void useAtUnit( size_t unit );

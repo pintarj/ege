@@ -16,9 +16,13 @@ namespace ege
                         class RectangularRegion: public Region
                         {
                                 protected:
+                                        size_t x;
+                                        size_t y;
                                         size_t width;
                                         size_t height;
                                         float uv[ 8 ];
+
+                                        void calculateUV();
 
                                 public:
                                         RectangularRegion( Texture& texture );

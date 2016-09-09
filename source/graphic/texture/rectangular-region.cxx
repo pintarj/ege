@@ -12,6 +12,16 @@ RectangularRegion::RectangularRegion( Texture &texture ): RectangularRegion( tex
 
 RectangularRegion::RectangularRegion( Texture &texture, size_t x, size_t y, size_t width, size_t height ): Region( texture )
 {
+        this->x = x;
+        this->y = y;
+        this->width = width;
+        this->height = height;
+        calculateUV();
+}
+
+
+void RectangularRegion::calculateUV()
+{
         size_t texCoord[ 2 ];
         texture.getDimensions( &texCoord[ 0 ], &texCoord[ 1 ] );
         const float tw = ( float ) texCoord[ 0 ];
@@ -33,9 +43,6 @@ RectangularRegion::RectangularRegion( Texture &texture, size_t x, size_t y, size
         uv[ 5 ] = by;
         uv[ 6 ] = rx;
         uv[ 7 ] = ty;
-
-        this->width = width;
-        this->height = height;
 }
 
 

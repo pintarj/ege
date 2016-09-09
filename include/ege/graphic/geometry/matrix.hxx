@@ -246,6 +246,98 @@ namespace ege
                                         matrix[ 14 ] = 0.0f;
                                         matrix[ 15 ] = 1.0f;
                                 }
+
+                                static inline void fromOriginLookAt( float* matrix, float centerX, float centerY, float centerZ, float upX, float upY, float upZ )
+                                {
+                                        float icl = 1.0f / std::sqrt( ( centerX * centerX ) + ( centerY * centerY ) + ( centerZ * centerZ ) );
+                                        float ncx = centerX * icl;
+                                        float ncy = centerY * icl;
+                                        float ncz = centerZ * icl;
+                                        float mx0 = ( ncy * upZ ) - ( ncz * upY );
+                                        float mx4 = ( ncz * upX ) - ( ncx * upZ );
+                                        float mx8 = ( ncx * upY ) - ( ncy * upX );
+                                        float isl = 1.0f / std::sqrt( ( mx0 * mx0 ) + ( mx4 * mx4 ) + ( mx8 * mx8 ) );
+                                        float snX = mx0 * isl;
+                                        float snY = mx4 * isl;
+                                        float snZ = mx8* isl;
+
+                                        matrix[  0 ] = mx0;
+                                        matrix[  1 ] = ( snY * ncz ) - ( snZ * ncy );
+                                        matrix[  2 ] = -ncx;
+                                        matrix[  3 ] = 0.0f;
+                                        matrix[  4 ] = mx4;
+                                        matrix[  5 ] = ( snZ * ncx ) - ( snX * ncz );
+                                        matrix[  6 ] = -ncy;
+                                        matrix[  8 ] = mx8;
+                                        matrix[  7 ] = 0.0f;
+                                        matrix[  9 ] = ( snX * ncy ) - ( snY * ncx );
+                                        matrix[ 10 ] = -ncz;
+                                        matrix[ 11 ] = 0.0f;
+                                        matrix[ 12 ] = 0.0f;
+                                        matrix[ 13 ] = 0.0f;
+                                        matrix[ 14 ] = 0.0f;
+                                        matrix[ 15 ] = 1.0f;
+                                }
+
+                                static inline void lookAt( float* matrix, float eyeX, float eyeY, float eyeZ, float centerX, float centerY, float centerZ, float upX, float upY, float upZ )
+                                {
+                                        float buffer[ 32 ];
+                                        fromOriginLookAt( &buffer[ 0 ], centerX, centerY, centerZ, upX, upY, upZ );
+                                        translate( &buffer[ 16 ], -eyeX, -eyeY, -eyeZ );
+                                        multiply( matrix, &buffer[ 0 ], &buffer[ 16 ] );
+                                }
+
+                                static inline void frustum( float* matrix, float left, float right, float bottom, float top, float near, float far )
+                                {
+                                        float rml = right - left;
+                                        float tmb = top - bottom;
+                                        float fmn = far - near;
+                                        float n2 = 2.0f * near;
+
+                                        matrix[  0 ] = n2 / rml;
+                                        matrix[  1 ] = 0.0f;
+                                        matrix[  2 ] = 0.0f;
+                                        matrix[  3 ] = 0.0f;
+                                        matrix[  4 ] = 0.0f;
+                                        matrix[  5 ] = n2 / tmb;
+                                        matrix[  6 ] = 0.0f;
+                                        matrix[  7 ] = 0.0f;
+                                        matrix[  8 ] = ( right + left ) / rml;
+                                        matrix[  9 ] = ( top + bottom ) / tmb;
+                                        matrix[ 10 ] = -( ( far + near ) / fmn );
+                                        matrix[ 11 ] = -1.0f;
+                                        matrix[ 12 ] = 0.0f;
+                                        matrix[ 13 ] = 0.0f;
+                                        matrix[ 14 ] = -( ( n2 * far ) / fmn );
+                                        matrix[ 15 ] = 0.0f;
+                                }
+
+                                void perspective( float* matrix, float degree, float ratio, float near, float far )
+                                {
+                                        float radians   = degree * ( M_PI / 180.0f );
+                                        float f         = 1.0f / std::tan( radians / 2.0f );
+                                        float d         = near - far;
+
+                                        matrix[  0 ] = f / ratio;
+                                        matrix[  1 ] = 0.0f;
+                                        matrix[  2 ] = 0.0f;
+                                        matrix[  3 ] = 0.0f;
+
+                                        matrix[  4 ] = 0.0f;
+                                        matrix[  5 ] = f;
+                                        matrix[  6 ] = 0.0f;
+                                        matrix[  7 ] = 0.0f;
+
+                                        matrix[  8 ] = 0.0f;
+                                        matrix[  9 ] = 0.0f;
+                                        matrix[ 10 ] = ( far + near ) / d;
+                                        matrix[ 11 ] = -1.0f;
+
+                                        matrix[ 12 ] = 0.0f;
+                                        matrix[ 13 ] = 0.0f;
+                                        matrix[ 14 ] = ( 2.0f * far * near ) / d;
+                                        matrix[ 15 ] = 0.0f;
+                                }
                         }
                 }
         }

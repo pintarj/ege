@@ -1,8 +1,8 @@
-#include <ege/graphic/texture/sampler.hxx>
+#include <ege/graphic/gpu/sampler.hxx>
 #include <GL/glew.h>
 
 
-using namespace ege::graphic::texture;
+using namespace ege::graphic::gpu;
 
 
 Sampler::Sampler()

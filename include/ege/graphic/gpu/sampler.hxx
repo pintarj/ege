@@ -1,7 +1,7 @@
 
 
-#ifndef EGE_GRAPHIC_TEXTURE_SAMPLER_HXX
-#define EGE_GRAPHIC_TEXTURE_SAMPLER_HXX
+#ifndef EGE_GRAPHIC_GPU_SAMPLER_HXX
+#define EGE_GRAPHIC_GPU_SAMPLER_HXX
 
 
 #include <cstddef>
@@ -11,7 +11,7 @@ namespace ege
 {
         namespace graphic
         {
-                namespace texture
+                namespace gpu
                 {
                         enum class SamplerFilter
                         {

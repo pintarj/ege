@@ -21,7 +21,7 @@ namespace ege
                                                 size_t matrixLocation;
 
                                         protected:
-                                                ModelViewProjectionMatrix( Program& program, const char* mvpMatrixName );
+                                                ModelViewProjectionMatrix( gpu::Program& program, const char* mvpMatrixName );
 
                                         public:
                                                 void uniformMatrix( const float* matrix );

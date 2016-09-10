@@ -14,7 +14,7 @@ namespace ege
         {
                 namespace program
                 {
-                        class MVPTextureProgram: public Program, public extension::Textures, public extension::ModelViewProjectionMatrix
+                        class MVPTextureProgram: public gpu::Program, public extension::Textures, public extension::ModelViewProjectionMatrix
                         {
                                 public:
                                         MVPTextureProgram();

@@ -5,10 +5,10 @@
 
 
 #include <ege/graphic/buffer/stream-mapper.hxx>
-#include <ege/graphic/geometry/vertex/array.hxx>
+#include <ege/graphic/gpu/vertex-array.hxx>
 #include <ege/graphic/program/mvp-texture-program.hxx>
 #include <ege/graphic/texture/rectangular-region.hxx>
-#include <ege/graphic/texture/sampler.hxx>
+#include <ege/graphic/gpu/sampler.hxx>
 
 
 namespace ege
@@ -32,9 +32,9 @@ namespace ege
                                         const size_t textureUnit;
                                         program::MVPTextureProgram* program;
                                         buffer::StreamMapper< Vertex >* mapper;
-                                        geometry::vertex::Array* vertexArray;
-                                        texture::Texture* texture;
-                                        texture::Sampler sampler;
+                                        gpu::VertexArray* vertexArray;
+                                        gpu::Texture* texture;
+                                        gpu::Sampler sampler;
                                         size_t unitsToDraw;
 
                                 public:

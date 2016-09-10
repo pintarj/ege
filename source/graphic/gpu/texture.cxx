@@ -1,11 +1,12 @@
-#include <ege/graphic/texture/texture.hxx>
+#include <ege/graphic/gpu/texture.hxx>
 #include <GL/glew.h>
 
 
-using namespace ege::graphic::texture;
+using namespace ege::graphic;
+using namespace ege::graphic::gpu;
 
 
-Texture::Texture( Format format ): format( format )
+Texture::Texture( texture::Format format ): format( format )
 {
         GLuint id;
         glGenTextures( 1, &id );
@@ -13,7 +14,7 @@ Texture::Texture( Format format ): format( format )
 }
 
 
-Texture::Texture( PixelsBuffer &pixelsBuffer, bool deleteBuffer ): Texture( pixelsBuffer.getFormat() )
+Texture::Texture( texture::PixelsBuffer &pixelsBuffer, bool deleteBuffer ): Texture( pixelsBuffer.getFormat() )
 {
         pixelsBuffer.getDimensions( &width, &height );
         const GLenum format = ( GLenum ) pixelsBuffer.getFormat();
@@ -28,14 +29,14 @@ Texture::Texture( PixelsBuffer &pixelsBuffer, bool deleteBuffer ): Texture( pixe
 }
 
 
-Texture::Texture( size_t width, size_t height, const void* pixels, Format format ):
-        Texture( *new PixelsBuffer( width, height, pixels, format ), true )
+Texture::Texture( size_t width, size_t height, const void* pixels, texture::Format format ):
+        Texture( *new texture::PixelsBuffer( width, height, pixels, format ), true )
 {
 
 }
 
 
-Texture::Texture( size_t width, size_t height, Format format, bool willBeTargeted ): Texture( format )
+Texture::Texture( size_t width, size_t height, texture::Format format, bool willBeTargeted ): Texture( format )
 {
         glBindTexture( GL_TEXTURE_2D, ( GLuint ) textureId );
         glTexImage2D( GL_TEXTURE_2D, 0, GL_RGB, ( GLsizei ) width, ( GLsizei ) height, 0, ( GLuint ) format, GL_UNSIGNED_BYTE, nullptr );
@@ -74,7 +75,7 @@ void Texture::useAtUnit( size_t unit )
 }
 
 
-Format Texture::getFormat()
+texture::Format Texture::getFormat()
 {
         return format;
 }

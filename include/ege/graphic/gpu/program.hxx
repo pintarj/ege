@@ -1,7 +1,7 @@
 
 
-#ifndef EGE_GRAPHIC_PROGRAM_PROGRAM_HXX
-#define EGE_GRAPHIC_PROGRAM_PROGRAM_HXX
+#ifndef EGE_GRAPHIC_GPU_PROGRAM_HXX
+#define EGE_GRAPHIC_GPU_PROGRAM_HXX
 
 
 #include <cstddef>
@@ -11,7 +11,7 @@ namespace ege
 {
         namespace graphic
         {
-                namespace program
+                namespace gpu
                 {
                         class Program
                         {

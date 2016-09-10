@@ -10,15 +10,15 @@ TextureRegionsStreamDrawer::TextureRegionsStreamDrawer(): textureUnit( 0 )
 {
         program = new program::MVPTextureProgram();
         mapper = new buffer::StreamMapper< Vertex >();
-        buffer::Buffer* buffer = mapper->getBuffer();
+        gpu::Buffer* buffer = mapper->getBuffer();
 
-        geometry::vertex::ArrayAttribute attributes[ 2 ] =
+        gpu::vertexArray::Attribute attributes[ 2 ] =
                 {
                         { 0, 3, sizeof( Vertex ), ( size_t ) &( ( Vertex* ) 0 )->x, buffer },
                         { 1, 2, sizeof( Vertex ), ( size_t ) &( ( Vertex* ) 0 )->u, buffer }
                 };
 
-        vertexArray = new geometry::vertex::Array( &attributes[ 0 ], 2 );
+        vertexArray = new gpu::VertexArray( &attributes[ 0 ], 2 );
         float matrix[ 16 ];
         geometry::matrix::identity( matrix );
         program->uniformMatrix( matrix );

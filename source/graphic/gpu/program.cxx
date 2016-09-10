@@ -1,11 +1,11 @@
-#include <ege/graphic/program/program.hxx>
+#include <ege/graphic/gpu/program.hxx>
 #include <ege/exception.hxx>
 #include <GL/glew.h>
 #include <cstring>
 
 
 using namespace ege;
-using namespace ege::graphic::program;
+using namespace ege::graphic::gpu;
 
 
 static inline GLuint compileShader( GLenum type, const char* source, char** log = nullptr )

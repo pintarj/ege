@@ -5,7 +5,7 @@
 
 
 #include <ege/graphic/texture/format.hxx>
-#include <ege/graphic/buffer/buffer.hxx>
+#include <ege/graphic/gpu/buffer.hxx>
 
 
 namespace ege
@@ -19,16 +19,16 @@ namespace ege
                                 private:
                                         const size_t width;
                                         const size_t height;
-                                        buffer::Buffer& pixels;
+                                        gpu::Buffer& pixels;
                                         const Format format;
                                         bool deleteBuffer;
 
                                 public:
-                                        PixelsBuffer( size_t width, size_t height, buffer::Buffer& pixels, Format format, bool deleteBuffer = false );
+                                        PixelsBuffer( size_t width, size_t height, gpu::Buffer& pixels, Format format, bool deleteBuffer = false );
                                         PixelsBuffer( size_t width, size_t height, const void* pixels, Format format );
                                         virtual ~PixelsBuffer();
                                         void getDimensions( size_t* width, size_t* height );
-                                        buffer::Buffer& getPixels();
+                                        gpu::Buffer& getPixels();
                                         const Format getFormat();
                         };
                 }

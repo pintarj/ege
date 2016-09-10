@@ -1,7 +1,7 @@
 
 
-#ifndef EGE_GRAPHIC_BUFFER_BUFFER_HXX
-#define EGE_GRAPHIC_BUFFER_BUFFER_HXX
+#ifndef EGE_GRAPHIC_GPU_BUFFER_HXX
+#define EGE_GRAPHIC_GPU_BUFFER_HXX
 
 
 #include <cstddef>
@@ -12,7 +12,7 @@ namespace ege
 {
         namespace graphic
         {
-                namespace buffer
+                namespace gpu
                 {
                         enum class BufferUsage
                         {

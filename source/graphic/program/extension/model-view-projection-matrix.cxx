@@ -7,7 +7,7 @@ using namespace ege;
 using namespace ege::graphic::program::extension;
 
 
-ModelViewProjectionMatrix::ModelViewProjectionMatrix( Program &program, const char* mvpMatrixName ): Extension( program )
+ModelViewProjectionMatrix::ModelViewProjectionMatrix( gpu::Program &program, const char* mvpMatrixName ): Extension( program )
 {
         GLint location = glGetUniformLocation( ( GLuint ) program.getProgramId(), mvpMatrixName );
 

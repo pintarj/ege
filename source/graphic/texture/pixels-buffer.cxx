@@ -5,7 +5,7 @@ using namespace ege::graphic;
 using namespace ege::graphic::texture;
 
 
-PixelsBuffer::PixelsBuffer( size_t width, size_t height, buffer::Buffer& pixels, Format format, bool deleteBuffer ):
+PixelsBuffer::PixelsBuffer( size_t width, size_t height, gpu::Buffer& pixels, Format format, bool deleteBuffer ):
         width( width ), height( height ), pixels( pixels ), format( format ), deleteBuffer( deleteBuffer )
 {
 
@@ -13,7 +13,7 @@ PixelsBuffer::PixelsBuffer( size_t width, size_t height, buffer::Buffer& pixels,
 
 
 PixelsBuffer::PixelsBuffer( size_t width, size_t height, const void* pixels, Format format ):
-        PixelsBuffer( width, height, *new buffer::Buffer( width * height * format::bytesPerPixel( format ), pixels, buffer::BufferUsage::STATIC ), format, true )
+        PixelsBuffer( width, height, *new gpu::Buffer( width * height * format::bytesPerPixel( format ), pixels, gpu::BufferUsage::STATIC ), format, true )
 {
 
 }
@@ -33,7 +33,7 @@ void PixelsBuffer::getDimensions( size_t* width, size_t* height )
 }
 
 
-buffer::Buffer& PixelsBuffer::getPixels()
+gpu::Buffer& PixelsBuffer::getPixels()
 {
         return pixels;
 }

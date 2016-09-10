@@ -1,11 +1,11 @@
-#include <ege/graphic/geometry/vertex/array.hxx>
+#include <ege/graphic/gpu/vertex-array.hxx>
 #include <GL/glew.h>
 
 
-using namespace ege::graphic::geometry::vertex;
+using namespace ege::graphic::gpu;
 
 
-Array::Array( ArrayAttribute* attributes, size_t count )
+VertexArray::VertexArray( vertexArray::Attribute* attributes, size_t count )
 {
         GLuint id;
         glGenVertexArrays( 1, &id );
@@ -14,7 +14,7 @@ Array::Array( ArrayAttribute* attributes, size_t count )
 
         for ( size_t i = 0; i < count; ++i )
         {
-                ArrayAttribute& attribute = attributes[ i ];
+                vertexArray::Attribute& attribute = attributes[ i ];
                 glEnableVertexAttribArray( ( GLuint ) attribute.vertexIndex );
                 glBindBuffer( GL_ARRAY_BUFFER, ( GLuint ) attribute.buffer->getBufferId() );
                 const void* offset = ( const void * ) attribute.offsetInBuffer;
@@ -23,19 +23,19 @@ Array::Array( ArrayAttribute* attributes, size_t count )
 }
 
 
-void Array::use()
+void VertexArray::use()
 {
         glBindVertexArray( ( GLuint ) glVertexArrayId );
 }
 
 
-size_t Array::getVertexArrayId()
+size_t VertexArray::getVertexArrayId()
 {
         return  glVertexArrayId;
 }
 
 
-Array::~Array()
+VertexArray::~VertexArray()
 {
         GLuint id = ( GLuint ) glVertexArrayId;
         glDeleteVertexArrays( 1, &id );

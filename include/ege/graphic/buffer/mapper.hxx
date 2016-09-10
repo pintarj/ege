@@ -4,7 +4,7 @@
 #define EGE_GRAPHIC_BUFFER_MAPPER_HXX
 
 
-#include <ege/graphic/buffer/buffer.hxx>
+#include <ege/graphic/gpu/buffer.hxx>
 #include <cstddef>
 
 
@@ -22,18 +22,18 @@ namespace ege
                                         size_t sectorsCount;
                                         size_t unitsPerSector;
                                         size_t unitsCount;
-                                        Buffer* buffer;
+                                        gpu::Buffer* buffer;
                                         unit* mappedArea;
                                         size_t mappedSector;
 
-                                        Mapper( BufferUsage usage, size_t sectorSize, size_t sectorsCount );
-                                        void mapSector( size_t sector, std::initializer_list< BufferMapAccess > access, size_t includeNPrevUnits = 0 );
+                                        Mapper( gpu::BufferUsage usage, size_t sectorSize, size_t sectorsCount );
+                                        void mapSector( size_t sector, std::initializer_list< gpu::BufferMapAccess > access, size_t includeNPrevUnits = 0 );
                                         void unmap();
                                         virtual void performFlush() = 0;
 
                                 public:
                                         virtual ~Mapper();
-                                        Buffer* getBuffer();
+                                        gpu::Buffer* getBuffer();
                                         size_t getUnitsCount();
                                         void flush();
                         };
@@ -43,7 +43,7 @@ namespace ege
 
 
 template < typename unit >
-ege::graphic::buffer::Mapper< unit >::Mapper( BufferUsage usage, size_t sectorSize, size_t sectorsCount )
+ege::graphic::buffer::Mapper< unit >::Mapper( gpu::BufferUsage usage, size_t sectorSize, size_t sectorsCount )
 {
         const size_t excess = ( sectorSize % sizeof( unit ) );
 
@@ -51,7 +51,7 @@ ege::graphic::buffer::Mapper< unit >::Mapper( BufferUsage usage, size_t sectorSi
                 sectorSize = sectorSize - excess + sizeof( unit );
 
         const size_t bufferSize = sectorSize * sectorsCount;
-        this->buffer = new Buffer( bufferSize, NULL, usage );
+        this->buffer = new gpu::Buffer( bufferSize, NULL, usage );
         this->mappedArea = nullptr;
         this->sectorSize = sectorSize;
         this->sectorsCount = sectorsCount;
@@ -68,7 +68,7 @@ ege::graphic::buffer::Mapper< unit >::~Mapper()
 
 
 template < typename unit >
-void ege::graphic::buffer::Mapper< unit >::mapSector( size_t sector, std::initializer_list< BufferMapAccess > access, size_t includeNPrevUnits )
+void ege::graphic::buffer::Mapper< unit >::mapSector( size_t sector, std::initializer_list< gpu::BufferMapAccess > access, size_t includeNPrevUnits )
 {
         if ( mappedArea != nullptr )
         {
@@ -91,7 +91,7 @@ void ege::graphic::buffer::Mapper< unit >::unmap()
 
 
 template < typename unit >
-ege::graphic::buffer::Buffer* ege::graphic::buffer::Mapper< unit >::getBuffer()
+ege::graphic::gpu::Buffer* ege::graphic::buffer::Mapper< unit >::getBuffer()
 {
         return buffer;
 }

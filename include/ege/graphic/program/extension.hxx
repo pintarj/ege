@@ -4,7 +4,7 @@
 #define EGE_GRAPHIC_PROGRAM_EXTENSION_HXX
 
 
-#include <ege/graphic/program/program.hxx>
+#include <ege/graphic/gpu/program.hxx>
 
 
 namespace ege
@@ -16,8 +16,8 @@ namespace ege
                         class Extension
                         {
                                 protected:
-                                        Program& program;
-                                        Extension( Program& program );
+                                        gpu::Program& program;
+                                        Extension( gpu::Program& program );
                         };
                 }
         }

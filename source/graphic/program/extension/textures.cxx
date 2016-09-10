@@ -7,7 +7,7 @@ using namespace ege;
 using namespace ege::graphic::program::extension;
 
 
-Textures::Textures( Program& program, const char** textureNames, size_t count ): Extension( program )
+Textures::Textures( gpu::Program& program, const char** textureNames, size_t count ): Extension( program )
 {
         texturesLocation = new size_t[ count ];
 

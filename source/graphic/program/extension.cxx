@@ -4,7 +4,7 @@
 using namespace ege::graphic::program;
 
 
-Extension::Extension( Program &program ): program( program )
+Extension::Extension( gpu::Program &program ): program( program )
 {
 
 }

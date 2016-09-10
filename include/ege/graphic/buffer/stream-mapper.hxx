@@ -38,7 +38,7 @@ namespace ege
 
 
 template < typename unit >
-ege::graphic::buffer::StreamMapper< unit >::StreamMapper( size_t sectorSize, size_t sectorsCount ): Mapper< unit >( BufferUsage::STREAM, sectorSize, sectorsCount )
+ege::graphic::buffer::StreamMapper< unit >::StreamMapper( size_t sectorSize, size_t sectorsCount ): Mapper< unit >( gpu::BufferUsage::STREAM, sectorSize, sectorsCount )
 {
         prepareSector( 0 );
 }
@@ -54,7 +54,7 @@ ege::graphic::buffer::StreamMapper< unit >::~StreamMapper()
 template < typename unit >
 void ege::graphic::buffer::StreamMapper< unit >::prepareSector( size_t index, size_t includeNPrevUnits )
 {
-        this->mapSector( index, { BufferMapAccess::INVALIDATE_RANGE, BufferMapAccess::UNSYNCHRONIZED, BufferMapAccess::FLUSH_EXPLICIT }, includeNPrevUnits );
+        this->mapSector( index, { gpu::BufferMapAccess::INVALIDATE_RANGE, gpu::BufferMapAccess::UNSYNCHRONIZED, gpu::BufferMapAccess::FLUSH_EXPLICIT }, includeNPrevUnits );
         flushed_units = 0;
         next_index = 0;
 }

@@ -21,7 +21,7 @@ namespace ege
                                                 size_t* texturesLocation;
 
                                         protected:
-                                                Textures( Program& program, const char** textureNames, size_t count );
+                                                Textures( gpu::Program& program, const char** textureNames, size_t count );
                                                 virtual ~Textures();
 
                                         public:

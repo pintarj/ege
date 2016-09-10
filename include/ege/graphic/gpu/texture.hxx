@@ -1,7 +1,7 @@
 
 
-#ifndef EGE_GRAPHIC_TEXTURE_TEXTURE_HXX
-#define EGE_GRAPHIC_TEXTURE_TEXTURE_HXX
+#ifndef EGE_GRAPHIC_GPU_TEXTURE_HXX
+#define EGE_GRAPHIC_GPU_TEXTURE_HXX
 
 
 #include <ege/graphic/render/targetable.hxx>
@@ -12,7 +12,7 @@ namespace ege
 {
         namespace graphic
         {
-                namespace texture
+                namespace gpu
                 {
                         class Texture: public render::Targetable
                         {
@@ -21,22 +21,23 @@ namespace ege
                                         size_t width;
                                         size_t height;
                                         size_t frameBufferId;
-                                        Format format;
+                                        texture::Format format;
 
-                                        Texture( Format format );
+                                        Texture( texture::Format format );
 
                                 public:
-                                        Texture( PixelsBuffer& pixelsBuffer, bool deleteBuffer = false );
-                                        Texture( size_t width, size_t height, const void* pixels, Format format = Format::RGBA );
-                                        Texture( size_t width, size_t height, Format format = Format::RGBA, bool willBeTargeted = true );
+                                        Texture( texture::PixelsBuffer& pixelsBuffer, bool deleteBuffer = false );
+                                        Texture( size_t width, size_t height, const void* pixels, texture::Format format = texture::Format::RGBA );
+                                        Texture( size_t width, size_t height, texture::Format format = texture::Format::RGBA, bool willBeTargeted = true );
                                         size_t getTextureId();
                                         virtual ~Texture();
+                                        void resize( size_t width, size_t height );
+                                        void resize( size_t width, size_t height, size_t x, size_t y );
                                         void useAtUnit( size_t unit );
-                                        Format getFormat();
+                                        texture::Format getFormat();
                                         void prepareForTargeting();
                                         size_t getWidth();
                                         size_t getHeight();
-
                                         void getDimensions( size_t* width, size_t* height );
                                         size_t getFrameBufferId();
                         };

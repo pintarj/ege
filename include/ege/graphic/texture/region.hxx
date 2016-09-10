@@ -4,7 +4,7 @@
 #define EGE_GRAPHIC_TEXTURE_REGION_HXX
 
 
-#include <ege/graphic/texture/texture.hxx>
+#include <ege/graphic/gpu/texture.hxx>
 
 
 namespace ege
@@ -16,12 +16,12 @@ namespace ege
                         class Region
                         {
                                 protected:
-                                        Texture& texture;
-                                        Region( Texture& texture );
+                                        gpu::Texture& texture;
+                                        Region( gpu::Texture& texture );
 
                                 public:
                                         virtual ~Region() {};
-                                        Texture& getTexture();
+                                        gpu::Texture& getTexture();
                         };
                 }
         }

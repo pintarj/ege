@@ -1,8 +1,8 @@
-#include <ege/graphic/buffer/buffer.hxx>
+#include <ege/graphic/gpu/buffer.hxx>
 #include <GL/glew.h>
 
 
-using namespace ege::graphic::buffer;
+using namespace ege::graphic::gpu;
 
 
 static inline GLenum toGlUsage( BufferUsage usage )

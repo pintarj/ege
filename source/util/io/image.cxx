@@ -5,7 +5,7 @@
 #include <png.h>
 
 
-using namespace ege::graphic::buffer;
+using namespace ege::graphic::gpu;
 using namespace ege::graphic::texture;
 using namespace ege::util::io;
 

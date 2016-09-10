@@ -11,7 +11,7 @@ using namespace ege;
 class GLFWKeyboard: public hardware::Keyboard
 {
         public:
-                bool isPressed( hardware::KeyboardKey key );
+                bool isPressed( hardware::keyboard::Key key );
 };
 
 
@@ -28,7 +28,7 @@ namespace global
 }
 
 
-bool GLFWKeyboard::isPressed( hardware::KeyboardKey key )
+bool GLFWKeyboard::isPressed( hardware::keyboard::Key key )
 {
         return glfwGetKey( global::glfwWindow, ( int ) key ) == GLFW_PRESS;
 }

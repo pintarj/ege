@@ -1,4 +1,4 @@
-#include <ege/engine/engine.hxx>
+#include <ege/engine.hxx>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
@@ -26,37 +26,36 @@ class EgeKeyboard: public hardware::Keyboard
 };
 
 
-engine::Configuration ege::engine::configuration;
 engine::Resources ege::engine::resources;
-static GLFWwindow* win;
-static uint16_t monitorRefreshRate;
 
 
-void ege::engine::initialize()
+void engine::start( const std::function< void( engine::Configurations& ) >& configure )
 {
         glfwInit();
+        GLFWmonitor* primary = glfwGetPrimaryMonitor();
+        const GLFWvidmode* videoMode = glfwGetVideoMode( primary );
+        uint16_t monitorRefreshRate = ( uint16_t ) videoMode->refreshRate;
         glfwDefaultWindowHints();
         glfwWindowHint( GLFW_CONTEXT_VERSION_MAJOR, 4 );
         glfwWindowHint( GLFW_CONTEXT_VERSION_MINOR, 1 );
-        GLFWmonitor* primary = glfwGetPrimaryMonitor();
-        const GLFWvidmode* videoMode = glfwGetVideoMode( primary );
-        monitorRefreshRate = ( uint16_t ) videoMode->refreshRate;
-        win = glfwCreateWindow( videoMode->width, videoMode->height, "", primary, NULL );
+        GLFWwindow* win = glfwCreateWindow( videoMode->width, videoMode->height, "", primary, NULL );
         glfwMakeContextCurrent( win );
         glfwSwapInterval( 1 );
+
         glewExperimental = GL_TRUE;
         glewInit();
         glGetError();
-        resources.keyboard = new EgeKeyboard( win );
-        resources.monitor = new hardware::Monitor( ( size_t ) videoMode->width, ( size_t ) videoMode->height );
-        resources.fpsAnalyzer = new fps::Analyzer();
-        resources.fpsModerator = new fps::Moderator( *resources.fpsAnalyzer, ( float ) monitorRefreshRate, true );
-}
 
+        engine::resources.keyboard = new EgeKeyboard( win );
+        engine::resources.monitor = new hardware::Monitor( ( size_t ) videoMode->width, ( size_t ) videoMode->height );
+        engine::resources.fpsAnalyzer = new fps::Analyzer();
+        engine::resources.fpsModerator = new fps::Moderator( *engine::resources.fpsAnalyzer, ( float ) monitorRefreshRate, true );
 
-void ege::engine::start( Scenario* initialScenario )
-{
-        Scenario* current = initialScenario;
+        engine::Configurations* configurations = new engine::Configurations;
+        configure( *configurations );
+        Scenario* current = configurations->initialScenario;
+        delete configurations;
+
         resources.fpsAnalyzer->markTimePoint();
         resources.fpsAnalyzer->setLastDelta( 1.0f / ( float ) monitorRefreshRate );
 
@@ -88,15 +87,11 @@ void ege::engine::start( Scenario* initialScenario )
                 resources.fpsModerator->moderate();
                 resources.fpsAnalyzer->markTimePoint();
         }
-}
 
-
-void ege::engine::destroy()
-{
         glfwDestroyWindow( win );
-        delete resources.keyboard;
-        delete resources.monitor;
-        delete resources.fpsAnalyzer;
-        delete resources.fpsModerator;
+        delete engine::resources.keyboard;
+        delete engine::resources.monitor;
+        delete engine::resources.fpsAnalyzer;
+        delete engine::resources.fpsModerator;
         glfwTerminate();
 }

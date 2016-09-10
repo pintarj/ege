@@ -18,15 +18,15 @@ namespace ege
                                 private:
                                         Analyzer& analyzer;
                                         float fps;
-                                        float period;
                                         bool vSyncEnabled;
+                                        float period;
                                         float periodFactor;
 
                                 public:
                                         Moderator( Analyzer& analyzer, float fps = 60.0f, bool vSyncEnabled = false );
                                         void setFPS( float fps );
-                                        void moderate();
                                         void setVSyncEnabled( bool vSyncEnabled );
+                                        void moderate();
                         };
                 }
         }

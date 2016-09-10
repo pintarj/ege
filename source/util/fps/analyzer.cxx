@@ -6,23 +6,26 @@ using namespace ege::util::fps;
 
 Analyzer::Analyzer( float lastDelta )
 {
-        lastTimePoint = std::chrono::system_clock::now();
+        markedTimePoint = std::chrono::system_clock::now();
         setLastDelta( lastDelta );
 }
 
 
-void Analyzer::markTimePoint()
+float Analyzer::calculateDelta( bool mark )
 {
-        std::chrono::time_point< std::chrono::system_clock > currentTimePoint = std::chrono::system_clock::now();
-        lastDelta = currentTimePoint - lastTimePoint;
-        lastTimePoint = currentTimePoint;
+        std::chrono::time_point< std::chrono::system_clock > now = std::chrono::system_clock::now();
+        lastDelta = now - markedTimePoint;
+
+        if ( mark )
+                markedTimePoint = now;
+
+        return lastDelta.count();
 }
 
 
-float Analyzer::calculateDelta()
+float Analyzer::calculateDeltaAndMark()
 {
-        lastDelta = std::chrono::system_clock::now() - lastTimePoint;
-        return lastDelta.count();
+        return calculateDelta( true );
 }
 
 

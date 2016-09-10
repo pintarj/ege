@@ -16,15 +16,15 @@ namespace ege
                         class Analyzer
                         {
                                 private:
-                                        std::chrono::time_point< std::chrono::system_clock > lastTimePoint;
+                                        std::chrono::time_point< std::chrono::system_clock > markedTimePoint;
                                         std::chrono::duration< float > lastDelta;
 
                                 public:
                                         Analyzer( float lastDelta = 0.0f );
-                                        void markTimePoint();
-                                        float calculateDelta();
-                                        void setLastDelta( float lastDelta );
+                                        float calculateDelta( bool mark = false );
+                                        float calculateDeltaAndMark();
                                         float getLastDelta();
+                                        void setLastDelta( float lastDelta );
                         };
                 }
         }

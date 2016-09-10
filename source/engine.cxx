@@ -56,7 +56,7 @@ void engine::start( const std::function< void( engine::Configurations& ) >& conf
         Scenario* current = configurations->initialScenario;
         delete configurations;
 
-        resources.fpsAnalyzer->markTimePoint();
+        resources.fpsAnalyzer->calculateDeltaAndMark();
         resources.fpsAnalyzer->setLastDelta( 1.0f / ( float ) monitorRefreshRate );
 
         while ( true )
@@ -85,7 +85,7 @@ void engine::start( const std::function< void( engine::Configurations& ) >& conf
                 current->render();
                 glfwSwapBuffers( win );
                 resources.fpsModerator->moderate();
-                resources.fpsAnalyzer->markTimePoint();
+                resources.fpsAnalyzer->calculateDeltaAndMark();
         }
 
         glfwDestroyWindow( win );

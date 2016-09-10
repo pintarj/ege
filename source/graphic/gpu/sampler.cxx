@@ -7,42 +7,31 @@ using namespace ege::graphic::gpu;
 
 Sampler::Sampler()
 {
-        GLuint id;
         glGenSamplers( 1, &id );
-        glSamplerParameteri( id, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
-        glSamplerParameteri( id, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
-        glSamplerId = id;
-        setMagFilter( SamplerFilter::LINEAR );
-        setMinFilter( SamplerFilter::LINEAR );
+        setMagFilter( sampler::Filter::LINEAR );
+        setMinFilter( sampler::Filter::LINEAR );
 }
 
 
 Sampler::~Sampler()
 {
-        GLuint id = ( GLuint ) glSamplerId;
         glDeleteSamplers( 1, &id );
 }
 
 
-void Sampler::setMagFilter( SamplerFilter filter )
+void Sampler::setMagFilter( sampler::Filter filter )
 {
-        glSamplerParameteri( ( GLuint ) glSamplerId, GL_TEXTURE_MAG_FILTER, ( GLenum ) filter );
+        glSamplerParameteri( id, GL_TEXTURE_MAG_FILTER, ( GLenum ) filter );
 }
 
 
-void Sampler::setMinFilter( SamplerFilter filter )
+void Sampler::setMinFilter( sampler::Filter filter )
 {
-        glSamplerParameteri( ( GLuint ) glSamplerId, GL_TEXTURE_MIN_FILTER, ( GLenum ) filter );
+        glSamplerParameteri( id, GL_TEXTURE_MIN_FILTER, ( GLenum ) filter );
 }
 
 
-void Sampler::useAtUnit( size_t unit )
+void Sampler::bindAtUnit( unsigned int unit ) const
 {
-        glBindSampler( ( GLuint ) unit, glSamplerId );
-}
-
-
-size_t Sampler::getSamplerId()
-{
-        return glSamplerId;
+        glBindSampler( unit, id );
 }

@@ -1,11 +1,10 @@
-#include <ege/util/load/image.hxx>
+#include <ege/util/io/image.hxx>
 #include <ege/exception.hxx>
 #include <cstdio>
 #include <cstring>
 #include <png.h>
 
 
-using namespace ege;
 using namespace ege::graphic::buffer;
 using namespace ege::graphic::texture;
 using namespace ege::util::io;
@@ -65,7 +64,7 @@ PixelsBuffer* image::loadPng( const char* fileName )
         {
                 png_destroy_read_struct( &png_ptr, &info_ptr, nullptr );
                 std::fclose( file );
-                exception::throwNew( "error while reading png data from file %s", fileName );
+                exception::throwNew( "error while reading data from png file %s", fileName );
         }
 
         Format format;
@@ -109,13 +108,13 @@ PixelsBuffer* image::load( const char* fileName )
         const char* lastPoint = std::strrchr( fileName, '.' );
 
         if ( lastPoint == nullptr )
-                exception::throwNew( "can't load image file: %s", fileName );
+                exception::throwNew( "can't load image file %s, because it doesn't have an extension", fileName );
 
-        ++lastPoint;
+        const char* extension = lastPoint + 1;
 
-        if ( std::strcmp( lastPoint, "png" ) == 0 )
+        if ( std::strcmp( extension, "png" ) == 0 )
                 return image::loadPng( fileName );
 
-        exception::throwNew( "can't load image file: %s", fileName );
+        exception::throwNew( "can't load image file %s, because the extension is not known", fileName );
         return nullptr;
 }

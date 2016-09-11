@@ -5,6 +5,7 @@
 
 
 #include <ege/graphic/texture/region.hxx>
+#include <cstddef>
 
 
 namespace ege
@@ -25,8 +26,8 @@ namespace ege
                                         void calculateUV();
 
                                 public:
-                                        RectangularRegion( gpu::Texture& texture );
-                                        RectangularRegion( gpu::Texture& texture, size_t x, size_t y, size_t width, size_t height );
+                                        RectangularRegion( gpu::Texture2D& texture );
+                                        RectangularRegion( gpu::Texture2D& texture, size_t x, size_t y, size_t width, size_t height );
                                         void getDimensions( size_t* width, size_t* height );
                                         const float* getUVCoordinates();
                         };

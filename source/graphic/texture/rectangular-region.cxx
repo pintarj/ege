@@ -4,13 +4,13 @@
 using namespace ege::graphic::texture;
 
 
-RectangularRegion::RectangularRegion( gpu::Texture &texture ): RectangularRegion( texture, 0, 0, texture.getWidth(), texture.getHeight() )
+RectangularRegion::RectangularRegion( gpu::Texture2D &texture ): RectangularRegion( texture, 0, 0, texture.width, texture.height )
 {
 
 }
 
 
-RectangularRegion::RectangularRegion( gpu::Texture &texture, size_t x, size_t y, size_t width, size_t height ): Region( texture )
+RectangularRegion::RectangularRegion( gpu::Texture2D &texture, size_t x, size_t y, size_t width, size_t height ): Region( texture )
 {
         this->x = x;
         this->y = y;
@@ -22,8 +22,7 @@ RectangularRegion::RectangularRegion( gpu::Texture &texture, size_t x, size_t y,
 
 void RectangularRegion::calculateUV()
 {
-        size_t texCoord[ 2 ];
-        texture.getDimensions( &texCoord[ 0 ], &texCoord[ 1 ] );
+        size_t texCoord[ 2 ] = { texture.width, texture.height };
         const float tw = ( float ) texCoord[ 0 ];
         const float th = ( float ) texCoord[ 1 ];
         const float fx = ( float ) x;

@@ -14,7 +14,9 @@ ADD_LIBRARY( ege-core SHARED
         source/graphic/gpu/program.cxx
         source/graphic/gpu/sampler.cxx
         source/graphic/gpu/texture.cxx
+        source/graphic/gpu/texture-2D.cxx
         source/graphic/gpu/vertex-array.cxx
+        source/graphic/gpu/util/image/buffer.cxx
         source/graphic/program/extension.cxx
         source/graphic/program/mvp-texture-program.cxx
         source/graphic/program/extension/model-view-projection-matrix.cxx
@@ -23,7 +25,6 @@ ADD_LIBRARY( ege-core SHARED
         source/graphic/render/targetable.cxx
         source/graphic/render/texture-regions-stream-drawer.cxx
         source/graphic/step/clear.cxx
-        source/graphic/texture/pixels-buffer.cxx
         source/graphic/texture/rectangular-region.cxx
         source/graphic/texture/region.cxx
         source/hardware/monitor.cxx

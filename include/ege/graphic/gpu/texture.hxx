@@ -4,8 +4,8 @@
 #define EGE_GRAPHIC_GPU_TEXTURE_HXX
 
 
-#include <ege/graphic/render/targetable.hxx>
-#include <ege/graphic/texture/pixels-buffer.hxx>
+#include <ege/graphic/gpu/object.hxx>
+#include <cstdint>
 
 
 namespace ege
@@ -14,32 +14,56 @@ namespace ege
         {
                 namespace gpu
                 {
-                        class Texture: public render::Targetable
+                        namespace texture
+                        {
+                                enum class Format
+                                {
+                                        RGB = 0x1907,
+                                        RGBA = 0x1908
+                                };
+
+                                namespace format
+                                {
+                                        constexpr uint8_t bytesPerPixel( Format format )
+                                        {
+                                                switch ( format )
+                                                {
+                                                        case Format::RGB:
+                                                                return 3;
+
+                                                        case Format::RGBA:
+                                                                return 4;
+                                                }
+                                        }
+
+
+                                        constexpr bool hasAlpha( Format format )
+                                        {
+                                                switch ( format )
+                                                {
+                                                        case Format::RGB:
+                                                                return false;
+
+                                                        case Format::RGBA:
+                                                                return true;
+                                                }
+                                        }
+                                }
+                        }
+
+                        class Texture: public Object
                         {
                                 private:
-                                        size_t textureId;
-                                        size_t width;
-                                        size_t height;
-                                        size_t frameBufferId;
-                                        texture::Format format;
+                                        const unsigned int type;
 
-                                        Texture( texture::Format format );
+                                protected:
+                                        const texture::Format format;
+
+                                        Texture( unsigned int type, texture::Format format );
 
                                 public:
-                                        Texture( texture::PixelsBuffer& pixelsBuffer, bool deleteBuffer = false );
-                                        Texture( size_t width, size_t height, const void* pixels, texture::Format format = texture::Format::RGBA );
-                                        Texture( size_t width, size_t height, texture::Format format = texture::Format::RGBA, bool willBeTargeted = true );
-                                        size_t getTextureId();
                                         virtual ~Texture();
-                                        void resize( size_t width, size_t height );
-                                        void resize( size_t width, size_t height, size_t x, size_t y );
-                                        void useAtUnit( size_t unit );
-                                        texture::Format getFormat();
-                                        void prepareForTargeting();
-                                        size_t getWidth();
-                                        size_t getHeight();
-                                        void getDimensions( size_t* width, size_t* height );
-                                        size_t getFrameBufferId();
+                                        void bindAtUnit( unsigned int index ) const;
                         };
                 }
         }

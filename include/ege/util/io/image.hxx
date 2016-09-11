@@ -4,7 +4,7 @@
 #define EGE_UTIL_IO_IMAGE_HXX
 
 
-#include <ege/graphic/texture/pixels-buffer.hxx>
+#include <ege/graphic/gpu/util/image/buffer.hxx>
 
 
 namespace ege
@@ -15,8 +15,8 @@ namespace ege
                 {
                         namespace image
                         {
-                                graphic::texture::PixelsBuffer* loadPng( const char* fileName );
-                                graphic::texture::PixelsBuffer* load( const char* fileName );
+                                graphic::gpu::util::image::Buffer* loadPng( const char* fileName );
+                                graphic::gpu::util::image::Buffer* load( const char* fileName );
                         }
                 }
         }

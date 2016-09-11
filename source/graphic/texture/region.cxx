@@ -5,13 +5,13 @@ using namespace ege::graphic;
 using namespace ege::graphic::texture;
 
 
-Region::Region( gpu::Texture &texture ): texture( texture )
+Region::Region( gpu::Texture2D &texture ): texture( texture )
 {
 
 }
 
 
-gpu::Texture& Region::getTexture()
+gpu::Texture2D& Region::getTexture()
 {
         return texture;
 }

@@ -114,7 +114,7 @@ void TextureRegionsStreamDrawer::flush()
 
         program->use();
         sampler.bindAtUnit( textureUnit );
-        texture->useAtUnit( textureUnit );
+        texture->bindAtUnit( textureUnit );
         vertexArray->bind();
         render::draw::arrays( render::draw::Mode::TRIANGLES, 0, unitsToDraw );
         mapper->reset();

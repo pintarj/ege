@@ -16,7 +16,7 @@ VertexArray::VertexArray( vertexArray::Attribute* attributes, size_t count )
         {
                 vertexArray::Attribute& attribute = attributes[ i ];
                 glEnableVertexAttribArray( ( GLuint ) attribute.vertexIndex );
-                glBindBuffer( GL_ARRAY_BUFFER, ( GLuint ) attribute.buffer->getBufferId() );
+                glBindBuffer( GL_ARRAY_BUFFER, object::getId( *attribute.buffer ) );
                 const void* offset = ( const void * ) attribute.offsetInBuffer;
                 glVertexAttribPointer( ( GLuint ) attribute.vertexIndex, attribute.vectorSize, GL_FLOAT, GL_FALSE, ( GLsizei ) attribute.stride, offset );
         }

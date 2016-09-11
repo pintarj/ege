@@ -5,6 +5,7 @@
 
 
 #include <ege/graphic/gpu/buffer.hxx>
+#include <cstddef>
 #include <cstdint>
 
 

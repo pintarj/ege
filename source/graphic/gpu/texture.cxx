@@ -18,7 +18,7 @@ Texture::Texture( texture::PixelsBuffer &pixelsBuffer, bool deleteBuffer ): Text
 {
         pixelsBuffer.getDimensions( &width, &height );
         const GLenum format = ( GLenum ) pixelsBuffer.getFormat();
-        glBindBuffer( GL_PIXEL_UNPACK_BUFFER, ( GLuint ) pixelsBuffer.getPixels().getBufferId() );
+        glBindBuffer( GL_PIXEL_UNPACK_BUFFER, ( GLuint ) object::getId( pixelsBuffer.getPixels() ) );
         glBindTexture( GL_TEXTURE_2D, ( GLuint ) textureId );
         glTexImage2D( GL_TEXTURE_2D, 0, format, ( GLsizei ) width, ( GLsizei ) height, 0, format, GL_UNSIGNED_BYTE, NULL );
         glBindBuffer( GL_PIXEL_UNPACK_BUFFER, 0 );

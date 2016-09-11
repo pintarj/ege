@@ -38,7 +38,7 @@ namespace ege
 
 
 template < typename unit >
-ege::graphic::buffer::StreamMapper< unit >::StreamMapper( size_t sectorSize, size_t sectorsCount ): Mapper< unit >( gpu::BufferUsage::STREAM, sectorSize, sectorsCount )
+ege::graphic::buffer::StreamMapper< unit >::StreamMapper( size_t sectorSize, size_t sectorsCount ): Mapper< unit >( gpu::buffer::usage::Frequency::STREAM, sectorSize, sectorsCount )
 {
         prepareSector( 0 );
 }
@@ -54,7 +54,7 @@ ege::graphic::buffer::StreamMapper< unit >::~StreamMapper()
 template < typename unit >
 void ege::graphic::buffer::StreamMapper< unit >::prepareSector( size_t index, size_t includeNPrevUnits )
 {
-        this->mapSector( index, { gpu::BufferMapAccess::INVALIDATE_RANGE, gpu::BufferMapAccess::UNSYNCHRONIZED, gpu::BufferMapAccess::FLUSH_EXPLICIT }, includeNPrevUnits );
+        this->mapSector( index, { gpu::buffer::map::WriteAccess::INVALIDATE_RANGE, gpu::buffer::map::WriteAccess::UNSYNCHRONIZED, gpu::buffer::map::WriteAccess::FLUSH_EXPLICIT }, includeNPrevUnits );
         flushed_units = 0;
         next_index = 0;
 }
@@ -63,7 +63,7 @@ void ege::graphic::buffer::StreamMapper< unit >::prepareSector( size_t index, si
 template < typename unit >
 void ege::graphic::buffer::StreamMapper< unit >::performFlush()
 {
-        this->buffer->flushRange( flushed_units * sizeof( unit ), ( next_index - flushed_units ) * sizeof( unit ) );
+        this->range->flush( flushed_units * sizeof( unit ), ( next_index - flushed_units ) * sizeof( unit ) );
         flushed_units = next_index;
 }
 
@@ -104,7 +104,7 @@ template < typename unit >
 void ege::graphic::buffer::StreamMapper< unit >::reset()
 {
         this->unmap();
-        this->buffer->orphan();
+        this->buffer->invalidateData();
         prepareSector( 0 );
 }
 

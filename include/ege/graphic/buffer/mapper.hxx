@@ -23,11 +23,12 @@ namespace ege
                                         size_t unitsPerSector;
                                         size_t unitsCount;
                                         gpu::Buffer* buffer;
+                                        gpu::buffer::map::WriteRange* range;
                                         unit* mappedArea;
                                         size_t mappedSector;
 
-                                        Mapper( gpu::BufferUsage usage, size_t sectorSize, size_t sectorsCount );
-                                        void mapSector( size_t sector, std::initializer_list< gpu::BufferMapAccess > access, size_t includeNPrevUnits = 0 );
+                                        Mapper( gpu::buffer::usage::Frequency usage, size_t sectorSize, size_t sectorsCount );
+                                        void mapSector( size_t sector, std::initializer_list< gpu::buffer::map::WriteAccess > access, size_t includeNPrevUnits = 0 );
                                         void unmap();
                                         virtual void performFlush() = 0;
 
@@ -43,7 +44,7 @@ namespace ege
 
 
 template < typename unit >
-ege::graphic::buffer::Mapper< unit >::Mapper( gpu::BufferUsage usage, size_t sectorSize, size_t sectorsCount )
+ege::graphic::buffer::Mapper< unit >::Mapper( gpu::buffer::usage::Frequency usage, size_t sectorSize, size_t sectorsCount )
 {
         const size_t excess = ( sectorSize % sizeof( unit ) );
 
@@ -51,7 +52,8 @@ ege::graphic::buffer::Mapper< unit >::Mapper( gpu::BufferUsage usage, size_t sec
                 sectorSize = sectorSize - excess + sizeof( unit );
 
         const size_t bufferSize = sectorSize * sectorsCount;
-        this->buffer = new gpu::Buffer( bufferSize, NULL, usage );
+        this->buffer = new gpu::Buffer( bufferSize, usage, gpu::buffer::usage::Nature::DRAW );
+        this->range = nullptr;
         this->mappedArea = nullptr;
         this->sectorSize = sectorSize;
         this->sectorsCount = sectorsCount;
@@ -63,21 +65,25 @@ ege::graphic::buffer::Mapper< unit >::Mapper( gpu::BufferUsage usage, size_t sec
 template < typename unit >
 ege::graphic::buffer::Mapper< unit >::~Mapper()
 {
+        if ( range != nullptr )
+                delete range;
+
         delete buffer;
 }
 
 
 template < typename unit >
-void ege::graphic::buffer::Mapper< unit >::mapSector( size_t sector, std::initializer_list< gpu::BufferMapAccess > access, size_t includeNPrevUnits )
+void ege::graphic::buffer::Mapper< unit >::mapSector( size_t sector, std::initializer_list< gpu::buffer::map::WriteAccess > access, size_t includeNPrevUnits )
 {
-        if ( mappedArea != nullptr )
+        if ( range != nullptr )
         {
                 performFlush();
-                buffer->unmap();
+                delete range;
         }
 
         size_t prevUnitsInBytes = includeNPrevUnits * sizeof( unit );
-        mappedArea = ( unit* ) buffer->map( sector * sectorSize - prevUnitsInBytes, sectorSize + prevUnitsInBytes, access );
+        range = new gpu::buffer::map::WriteRange( *buffer, sector * sectorSize - prevUnitsInBytes, sectorSize + prevUnitsInBytes, access );
+        mappedArea = ( unit* ) range->mappedMemory;
         mappedSector = sector;
 }
 
@@ -85,8 +91,12 @@ void ege::graphic::buffer::Mapper< unit >::mapSector( size_t sector, std::initia
 template < typename unit >
 void ege::graphic::buffer::Mapper< unit >::unmap()
 {
-        buffer->unmap();
-        mappedArea = nullptr;
+        if ( range != nullptr )
+        {
+                delete range;
+                range = nullptr;
+        }
+
 }
 
 
@@ -107,7 +117,7 @@ size_t ege::graphic::buffer::Mapper< unit >::getUnitsCount()
 template < typename unit >
 void ege::graphic::buffer::Mapper< unit >::flush()
 {
-        if ( mappedArea == nullptr )
+        if ( range == nullptr )
                 return;
 
         performFlush();

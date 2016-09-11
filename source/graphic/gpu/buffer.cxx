@@ -1,97 +1,159 @@
 #include <ege/graphic/gpu/buffer.hxx>
+#include <ege/exception.hxx>
 #include <GL/glew.h>
 
 
+using namespace ege;
 using namespace ege::graphic::gpu;
 
 
-static inline GLenum toGlUsage( BufferUsage usage )
+static inline unsigned int generateBuffer()
 {
-        switch ( usage )
+        unsigned int id;
+        glGenBuffers( 1, &id );
+        return id;
+}
+
+
+static inline unsigned int calculateUsageFlag( buffer::usage::Frequency frequency, buffer::usage::Nature nature )
+{
+        switch ( frequency )
         {
-                case BufferUsage::STREAM:
-                        return GL_STREAM_DRAW;
+                case buffer::usage::Frequency::STREAM:
+                        switch ( nature )
+                        {
+                                case buffer::usage::Nature::DRAW:
+                                        return GL_STREAM_DRAW;
 
-                case BufferUsage::STATIC:
-                        return GL_STATIC_DRAW;
+                                case buffer::usage::Nature::READ:
+                                        return GL_STREAM_READ;
 
-                case BufferUsage::DYNAMIC:
-                        return GL_DYNAMIC_DRAW;
+                                case buffer::usage::Nature::COPY:
+                                        return GL_STREAM_COPY;
+                        }
+
+                case buffer::usage::Frequency::STATIC:
+                        switch ( nature )
+                        {
+                                case buffer::usage::Nature::DRAW:
+                                        return GL_DYNAMIC_DRAW;
+
+                                case buffer::usage::Nature::READ:
+                                        return GL_DYNAMIC_READ;
+
+                                case buffer::usage::Nature::COPY:
+                                        return GL_DYNAMIC_COPY;
+                        }
+
+                case buffer::usage::Frequency::DYNAMIC:
+                        switch ( nature )
+                        {
+                                case buffer::usage::Nature::DRAW:
+                                        return GL_DYNAMIC_DRAW;
+
+                                case buffer::usage::Nature::READ:
+                                        return GL_DYNAMIC_READ;
+
+                                case buffer::usage::Nature::COPY:
+                                        return GL_DYNAMIC_COPY;
+                        }
         }
 }
 
 
-Buffer::Buffer( size_t sizeInBytes, const void* data, BufferUsage usage )
+buffer::map::Range::Range( Buffer &buffer, unsigned int offset, unsigned int length, unsigned int access ):
+        buffer( buffer ), offset( offset ), length( length ), access( access )
 {
-        GLuint id;
-        glGenBuffers( 1, &id );
-        glBindBuffer( GL_ARRAY_BUFFER, id );
-        glBufferData( GL_ARRAY_BUFFER, sizeInBytes, data, toGlUsage( usage ) );
-        glBufferId = id;
-        this->usage = usage;
-        size = sizeInBytes;
+        if ( buffer.mappedRange != nullptr )
+                exception::throwNew( "can't map gpu buffer, because it's already mapped" );
+
+        buffer.mappedRange = this;
+        glBindBuffer( GL_COPY_WRITE_BUFFER, buffer.id );
+}
+
+
+buffer::map::Range::~Range()
+{
+        glBindBuffer( GL_COPY_WRITE_BUFFER, buffer.id );
+        glUnmapBuffer( GL_COPY_WRITE_BUFFER );
+        buffer.mappedRange = nullptr;
+}
+
+
+buffer::map::WriteRange::WriteRange( Buffer &buffer, unsigned int offset, unsigned int length, unsigned int access ):
+        Range( buffer, offset, length, access | GL_MAP_WRITE_BIT ), mappedMemory( glMapBufferRange( GL_COPY_WRITE_BUFFER, offset, length, this->access ) )
+{
+
+}
+
+
+void buffer::map::WriteRange::flush( unsigned int offset, unsigned int length )
+{
+        glBindBuffer( GL_COPY_WRITE_BUFFER, object::getId( buffer ) );
+        glFlushMappedBufferRange( GL_COPY_WRITE_BUFFER, offset, length );
+}
+
+
+buffer::map::ReadRange::ReadRange( Buffer &buffer, unsigned int offset, unsigned int length, unsigned int access ):
+        Range( buffer, offset, length, access | GL_MAP_READ_BIT ), mappedMemory( glMapBufferRange( GL_COPY_WRITE_BUFFER, offset, length, this->access ) )
+{
+
+}
+
+
+Buffer::Buffer( unsigned int size, buffer::usage::Frequency frequency, buffer::usage::Nature nature, const void* data ): Object( generateBuffer() )
+{
+        this->mappedRange = nullptr;
+        reallocate( size, frequency, nature, data );
 }
 
 
 Buffer::~Buffer()
 {
-        GLuint id = ( GLuint ) glBufferId;
         glDeleteBuffers( 1, &id );
 }
 
 
-size_t Buffer::getSize()
+void Buffer::reallocate( unsigned int size, buffer::usage::Frequency frequency, buffer::usage::Nature nature,
+                         const void* data )
 {
-        return size;
+        this->size = size;
+        this->usageFrequency = frequency;
+        this->usageNature = nature;
+        this->usageCacheFlag = calculateUsageFlag( frequency, nature );
+        glBindBuffer( GL_COPY_WRITE_BUFFER, id );
+        glBufferData( GL_COPY_WRITE_BUFFER, size, data, usageCacheFlag );
 }
 
 
-size_t Buffer::getBufferId()
+void Buffer::reallocate( unsigned int size, const void* data )
 {
-        return glBufferId;
-}
-
-
-void* Buffer::map( size_t offset, size_t length, std::initializer_list< BufferMapAccess > access )
-{
-        GLenum flags = GL_MAP_WRITE_BIT;
-
-        for ( auto flag : access )
-                flags |= ( GLenum ) flag;
-
-        glBindBuffer( GL_ARRAY_BUFFER, ( GLuint ) glBufferId );
-        return glMapBufferRange( GL_ARRAY_BUFFER, offset, length, flags );
-}
-
-
-void* Buffer::mapAll( std::initializer_list< BufferMapAccess > access )
-{
-        return map( 0, size, access );
-}
-
-
-void Buffer::unmap()
-{
-        glBindBuffer( GL_ARRAY_BUFFER, ( GLuint ) glBufferId );
-        glUnmapBuffer( GL_ARRAY_BUFFER );
+        this->size = size;
+        glBindBuffer( GL_COPY_WRITE_BUFFER, id );
+        glBufferData( GL_COPY_WRITE_BUFFER, size, data, usageCacheFlag );
 }
 
 
 void Buffer::invalidateData()
 {
-        glBindBuffer( GL_ARRAY_BUFFER, ( GLuint ) glBufferId );
-        glBufferData( GL_ARRAY_BUFFER, size, NULL, toGlUsage( usage ) );
+        glBindBuffer( GL_COPY_WRITE_BUFFER, id );
+        glBufferData( GL_COPY_WRITE_BUFFER, size, nullptr, usageCacheFlag );
 }
 
 
-void Buffer::orphan()
+unsigned int Buffer::getSize() const
 {
-        invalidateData();
+        return size;
 }
 
 
-void Buffer::flushRange( size_t offset, size_t length )
+bool Buffer::isMapped() const
 {
-        glBindBuffer( GL_ARRAY_BUFFER, ( GLuint ) glBufferId );
-        glFlushMappedBufferRange( GL_ARRAY_BUFFER, offset, length );
+        return mappedRange != nullptr;
+}
+
+
+buffer::map::Range& Buffer::getMappedRange() const
+{
+        return *mappedRange;
 }

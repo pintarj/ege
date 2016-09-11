@@ -87,18 +87,18 @@ PixelsBuffer* image::loadPng( const char* fileName )
         }
 
         const size_t rowBytes = width * format::bytesPerPixel( format );
-        Buffer* pixels = new Buffer( height * rowBytes );
-        void* mappedPixels = pixels->mapAll();
+        Buffer* pixels = new Buffer( height * rowBytes, buffer::usage::Frequency::STATIC, buffer::usage::Nature::DRAW );
+        buffer::map::WriteRange* writeRange = new buffer::map::WriteRange( *pixels );
         png_bytep* rowPointers = new png_bytep[ height ];
 
         for ( size_t i = 0; i < height; ++i )
-                rowPointers[ height - i - 1 ] = &( ( uint8_t* ) mappedPixels )[ i * rowBytes ];
+                rowPointers[ height - i - 1 ] = &( ( uint8_t* ) writeRange->mappedMemory )[ i * rowBytes ];
 
         png_read_image( png_ptr, rowPointers );
         delete rowPointers;
         png_destroy_read_struct( &png_ptr, &info_ptr, nullptr );
         std::fclose( file );
-        pixels->unmap();
+        delete writeRange;
         return new PixelsBuffer( width, height, *pixels, format, true );
 }
 

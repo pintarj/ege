@@ -4,7 +4,7 @@
 #define EGE_GRAPHIC_GPU_BUFFER_HXX
 
 
-#include <cstddef>
+#include <ege/graphic/gpu/object.hxx>
 #include <initializer_list>
 
 
@@ -14,39 +14,138 @@ namespace ege
         {
                 namespace gpu
                 {
-                        enum class BufferUsage
-                        {
-                                STREAM,
-                                STATIC,
-                                DYNAMIC
-                        };
+                        class Buffer;
 
-                        enum class BufferMapAccess
+                        namespace buffer
                         {
-                                INVALIDATE_RANGE = 0x0004,
-                                FLUSH_EXPLICIT = 0x0010,
-                                UNSYNCHRONIZED = 0x0020
-                        };
+                                namespace map
+                                {
+                                        class Range;
+                                }
 
-                        class Buffer
+                                namespace usage
+                                {
+                                        enum class Frequency
+                                        {
+                                                STREAM,
+                                                STATIC,
+                                                DYNAMIC
+                                        };
+
+                                        enum class Nature
+                                        {
+                                                DRAW,
+                                                READ,
+                                                COPY
+                                        };
+                                }
+                        }
+
+                        class Buffer: public Object
                         {
+                                friend buffer::map::Range;
+
                                 private:
-                                        size_t size;
-                                        size_t glBufferId;
-                                        BufferUsage usage;
+                                        unsigned int size;
+                                        buffer::usage::Frequency usageFrequency;
+                                        buffer::usage::Nature usageNature;
+                                        unsigned int usageCacheFlag;
+                                        buffer::map::Range* mappedRange;
 
                                 public:
-                                        Buffer( size_t sizeInBytes, const void* data = nullptr, BufferUsage usage = BufferUsage::STATIC );
+                                        Buffer( unsigned int size, buffer::usage::Frequency frequency, buffer::usage::Nature nature, const void* data = nullptr );
                                         virtual ~Buffer();
-                                        size_t getSize();
-                                        size_t getBufferId();
-                                        void* map( size_t offset, size_t length, std::initializer_list< BufferMapAccess > access = {} );
-                                        void* mapAll( std::initializer_list< BufferMapAccess > access = {} );
-                                        void unmap();
+                                        void reallocate( unsigned int size, buffer::usage::Frequency frequency, buffer::usage::Nature nature, const void* data = nullptr );
+                                        void reallocate( unsigned int size, const void* data = nullptr );
                                         void invalidateData();
-                                        void orphan();
-                                        void flushRange( size_t offset, size_t length );
+                                        unsigned int getSize() const;
+                                        bool isMapped() const;
+                                        buffer::map::Range& getMappedRange() const;
                         };
+
+                        namespace buffer
+                        {
+
+                                namespace map
+                                {
+                                        enum class WriteAccess
+                                        {
+                                                FLUSH_EXPLICIT = 0x0010,
+                                                UNSYNCHRONIZED = 0x0020,
+                                                INVALIDATE_RANGE = 0x0004
+                                        };
+
+                                        enum class ReadAccess
+                                        {
+                                                UNSYNCHRONIZED = 0x0020
+                                        };
+
+                                        class Range
+                                        {
+                                                protected:
+                                                        const unsigned int access;
+                                                        Buffer& buffer;
+
+                                                        Range( Buffer& buffer, unsigned int offset, unsigned int length, unsigned int access );
+                                                public:
+                                                        const unsigned int offset;
+                                                        const unsigned int length;
+
+                                                        virtual ~Range();
+                                        };
+
+                                        class WriteRange: public Range
+                                        {
+                                                private:
+                                                        WriteRange( Buffer& buffer, unsigned int offset, unsigned int length, unsigned int access );
+
+                                                public:
+                                                        void* const mappedMemory;
+
+                                                        WriteRange( Buffer& buffer, unsigned int offset, unsigned int length, std::initializer_list< WriteAccess > writeAccess = {} ):
+                                                                WriteRange( buffer, offset, length, [ writeAccess ] ()
+                                                                {
+                                                                        unsigned int accessFlag = 0;
+
+                                                                        for ( auto bit : writeAccess )
+                                                                                accessFlag |= ( unsigned int ) bit;
+
+                                                                        return accessFlag;
+                                                                } () ) {}
+
+                                                        WriteRange( Buffer& buffer, std::initializer_list< WriteAccess > writeAccess = {} ):
+                                                                WriteRange( buffer, 0, buffer.getSize(), writeAccess ) {}
+
+                                                        virtual ~WriteRange() {};
+                                                        void flush( unsigned int offset, unsigned int length );
+                                        };
+
+                                        class ReadRange: public Range
+                                        {
+                                                private:
+                                                        ReadRange( Buffer& buffer, unsigned int offset, unsigned int length, unsigned int access );
+
+                                                public:
+                                                        const void* const mappedMemory;
+
+                                                        ReadRange( Buffer& buffer, unsigned int offset, unsigned int length, std::initializer_list< ReadAccess > readAccess = {} ):
+                                                                ReadRange( buffer, offset, length, [ readAccess ] ()
+                                                                {
+                                                                        unsigned int accessFlag = 0;
+
+                                                                        for ( auto bit : readAccess )
+                                                                                accessFlag |= ( unsigned int ) bit;
+
+                                                                        return accessFlag;
+                                                                } () ) {}
+
+                                                        ReadRange( Buffer& buffer, std::initializer_list< ReadAccess > readAccess = {} ):
+                                                                ReadRange( buffer, 0, buffer.getSize(), readAccess ) {}
+
+                                                        virtual ~ReadRange() {};
+                                        };
+                                }
+                        }
                 }
         }
 }

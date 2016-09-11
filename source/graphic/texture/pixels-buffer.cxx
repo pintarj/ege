@@ -13,7 +13,7 @@ PixelsBuffer::PixelsBuffer( size_t width, size_t height, gpu::Buffer& pixels, Fo
 
 
 PixelsBuffer::PixelsBuffer( size_t width, size_t height, const void* pixels, Format format ):
-        PixelsBuffer( width, height, *new gpu::Buffer( width * height * format::bytesPerPixel( format ), pixels, gpu::BufferUsage::STATIC ), format, true )
+        PixelsBuffer( width, height, *new gpu::Buffer( width * height * format::bytesPerPixel( format ), gpu::buffer::usage::Frequency::STATIC, gpu::buffer::usage::Nature::DRAW, pixels ), format, true )
 {
 
 }

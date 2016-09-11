@@ -6,6 +6,7 @@
 
 #include <ege/graphic/texture/format.hxx>
 #include <ege/graphic/gpu/buffer.hxx>
+#include <cstddef>
 
 
 namespace ege

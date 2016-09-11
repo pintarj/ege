@@ -95,7 +95,7 @@ Engine::Engine()
         global::fpsAnalyzer = new util::fps::Analyzer();
         global::fpsModerator = new util::fps::Moderator( *global::fpsAnalyzer, monitorRefreshRate );
 
-        *const_cast< engine::Resources** >( &ege::game::Scene::engineResources ) = new engine::Resources();
+        ege::game::Scene::pointerToEngineResources = new engine::Resources();
 }
 
 

@@ -23,12 +23,13 @@ namespace ege
                         friend Engine;
 
                         private:
+                                static engine::Resources* pointerToEngineResources;
                                 Scene* nextScene;
                                 bool stopEngine;
                                 bool restartEngine;
 
                         protected:
-                                static engine::Resources* const engineResources;
+                                engine::Resources* const engineResources;
 
                                 Scene();
                                 void setNextScene( Scene& scene );

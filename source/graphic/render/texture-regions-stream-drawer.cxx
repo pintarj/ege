@@ -3,6 +3,7 @@
 #include <ege/graphic/render/draw.hxx>
 
 
+using namespace ege::graphic::gpu;
 using namespace ege::graphic::render;
 
 
@@ -11,14 +12,11 @@ TextureRegionsStreamDrawer::TextureRegionsStreamDrawer(): textureUnit( 0 )
         program = new program::MVPTextureProgram();
         mapper = new buffer::StreamMapper< Vertex >();
         gpu::Buffer* buffer = mapper->getBuffer();
-
-        gpu::vertexArray::Attribute attributes[ 2 ] =
-                {
-                        { 0, 3, sizeof( Vertex ), ( size_t ) &( ( Vertex* ) 0 )->x, buffer },
-                        { 1, 2, sizeof( Vertex ), ( size_t ) &( ( Vertex* ) 0 )->u, buffer }
-                };
-
-        vertexArray = new gpu::VertexArray( &attributes[ 0 ], 2 );
+        vertexArray = new gpu::VertexArray();
+        vertexArray->enableAttribute( 0 );
+        vertexArray->enableAttribute( 1 );
+        vertexArray->setAttributeFormatAndBindVertexBuffer( 0, 3, vertexArray::attribute::Type::FLOAT, false, *buffer, offsetof( Vertex, x ), sizeof( Vertex ) );
+        vertexArray->setAttributeFormatAndBindVertexBuffer( 1, 2, vertexArray::attribute::Type::FLOAT, false, *buffer, offsetof( Vertex, u ), sizeof( Vertex ) );
         float matrix[ 16 ];
         geometry::matrix::identity( matrix );
         program->uniformMatrix( matrix );
@@ -117,7 +115,7 @@ void TextureRegionsStreamDrawer::flush()
         program->use();
         sampler.bindAtUnit( textureUnit );
         texture->useAtUnit( textureUnit );
-        vertexArray->use();
+        vertexArray->bind();
         render::draw::arrays( render::draw::Mode::TRIANGLES, 0, unitsToDraw );
         mapper->reset();
         unitsToDraw = 0;

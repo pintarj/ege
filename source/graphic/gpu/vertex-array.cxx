@@ -5,38 +5,50 @@
 using namespace ege::graphic::gpu;
 
 
-VertexArray::VertexArray( vertexArray::Attribute* attributes, size_t count )
+static inline unsigned int createVertexArray()
 {
-        GLuint id;
-        glGenVertexArrays( 1, &id );
-        glVertexArrayId = id;
-        glBindVertexArray( id );
-
-        for ( size_t i = 0; i < count; ++i )
-        {
-                vertexArray::Attribute& attribute = attributes[ i ];
-                glEnableVertexAttribArray( ( GLuint ) attribute.vertexIndex );
-                glBindBuffer( GL_ARRAY_BUFFER, object::getId( *attribute.buffer ) );
-                const void* offset = ( const void * ) attribute.offsetInBuffer;
-                glVertexAttribPointer( ( GLuint ) attribute.vertexIndex, attribute.vectorSize, GL_FLOAT, GL_FALSE, ( GLsizei ) attribute.stride, offset );
-        }
+        unsigned int id;
+        glCreateVertexArrays( 1, &id );
+        return id;
 }
 
 
-void VertexArray::use()
+VertexArray::VertexArray(): Object( createVertexArray() )
 {
-        glBindVertexArray( ( GLuint ) glVertexArrayId );
-}
 
-
-size_t VertexArray::getVertexArrayId()
-{
-        return  glVertexArrayId;
 }
 
 
 VertexArray::~VertexArray()
 {
-        GLuint id = ( GLuint ) glVertexArrayId;
         glDeleteVertexArrays( 1, &id );
+}
+
+
+void VertexArray::enableAttribute( unsigned int index )
+{
+        glBindVertexArray( id );
+        glEnableVertexAttribArray( index );
+}
+
+
+void VertexArray::disableAttribute( unsigned int index )
+{
+        glBindVertexArray( id );
+        glDisableVertexAttribArray( index );
+}
+
+
+void VertexArray::setAttributeFormatAndBindVertexBuffer(  unsigned int index, uint8_t size, vertexArray::attribute::Type type,
+                                                          bool normalized, const gpu::Buffer& buffer, unsigned int offset, unsigned int stride  )
+{
+        glBindVertexArray( id );
+        glBindBuffer( GL_ARRAY_BUFFER, buffer.id );
+        glVertexAttribPointer( index, size, ( GLenum ) type, ( GLboolean ) ( normalized ? GL_TRUE : GL_FALSE ), stride, reinterpret_cast< const void* >( ( size_t ) offset ) );
+}
+
+
+void VertexArray::bind() const
+{
+        glBindVertexArray( id );
 }

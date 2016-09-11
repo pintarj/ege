@@ -14,3 +14,9 @@ Object::Object( unsigned int id ): id( id )
 {
 
 }
+
+
+Object::~Object()
+{
+
+}

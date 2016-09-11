@@ -4,6 +4,9 @@
 #define EGE_GRAPHIC_GPU_SAMPLER_HXX
 
 
+#include <ege/graphic/gpu/object.hxx>
+
+
 namespace ege
 {
         namespace graphic
@@ -19,11 +22,8 @@ namespace ege
                                 };
                         }
 
-                        class Sampler
+                        class Sampler: public Object
                         {
-                                private:
-                                        unsigned int id;
-
                                 public:
                                         Sampler();
                                         virtual ~Sampler();

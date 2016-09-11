@@ -5,9 +5,16 @@
 using namespace ege::graphic::gpu;
 
 
-Sampler::Sampler()
+static inline unsigned int generateSampler()
 {
+        unsigned int id;
         glGenSamplers( 1, &id );
+        return id;
+}
+
+
+Sampler::Sampler(): Object( generateSampler() )
+{
         setMagFilter( sampler::Filter::LINEAR );
         setMinFilter( sampler::Filter::LINEAR );
 }

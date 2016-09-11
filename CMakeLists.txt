@@ -9,6 +9,7 @@ ADD_LIBRARY( ege-core SHARED
         source/engine.cxx
         source/game/scene.cxx
         source/graphic/gpu/buffer.cxx
+        source/graphic/gpu/frame-buffer.cxx
         source/graphic/gpu/object.cxx
         source/graphic/gpu/program.cxx
         source/graphic/gpu/sampler.cxx

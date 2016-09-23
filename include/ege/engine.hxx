@@ -21,6 +21,20 @@ namespace ege
                 class Scene;
         }
 
+        namespace graphic
+        {
+                namespace gpu
+                {
+                        class Context;
+                }
+
+        }
+
+        namespace hardware
+        {
+                class Monitor;
+        }
+
         namespace engine
         {
                 struct Configurations
@@ -30,7 +44,6 @@ namespace ege
 
                 struct Resources
                 {
-                        hardware::Keyboard* const keyboard;
                         hardware::Monitor* const monitor;
                         util::fps::Analyzer* const fpsAnalyzer;
                         util::fps::Moderator* const fpsModerator;
@@ -41,12 +54,12 @@ namespace ege
                                 Resources();
                 };
 
-                void start( const std::function< void( Configurations& ) > &configure );
+                void start( const std::function< void( Configurations& ) >& configure );
         }
 
         class Engine
         {
-                friend void engine::start( const std::function< void( engine::Configurations& ) > &configure );
+                friend void engine::start( const std::function< void( engine::Configurations& ) >& configure );
 
                 private:
                         Engine();

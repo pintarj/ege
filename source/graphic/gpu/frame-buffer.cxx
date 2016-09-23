@@ -30,3 +30,10 @@ FrameBuffer::~FrameBuffer()
         if ( id != 0 )
                 glDeleteFramebuffers( 1, &id );
 }
+
+
+void FrameBuffer::bindAsDrawTarget() const
+{
+        glViewport( 0, 0, width, height );
+        glBindFramebuffer( GL_DRAW_FRAMEBUFFER, id );
+}

@@ -1,4 +1,5 @@
 #include <ege/engine.hxx>
+#include <ege/graphic/gpu/context.hxx>
 #include <ege/exception.hxx>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -8,29 +9,14 @@
 using namespace ege;
 
 
-class GLFWKeyboard: public hardware::Keyboard
-{
-        public:
-                bool isPressed( hardware::keyboard::Key key );
-};
-
-
 namespace global
 {
         static std::atomic_bool started( false );
         static engine::Configurations configurations;
-        static GLFWKeyboard keyboard;
         static hardware::Monitor* monitor;
         static util::fps::Analyzer* fpsAnalyzer;
         static util::fps::Moderator* fpsModerator;
         static bool restartRequired;
-        static GLFWwindow* glfwWindow;
-}
-
-
-bool GLFWKeyboard::isPressed( hardware::keyboard::Key key )
-{
-        return glfwGetKey( global::glfwWindow, ( int ) key ) == GLFW_PRESS;
 }
 
 
@@ -41,12 +27,10 @@ static void initializeStaticMembers()
         global::fpsAnalyzer = nullptr;
         global::fpsModerator = nullptr;
         global::restartRequired = false;
-        global::glfwWindow = nullptr;
 }
 
 
 engine::Resources::Resources():
-        keyboard( &global::keyboard ),
         monitor( global::monitor ),
         fpsAnalyzer( global::fpsAnalyzer ),
         fpsModerator( global::fpsModerator )
@@ -77,31 +61,16 @@ void engine::start( const std::function< void( engine::Configurations& ) > &conf
 Engine::Engine()
 {
         glfwInit();
-        GLFWmonitor* primary = glfwGetPrimaryMonitor();
-        const GLFWvidmode* videoMode = glfwGetVideoMode( primary );
-        uint16_t monitorRefreshRate = ( uint16_t ) videoMode->refreshRate;
-        glfwDefaultWindowHints();
-        glfwWindowHint( GLFW_CONTEXT_VERSION_MAJOR, 4 );
-        glfwWindowHint( GLFW_CONTEXT_VERSION_MINOR, 1 );
-        global::glfwWindow = glfwCreateWindow( videoMode->width, videoMode->height, "", primary, NULL );
-        glfwMakeContextCurrent( global::glfwWindow );
-        glfwSwapInterval( 1 );
-
-        glewExperimental = GL_TRUE;
-        glewInit();
-        glGetError();
-
-        global::monitor = new hardware::Monitor( ( size_t ) videoMode->width, ( size_t ) videoMode->height );
+        global::monitor = new hardware::Monitor( glfwGetPrimaryMonitor() );
         global::fpsAnalyzer = new util::fps::Analyzer();
-        global::fpsModerator = new util::fps::Moderator( *global::fpsAnalyzer, monitorRefreshRate );
-
+        global::fpsModerator = new util::fps::Moderator( *global::fpsAnalyzer, 60 );
         ege::game::Scene::pointerToEngineResources = new engine::Resources();
 }
 
 
 Engine::~Engine()
 {
-        glfwDestroyWindow( global::glfwWindow );
+        delete ege::game::Scene::pointerToEngineResources;
         delete global::fpsModerator;
         delete global::fpsAnalyzer;
         delete global::monitor;
@@ -111,6 +80,8 @@ Engine::~Engine()
 
 void Engine::start()
 {
+        global::monitor->createGPUContext();
+        global::monitor->getGPUContext().getDefaultFrameBuffer().bindAsDrawTarget();
         game::Scene* currentScene = global::configurations.createInitialScene();
         global::fpsAnalyzer->calculateDeltaAndMark();
         global::fpsAnalyzer->setLastDelta( 1.0f / 60.0f );
@@ -119,7 +90,7 @@ void Engine::start()
         {
                 glfwPollEvents();
 
-                if ( glfwWindowShouldClose( global::glfwWindow ) )
+                if ( glfwWindowShouldClose( static_cast< GLFWwindow* >( global::monitor->getGPUContext().glfwContext ) ) )
                 {
                         currentScene->shouldClose();
 
@@ -143,7 +114,7 @@ stop_engine_label:
                 else
                 {
                         currentScene->render();
-                        glfwSwapBuffers( global::glfwWindow );
+                        global::monitor->getGPUContext().swapBuffers();
                         global::fpsModerator->moderate();
                 }
 

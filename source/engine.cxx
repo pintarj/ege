@@ -41,20 +41,27 @@ engine::Resources::Resources():
 
 void engine::start( const std::function< void( engine::Configurations& ) > &configure )
 {
-        if ( global::started.exchange( true ) )
-                exception::throwNew( "an attempt to start engine was done, but engine is already started" );
-
-        do
+        try
         {
-                initializeStaticMembers();
-                configure( global::configurations );
-                Engine* engine = new Engine();
-                engine->start();
-                delete engine;
-        }
-        while ( global::restartRequired );
+                if ( global::started.exchange( true ) )
+                        exception::throwNew( "an attempt to start engine was done, but engine is already started" );
 
-        global::started = false;
+                do
+                {
+                        initializeStaticMembers();
+                        configure( global::configurations );
+                        Engine* engine = new Engine();
+                        engine->start();
+                        delete engine;
+                }
+                while ( global::restartRequired );
+
+                global::started = false;
+        }
+        catch ( std::exception* e )
+        {
+                fprintf( stderr, "%s\n", e->what() );
+        }
 }
 
 

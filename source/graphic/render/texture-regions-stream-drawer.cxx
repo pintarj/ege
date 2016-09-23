@@ -75,12 +75,12 @@ void TextureRegionsStreamDrawer::setMVPMatrix( const float* mvpMatrix )
 }
 
 
-void TextureRegionsStreamDrawer::draw( texture::RectangularRegion& region, float x, float y )
+void TextureRegionsStreamDrawer::draw( gpu::util::texture::RectangularRegion& region, float x, float y )
 {
-        if ( &region.getTexture() != texture )
+        if ( &region.texture != texture )
         {
                 flush();
-                texture = &region.getTexture();
+                texture = &region.texture;
         }
 
         Vertex* vertex = mapper->mapNext( 6 );
@@ -91,11 +91,9 @@ void TextureRegionsStreamDrawer::draw( texture::RectangularRegion& region, float
                 vertex = mapper->mapNext( 6 );
         }
 
-        size_t w, h;
-        region.getDimensions( &w, &h );
         const float* uv = region.getUVCoordinates();
-        const float xw = x + ( float ) w;
-        const float yh = y + ( float ) h;
+        const float xw = x + ( float ) region.width;
+        const float yh = y + ( float ) region.height;
 
         vertex->x = x;
         vertex->y = y;

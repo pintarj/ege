@@ -14,6 +14,7 @@ ADD_LIBRARY( ege-core SHARED
         source/graphic/gpu/object.cxx
         source/graphic/gpu/program.cxx
         source/graphic/gpu/sampler.cxx
+        source/graphic/gpu/shader.cxx
         source/graphic/gpu/texture.cxx
         source/graphic/gpu/texture-2D.cxx
         source/graphic/gpu/vertex-array.cxx

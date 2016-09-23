@@ -4,7 +4,9 @@
 #define EGE_GRAPHIC_GPU_PROGRAM_HXX
 
 
-#include <cstddef>
+#include <ege/graphic/gpu/object.hxx>
+#include <ege/graphic/gpu/shader.hxx>
+#include <initializer_list>
 
 
 namespace ege
@@ -13,20 +15,15 @@ namespace ege
         {
                 namespace gpu
                 {
-                        class Program
+                        class Program: public Object
                         {
-                                private:
-                                        const bool deleteGlProgram;
-
-                                protected:
-                                        const size_t glProgramId;
-                                        Program( size_t glProgramId, bool deleteGlProgram = false );
-                                        Program( const char* vertexShader, const char* fragmentShader );
-
                                 public:
+                                        Program( std::initializer_list< const Shader* > shaders );
                                         virtual ~Program();
                                         void use();
-                                        const size_t getProgramId();
+                                        int getUniformLocation( const char* uniformName );
+                                        void uniform( unsigned int location, int v0 );
+                                        void uniformMatrix4x4( unsigned int location, unsigned int count, bool transpose, const float* matrix4x4 );
                         };
                 }
         }

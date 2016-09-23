@@ -15,35 +15,44 @@ Currently (at version 0.1.1) it can't do much:
 
 ### Example of "Hello World"
 
-Press <kbd>alt</kbd>+<kbd>F4</kbd> to exit.
+That's a simple blue fullscreen application. Press <kbd>alt</kbd>+<kbd>F4</kbd> to exit.
 
 ``` c++
 #include <ege/engine.hxx>
+#include <ege/graphic/gpu/frame-buffer.hxx>
+
 
 using namespace ege;
+using namespace ege::graphic::gpu;
+
 
 class MainScene: public game::Scene
 {
-    public:
-        void update( float delta )
-        {
+        public:
+                MainScene()
+                {
+                        frameBuffer::setClearColor( 0.0f, 0.0f, 0.5f, 1.0f );
+                }
 
-        }
+                void update( float delta )
+                {
 
-        void render()
-        {
+                }
 
-        }
+                void render()
+                {
+                        frameBuffer::clearColorBuffer();
+                }
 };
 
 int main()
 {
-    engine::start( [] ( engine::Configurations& conf )
-        {
-            conf.createInitialScene = [] () { return new MainScene; };
-        } );
+        engine::start( [] ( engine::Configurations& conf )
+                       {
+                               conf.createInitialScene = [] () { return new MainScene; };
+                       } );
 
-    return 0;
+        return 0;
 }
 ```
 

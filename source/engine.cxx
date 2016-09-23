@@ -82,16 +82,26 @@ Engine::~Engine()
         delete global::fpsAnalyzer;
         delete global::monitor;
         glfwTerminate();
+
+        GLenum glError = GL_NO_ERROR;
+
+        if ( ( glError = glGetError() ) != GL_NO_ERROR )
+                exception::throwNew( "GL error (%d) during engine termination", glError );
 }
 
 
 void Engine::start()
 {
+        GLenum glError = GL_NO_ERROR;
+
         global::monitor->createGPUContext();
         global::monitor->getGPUContext().getDefaultFrameBuffer().bindAsDrawTarget();
         game::Scene* currentScene = global::configurations.createInitialScene();
         global::fpsAnalyzer->calculateDeltaAndMark();
         global::fpsAnalyzer->setLastDelta( 1.0f / 60.0f );
+
+        if ( ( glError = glGetError() ) != GL_NO_ERROR )
+                exception::throwNew( "GL error (%d) during engine initialization", glError );
 
         while ( true )
         {
@@ -124,6 +134,9 @@ stop_engine_label:
                         global::monitor->getGPUContext().swapBuffers();
                         global::fpsModerator->moderate();
                 }
+
+                if ( ( glError = glGetError() ) != GL_NO_ERROR )
+                        exception::throwNew( "GL error (%d) during engine execution", glError );
 
                 global::fpsAnalyzer->calculateDeltaAndMark();
         }

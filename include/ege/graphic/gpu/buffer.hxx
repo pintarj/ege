@@ -101,6 +101,7 @@ namespace ege
 
                                                 public:
                                                         void* const mappedMemory;
+                                                        const bool flushExplicit;
 
                                                         WriteRange( Buffer& buffer, unsigned int offset, unsigned int length, std::initializer_list< WriteAccess > writeAccess = {} ):
                                                                 WriteRange( buffer, offset, length, [ writeAccess ] ()
@@ -117,7 +118,7 @@ namespace ege
                                                                 WriteRange( buffer, 0, buffer.getSize(), writeAccess ) {}
 
                                                         virtual ~WriteRange() {};
-                                                        void flush( unsigned int offset, unsigned int length );
+                                                        void flush( unsigned int offset, unsigned int length ) const;
                                         };
 
                                         class ReadRange: public Range

@@ -4,7 +4,7 @@
 #define EGE_TEXTURE_REGIONS_STREAM_DRAWER_HXX
 
 
-#include <ege/graphic/buffer/stream-mapper.hxx>
+#include <ege/graphic/gpu/util/buffer/stream-write-mapper.hxx>
 #include <ege/graphic/gpu/vertex-array.hxx>
 #include <ege/graphic/program/mvp-texture-program.hxx>
 #include <ege/graphic/texture/rectangular-region.hxx>
@@ -29,9 +29,10 @@ namespace ege
                                                 float v;
                                         };
 
-                                        const size_t textureUnit;
+                                        const unsigned int textureUnit;
                                         program::MVPTextureProgram* program;
-                                        buffer::StreamMapper< Vertex >* mapper;
+                                        gpu::Buffer* buffer;
+                                        gpu::util::buffer::StreamWriteMapper< Vertex >* mapper;
                                         gpu::VertexArray* vertexArray;
                                         gpu::Texture* texture;
                                         gpu::Sampler sampler;

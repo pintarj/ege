@@ -10,8 +10,10 @@ using namespace ege::graphic::render;
 TextureRegionsStreamDrawer::TextureRegionsStreamDrawer(): textureUnit( 0 )
 {
         program = new program::MVPTextureProgram();
-        mapper = new buffer::StreamMapper< Vertex >();
-        gpu::Buffer* buffer = mapper->getBuffer();
+        const size_t unitsPerSector = 2048;
+        const size_t sectorsCount = 2;
+        buffer = new Buffer( unitsPerSector * sectorsCount * sizeof( Vertex ), buffer::usage::Frequency::STREAM, buffer::usage::Nature::DRAW );
+        mapper = new util::buffer::StreamWriteMapper< Vertex >( buffer, unitsPerSector, sectorsCount );
         vertexArray = new gpu::VertexArray();
         vertexArray->enableAttribute( 0 );
         vertexArray->enableAttribute( 1 );
@@ -31,6 +33,7 @@ TextureRegionsStreamDrawer::~TextureRegionsStreamDrawer()
         delete program;
         delete mapper;
         delete vertexArray;
+        delete buffer;
 }
 
 
@@ -116,7 +119,9 @@ void TextureRegionsStreamDrawer::flush()
         sampler.bindAtUnit( textureUnit );
         texture->bindAtUnit( textureUnit );
         vertexArray->bind();
+        mapper->unmap();
         render::draw::arrays( render::draw::Mode::TRIANGLES, 0, unitsToDraw );
+        buffer->invalidateData();
         mapper->reset();
         unitsToDraw = 0;
 }

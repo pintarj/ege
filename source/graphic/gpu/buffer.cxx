@@ -81,13 +81,15 @@ buffer::map::Range::~Range()
 
 
 buffer::map::WriteRange::WriteRange( Buffer &buffer, unsigned int offset, unsigned int length, unsigned int access ):
-        Range( buffer, offset, length, access | GL_MAP_WRITE_BIT ), mappedMemory( glMapBufferRange( GL_COPY_WRITE_BUFFER, offset, length, this->access ) )
+        Range( buffer, offset, length, access | GL_MAP_WRITE_BIT ),
+        mappedMemory( glMapBufferRange( GL_COPY_WRITE_BUFFER, offset, length, this->access ) ),
+        flushExplicit( ( access & GL_MAP_FLUSH_EXPLICIT_BIT ) != 0 )
 {
 
 }
 
 
-void buffer::map::WriteRange::flush( unsigned int offset, unsigned int length )
+void buffer::map::WriteRange::flush( unsigned int offset, unsigned int length ) const
 {
         glBindBuffer( GL_COPY_WRITE_BUFFER, object::getId( buffer ) );
         glFlushMappedBufferRange( GL_COPY_WRITE_BUFFER, offset, length );

@@ -10,6 +10,7 @@ ADD_LIBRARY( ege-core SHARED
         source/game/scene.cxx
         source/graphic/gpu/buffer.cxx
         source/graphic/gpu/context.cxx
+        source/graphic/gpu/draw.cxx
         source/graphic/gpu/frame-buffer.cxx
         source/graphic/gpu/object.cxx
         source/graphic/gpu/program.cxx
@@ -19,11 +20,6 @@ ADD_LIBRARY( ege-core SHARED
         source/graphic/gpu/texture-2D.cxx
         source/graphic/gpu/vertex-array.cxx
         source/graphic/gpu/util/image/buffer.cxx
-        source/graphic/program/extension.cxx
-        source/graphic/program/mvp-texture-program.cxx
-        source/graphic/program/extension/model-view-projection-matrix.cxx
-        source/graphic/program/extension/textures.cxx
-        source/graphic/render/draw.cxx
         source/graphic/render/texture-regions-stream-drawer.cxx
         source/graphic/step/clear.cxx
         source/graphic/texture/rectangular-region.cxx

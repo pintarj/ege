@@ -1,17 +1,14 @@
 
 
-#ifndef EGE_GRAPHIC_RENDER_DRAW_HXX
-#define EGE_GRAPHIC_RENDER_DRAW_HXX
-
-
-#include <cstddef>
+#ifndef EGE_GRAPHIC_GPU_DRAW_HXX
+#define EGE_GRAPHIC_GPU_DRAW_HXX
 
 
 namespace ege
 {
         namespace graphic
         {
-                namespace render
+                namespace gpu
                 {
                         namespace draw
                         {
@@ -26,7 +23,7 @@ namespace ege
                                                 TRIANGLE_FAN = 0x6
                                 };
 
-                                void arrays( Mode mode, size_t offset, size_t count );
+                                void arrays( Mode mode, unsigned int offset, unsigned int count );
                         }
                 }
         }

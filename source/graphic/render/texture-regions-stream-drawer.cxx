@@ -1,6 +1,6 @@
 #include <ege/graphic/render/texture-regions-stream-drawer.hxx>
 #include <ege/graphic/geometry/matrix.hxx>
-#include <ege/graphic/render/draw.hxx>
+#include <ege/graphic/gpu/draw.hxx>
 #include <ege/graphic/gpu/shader.hxx>
 
 
@@ -152,7 +152,7 @@ void TextureRegionsStreamDrawer::flush()
         texture->bindAtUnit( textureUnit );
         vertexArray->bind();
         mapper->unmap();
-        render::draw::arrays( render::draw::Mode::TRIANGLES, 0, unitsToDraw );
+        draw::arrays( draw::Mode::TRIANGLES, 0, unitsToDraw );
         buffer->invalidateData();
         mapper->reset();
         unitsToDraw = 0;

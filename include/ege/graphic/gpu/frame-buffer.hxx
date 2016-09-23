@@ -14,6 +14,13 @@ namespace ege
         {
                 namespace gpu
                 {
+                        namespace frameBuffer
+                        {
+                                void setClearColor( float r, float g, float b, float a );
+                                void clearColorBuffer();
+                                void clearColorBuffer( float r, float g, float b, float a );
+                        }
+
                         class Context;
 
                         class FrameBuffer: public Object

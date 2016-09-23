@@ -13,6 +13,25 @@ static inline unsigned int createFramebuffer()
 }
 
 
+void frameBuffer::setClearColor( float r, float g, float b, float a )
+{
+        glClearColor( r, g, b, a );
+}
+
+
+void frameBuffer::clearColorBuffer()
+{
+        glClear( GL_COLOR_BUFFER_BIT );
+}
+
+
+void frameBuffer::clearColorBuffer( float r, float g, float b, float a )
+{
+        setClearColor( r, g, b, a );
+        clearColorBuffer();
+}
+
+
 FrameBuffer::FrameBuffer( unsigned int id ): Object( id )
 {
 

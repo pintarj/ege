@@ -95,6 +95,7 @@ void Engine::start()
         GLenum glError = GL_NO_ERROR;
 
         global::monitor->createGPUContext();
+        graphic::gpu::frameBuffer::setClearColor( 0.0, 0.0, 0.0, 0.0 );
         global::monitor->getGPUContext().getDefaultFrameBuffer().bindAsDrawTarget();
         game::Scene* currentScene = global::configurations.createInitialScene();
         global::fpsAnalyzer->calculateDeltaAndMark();

@@ -1,6 +1,7 @@
 #include <ege/engine.hxx>
-#include <ege/graphic/gpu/context.hxx>
 #include <ege/exception.hxx>
+#include <ege/graphic/gpu/context.hxx>
+#include <ege/util/log/logger.hxx>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <atomic>
@@ -16,6 +17,7 @@ namespace global
         static hardware::Monitor* monitor;
         static util::fps::Analyzer* fpsAnalyzer;
         static util::fps::Moderator* fpsModerator;
+        static util::log::Logger logger;
         static bool restartRequired;
 }
 
@@ -26,6 +28,7 @@ static void initializeStaticMembers()
         global::monitor = nullptr;
         global::fpsAnalyzer = nullptr;
         global::fpsModerator = nullptr;
+        global::logger.setLevel( util::log::Level::INFO );
         global::restartRequired = false;
 }
 
@@ -33,7 +36,8 @@ static void initializeStaticMembers()
 engine::Resources::Resources():
         monitor( global::monitor ),
         fpsAnalyzer( global::fpsAnalyzer ),
-        fpsModerator( global::fpsModerator )
+        fpsModerator( global::fpsModerator ),
+        logger( &global::logger )
 {
 
 }
@@ -46,21 +50,31 @@ void engine::start( const std::function< void( engine::Configurations& ) > &conf
                 if ( global::started.exchange( true ) )
                         exception::throwNew( "an attempt to start engine was done, but engine is already started" );
 
-                do
+                while ( true )
                 {
+                        global::logger.log( util::log::Level::INFO, "engine started" );
                         initializeStaticMembers();
                         configure( global::configurations );
                         Engine* engine = new Engine();
                         engine->start();
                         delete engine;
+
+                        if ( global::restartRequired )
+                        {
+                                global::logger.log( util::log::Level::INFO, "engine restarting" );
+                                continue;
+                        }
+
+                        global::logger.log( util::log::Level::INFO, "engine stopped" );
+                        break;
                 }
-                while ( global::restartRequired );
 
                 global::started = false;
         }
         catch ( std::exception* e )
         {
-                fprintf( stderr, "%s\n", e->what() );
+                global::logger.log( util::log::Level::ERROR, e->what() );
+                delete e;
         }
 }
 
@@ -98,11 +112,17 @@ void Engine::start()
         graphic::gpu::frameBuffer::setClearColor( 0.0, 0.0, 0.0, 0.0 );
         global::monitor->getGPUContext().getDefaultFrameBuffer().bindAsDrawTarget();
         game::Scene* currentScene = global::configurations.createInitialScene();
+
+        if ( currentScene == nullptr )
+                exception::throwNew( "no initial scenario defined" );
+
         global::fpsAnalyzer->calculateDeltaAndMark();
         global::fpsAnalyzer->setLastDelta( 1.0f / 60.0f );
 
         if ( ( glError = glGetError() ) != GL_NO_ERROR )
                 exception::throwNew( "GL error (%d) during engine initialization", glError );
+
+        global::logger.log( util::log::Level::INFO, "engine loop started" );
 
         while ( true )
         {
@@ -141,4 +161,6 @@ stop_engine_label:
 
                 global::fpsAnalyzer->calculateDeltaAndMark();
         }
+
+        global::logger.log( util::log::Level::INFO, "engine loop stopped" );
 }

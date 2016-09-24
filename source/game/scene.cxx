@@ -25,13 +25,15 @@ void Scene::setNextScene( Scene &scene )
 void Scene::requireEngineStop()
 {
         stopEngine = true;
+        engineResources->logger->log( util::log::Level::INFO, "engine stop required" );
 }
 
 
 void Scene::requireEngineRestart()
 {
         restartEngine = true;
-        requireEngineStop();
+        stopEngine = true;
+        engineResources->logger->log( util::log::Level::INFO, "engine restart required" );
 }
 
 

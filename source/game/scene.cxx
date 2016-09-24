@@ -5,10 +5,7 @@ using namespace ege;
 using namespace ege::game;
 
 
-engine::Resources* Scene::pointerToEngineResources = nullptr;
-
-
-Scene::Scene(): engineResources( pointerToEngineResources )
+Scene::Scene(): engineResources( ege::engine::resources )
 {
         nextScene = nullptr;
         stopEngine = false;

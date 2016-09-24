@@ -16,7 +16,7 @@ monitor::VideoMode::VideoMode( unsigned int width, unsigned int height, unsigned
 void Monitor::createGPUContext( const hardware::monitor::VideoMode& videoMode )
 {
         if ( const_cast< const Monitor* >( this ) != &videoMode.monitor )
-                exception::throwNew( "video mode is not owned by this monitor" );
+                Exception::throwNew( "video mode is not owned by this monitor" );
 
         context = new graphic::gpu::Context( videoMode );
 }
@@ -56,7 +56,7 @@ Monitor::Monitor( void* glfwMonitor ): glfwMonitor( glfwMonitor )
         }
 
         if ( indexOfCurrentVideoMode == -1 )
-                exception::throwNew( "no current video mode found for monitor" );
+                Exception::throwNew( "no current video mode found for monitor" );
 
         this->context = nullptr;
         this->current = videoModes[ indexOfCurrentVideoMode ];
@@ -75,7 +75,7 @@ Monitor::~Monitor()
 const graphic::gpu::Context& Monitor::getGPUContext() const
 {
         if ( context == nullptr )
-                exception::throwNew( "no GPU context found for this monitor" );
+                Exception::throwNew( "no GPU context found for this monitor" );
 
         return *context;
 }

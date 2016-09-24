@@ -23,7 +23,6 @@ namespace ege
                         friend Engine;
 
                         private:
-                                static engine::Resources* pointerToEngineResources;
                                 Scene* nextScene;
                                 bool stopEngine;
                                 bool restartEngine;

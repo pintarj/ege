@@ -14,7 +14,7 @@ gpu::util::image::Buffer* image::loadPng( const char* fileName )
         std::FILE* file = std::fopen( fileName, "rb" );
 
         if ( file == nullptr )
-                exception::throwNew( "can't open file %s", fileName );
+                Exception::throwNew( "can't open file %s", fileName );
 
         png_byte header[ 8 ];
         std::fread( header, 1, 8, file );
@@ -22,7 +22,7 @@ gpu::util::image::Buffer* image::loadPng( const char* fileName )
         if ( png_sig_cmp( header, 0, 8 ) )
         {
                 std::fclose( file );
-                exception::throwNew( "file %s is not recognized as a PNG file", fileName );
+                Exception::throwNew( "file %s is not recognized as a PNG file", fileName );
         }
 
         png_structp png_ptr = png_create_read_struct( PNG_LIBPNG_VER_STRING, NULL, NULL, NULL );
@@ -30,7 +30,7 @@ gpu::util::image::Buffer* image::loadPng( const char* fileName )
         if ( png_ptr == nullptr )
         {
                 std::fclose( file );
-                exception::throwNew( "error while creating png read struct for file %s", fileName );
+                Exception::throwNew( "error while creating png read struct for file %s", fileName );
         }
 
         png_infop info_ptr = png_create_info_struct( png_ptr );
@@ -39,14 +39,14 @@ gpu::util::image::Buffer* image::loadPng( const char* fileName )
         {
                 png_destroy_read_struct( &png_ptr, NULL, nullptr );
                 std::fclose( file );
-                exception::throwNew( "error while creating png info struct for file %s", fileName );
+                Exception::throwNew( "error while creating png info struct for file %s", fileName );
         }
 
         if ( setjmp( png_jmpbuf( png_ptr ) ) )
         {
                 png_destroy_read_struct( &png_ptr, &info_ptr, nullptr );
                 std::fclose( file );
-                exception::throwNew( "error while initializing png IO for file %s", fileName );
+                Exception::throwNew( "error while initializing png IO for file %s", fileName );
         }
 
         png_init_io( png_ptr, file );
@@ -63,7 +63,7 @@ gpu::util::image::Buffer* image::loadPng( const char* fileName )
         {
                 png_destroy_read_struct( &png_ptr, &info_ptr, nullptr );
                 std::fclose( file );
-                exception::throwNew( "error while reading data from png file %s", fileName );
+                Exception::throwNew( "error while reading data from png file %s", fileName );
         }
 
         gpu::util::image::buffer::Format format;
@@ -81,7 +81,7 @@ gpu::util::image::Buffer* image::loadPng( const char* fileName )
                 default:
                         png_destroy_read_struct( &png_ptr, &info_ptr, nullptr );
                         std::fclose( file );
-                        exception::throwNew( "png file %s has an unsupported color type", fileName );
+                        Exception::throwNew( "png file %s has an unsupported color type", fileName );
                         return nullptr;
         }
 
@@ -107,13 +107,13 @@ gpu::util::image::Buffer* image::load( const char* fileName )
         const char* lastPoint = std::strrchr( fileName, '.' );
 
         if ( lastPoint == nullptr )
-                exception::throwNew( "can't load image file %s, because it doesn't have an extension", fileName );
+                Exception::throwNew( "can't load image file %s, because it doesn't have an extension", fileName );
 
         const char* extension = lastPoint + 1;
 
         if ( std::strcmp( extension, "png" ) == 0 )
                 return image::loadPng( fileName );
 
-        exception::throwNew( "can't load image file %s, because the extension is not known", fileName );
+        Exception::throwNew( "can't load image file %s, because the extension is not known", fileName );
         return nullptr;
 }

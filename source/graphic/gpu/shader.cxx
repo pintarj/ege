@@ -22,7 +22,7 @@ Shader::Shader( shader::Type type, const char* sourceCode ): Object( glCreateSha
                 char log[ len ];
                 glGetShaderInfoLog( id, len, NULL, log );
                 glDeleteShader( id );
-                exception::throwNew( "can not compile GL shader: %s", log );
+                Exception::throwNew( "can not compile GL shader: %s", log );
         }
 }
 

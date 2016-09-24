@@ -28,7 +28,7 @@ Program::Program( std::initializer_list< const Shader* > shaders ): Object( glCr
                 char log[ len ];
                 glGetProgramInfoLog( id, len, NULL, log );
                 glDeleteProgram( id );
-                exception::throwNew( "can not link program: %d", log );
+                Exception::throwNew( "can not link program: %d", log );
         }
 }
 

@@ -10,6 +10,9 @@
 using namespace ege;
 
 
+engine::Resources* ege::engine::resources;
+
+
 namespace global
 {
         static std::atomic_bool started( false );
@@ -24,6 +27,7 @@ namespace global
 
 static void initializeStaticMembers()
 {
+        ege::engine::resources = nullptr;
         global::configurations.createInitialScene = [] () { return nullptr; };
         global::monitor = nullptr;
         global::fpsAnalyzer = nullptr;
@@ -48,7 +52,7 @@ void engine::start( const std::function< void( engine::Configurations& ) > &conf
         try
         {
                 if ( global::started.exchange( true ) )
-                        exception::throwNew( "an attempt to start engine was done, but engine is already started" );
+                        Exception::throwNew( "an attempt to start engine was done, but engine is already started" );
 
                 while ( true )
                 {
@@ -71,10 +75,9 @@ void engine::start( const std::function< void( engine::Configurations& ) > &conf
 
                 global::started = false;
         }
-        catch ( std::exception* e )
+        catch ( ege::Exception* e )
         {
-                global::logger.log( util::log::Level::ERROR, e->what() );
-                delete e;
+                e->consume();
         }
 }
 
@@ -85,13 +88,13 @@ Engine::Engine()
         global::monitor = new hardware::Monitor( glfwGetPrimaryMonitor() );
         global::fpsAnalyzer = new util::fps::Analyzer();
         global::fpsModerator = new util::fps::Moderator( *global::fpsAnalyzer, 60 );
-        ege::game::Scene::pointerToEngineResources = new engine::Resources();
+        ege::engine::resources = new engine::Resources();
 }
 
 
 Engine::~Engine()
 {
-        delete ege::game::Scene::pointerToEngineResources;
+        delete ege::engine::resources;
         delete global::fpsModerator;
         delete global::fpsAnalyzer;
         delete global::monitor;
@@ -100,7 +103,7 @@ Engine::~Engine()
         GLenum glError = GL_NO_ERROR;
 
         if ( ( glError = glGetError() ) != GL_NO_ERROR )
-                exception::throwNew( "GL error (%d) during engine termination", glError );
+                Exception::throwNew( "GL error (%d) during engine termination", glError );
 }
 
 
@@ -114,13 +117,13 @@ void Engine::start()
         game::Scene* currentScene = global::configurations.createInitialScene();
 
         if ( currentScene == nullptr )
-                exception::throwNew( "no initial scenario defined" );
+                Exception::throwNew( "no initial scenario defined" );
 
         global::fpsAnalyzer->calculateDeltaAndMark();
         global::fpsAnalyzer->setLastDelta( 1.0f / 60.0f );
 
         if ( ( glError = glGetError() ) != GL_NO_ERROR )
-                exception::throwNew( "GL error (%d) during engine initialization", glError );
+                Exception::throwNew( "GL error (%d) during engine initialization", glError );
 
         global::logger.log( util::log::Level::INFO, "engine loop started" );
 
@@ -157,7 +160,7 @@ stop_engine_label:
                 }
 
                 if ( ( glError = glGetError() ) != GL_NO_ERROR )
-                        exception::throwNew( "GL error (%d) during engine execution", glError );
+                        Exception::throwNew( "GL error (%d) during engine execution", glError );
 
                 global::fpsAnalyzer->calculateDeltaAndMark();
         }

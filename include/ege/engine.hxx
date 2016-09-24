@@ -56,6 +56,8 @@ namespace ege
                                 Resources();
                 };
 
+                extern Resources* resources;
+
                 void start( const std::function< void( Configurations& ) >& configure );
         }
 

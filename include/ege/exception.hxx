@@ -4,12 +4,24 @@
 #define EGE_EXCEPTION_HXX
 
 
+#include <exception>
+
+
 namespace ege
 {
-        namespace exception
+        class Exception: public std::exception
         {
-                void throwNew( const char * formatted, ... );
-        }
+                private:
+                        const char* message;
+
+                        Exception( const char* message );
+
+                public:
+                        virtual ~Exception() {};
+                        virtual const char* what() const throw();
+                        void consume();
+                        static void throwNew( const char * formatted, ... );
+        };
 }
 
 

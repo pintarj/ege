@@ -17,6 +17,7 @@ namespace global
 {
         static std::atomic_bool started( false );
         static engine::Configurations configurations;
+        static hardware::Keyboard* keyboard;
         static hardware::Monitor* monitor;
         static util::fps::Analyzer* fpsAnalyzer;
         static util::fps::Moderator* fpsModerator;
@@ -29,6 +30,7 @@ static void initializeStaticMembers()
 {
         ege::engine::resources = nullptr;
         global::configurations.createInitialScene = [] () { return nullptr; };
+        global::keyboard = nullptr;
         global::monitor = nullptr;
         global::fpsAnalyzer = nullptr;
         global::fpsModerator = nullptr;
@@ -38,6 +40,7 @@ static void initializeStaticMembers()
 
 
 engine::Resources::Resources():
+        keyboard( global::keyboard ),
         monitor( global::monitor ),
         fpsAnalyzer( global::fpsAnalyzer ),
         fpsModerator( global::fpsModerator ),
@@ -88,6 +91,7 @@ Engine::Engine()
         global::monitor = new hardware::Monitor( glfwGetPrimaryMonitor() );
         global::fpsAnalyzer = new util::fps::Analyzer();
         global::fpsModerator = new util::fps::Moderator( *global::fpsAnalyzer, 60 );
+        global::keyboard = new hardware::Keyboard();
         ege::engine::resources = new engine::Resources();
 }
 
@@ -98,6 +102,7 @@ Engine::~Engine()
         delete global::fpsModerator;
         delete global::fpsAnalyzer;
         delete global::monitor;
+        delete global::keyboard;
         glfwTerminate();
 
         GLenum glError = GL_NO_ERROR;
@@ -115,6 +120,8 @@ void Engine::start()
         graphic::gpu::frameBuffer::setClearColor( 0.0, 0.0, 0.0, 0.0 );
         global::monitor->getGPUContext().getDefaultFrameBuffer().bindAsDrawTarget();
         game::Scene* currentScene = global::configurations.createInitialScene();
+        void* glfwWindows[ 1 ] = { global::monitor->getGPUContext().glfwContext };
+        global::keyboard->listenOnWindows( glfwWindows, 1 );
 
         if ( currentScene == nullptr )
                 Exception::throwNew( "no initial scenario defined" );
@@ -130,6 +137,7 @@ void Engine::start()
         while ( true )
         {
                 glfwPollEvents();
+                glfwPollEvents(); // solve bug: glfw perform a key repressed after key repeating
 
                 if ( glfwWindowShouldClose( static_cast< GLFWwindow* >( global::monitor->getGPUContext().glfwContext ) ) )
                 {

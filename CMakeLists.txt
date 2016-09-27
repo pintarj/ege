@@ -22,6 +22,7 @@ ADD_LIBRARY( ege-core SHARED
         source/graphic/gpu/util/image/buffer.cxx
         source/graphic/gpu/util/texture/rectangular-region.cxx
         source/graphic/render/texture-regions-stream-drawer.cxx
+        source/hardware/keyboard.cxx
         source/hardware/monitor.cxx
         source/util/fps/analyzer.cxx
         source/util/fps/moderator.cxx

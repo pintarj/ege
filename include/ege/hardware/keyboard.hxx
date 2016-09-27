@@ -4,10 +4,17 @@
 #define EGE_HARDWARE_KEYBOARD_HXX
 
 
+#include <ege/engine.hxx>
+
+
 namespace ege
 {
+        class Engine;
+
         namespace hardware
         {
+                class Keyboard;
+
                 namespace keyboard
                 {
                         enum class Key
@@ -133,12 +140,47 @@ namespace ege
                                 RIGHT_SUPER = 347,
                                 MENU = 348
                         };
+
+                        namespace key
+                        {
+                                class Modifier
+                                {
+                                        friend Keyboard;
+
+                                        private:
+                                                const unsigned int modifier;
+
+                                                Modifier( unsigned int modifier ): modifier( modifier ) {}
+
+                                        public:
+                                                inline bool isShift() { return ( modifier & 0x1 ) != 0; }
+                                                inline bool isCtrl() { return ( modifier & 0x2 ) != 0; }
+                                                inline bool isAlt() { return ( modifier & 0x4 ) != 0; }
+                                                inline bool isSuper() { return ( modifier & 0x8 ) != 0; }
+                                };
+
+                                struct EventListener
+                                {
+                                        virtual void onKeyPress( Key key, Modifier modifier );
+                                        virtual void onKeyRelease( Key key, Modifier modifier );
+                                        virtual ~EventListener() {};
+                                };
+                        }
                 }
 
                 class Keyboard
                 {
+                        friend Engine;
+
+                        private:
+                                Keyboard();
+                                static void listenOnWindows( void** windows, unsigned int count );
+
                         public:
-                                virtual bool isPressed( keyboard::Key key ) = 0;
+                                virtual ~Keyboard();
+                                bool isPressed( keyboard::Key key ) const;
+                                void addKeyEventListener( keyboard::key::EventListener* listener );
+                                void removeKeyEventListener( keyboard::key::EventListener* listener );
                 };
         }
 }

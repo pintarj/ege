@@ -34,6 +34,7 @@ namespace ege
         namespace hardware
         {
                 class Monitor;
+                class Keyboard;
         }
 
         namespace engine
@@ -45,6 +46,7 @@ namespace ege
 
                 struct Resources
                 {
+                        hardware::Keyboard* const keyboard;
                         hardware::Monitor* const monitor;
                         util::fps::Analyzer* const fpsAnalyzer;
                         util::fps::Moderator* const fpsModerator;

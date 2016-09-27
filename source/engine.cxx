@@ -1,5 +1,6 @@
 #include <ege/engine.hxx>
 #include <ege/exception.hxx>
+#include <ege/version.hxx>
 #include <ege/graphic/gpu/context.hxx>
 #include <ege/util/log/logger.hxx>
 #include <GL/glew.h>
@@ -90,7 +91,13 @@ void engine::start( const std::function< void( engine::Configurations& ) > &conf
 
 Engine::Engine()
 {
-        glfwInit();
+        if( glfwInit() == GL_FALSE )
+                Exception::throwNew( "could not initialize GLFW" );
+
+        int glfwVersion[ 3 ];
+        glfwGetVersion( &glfwVersion[ 0 ], &glfwVersion[ 1 ], &glfwVersion[ 2 ] );
+        global::logger.log( util::log::Level::INFO, "GLFW %d.%d.%d initialized", glfwVersion[ 0 ], glfwVersion[ 1 ], glfwVersion[ 2 ] );
+
         global::monitor = new hardware::Monitor( glfwGetPrimaryMonitor() );
         global::fpsAnalyzer = new util::fps::Analyzer();
         global::fpsModerator = new util::fps::Moderator( *global::fpsAnalyzer, 60 );
@@ -113,6 +120,9 @@ Engine::Engine()
         if ( glError != GL_NO_ERROR )
                 Exception::throwNew( "GL error (%d) during engine initialization", glError );
 
+        uint32_t egeVersion[ 3 ];
+        version::get( &egeVersion[ 0 ], &egeVersion[ 1 ], &egeVersion[ 2 ] );
+        global::logger.log( util::log::Level::INFO, "EGE %d.%d.%d initialized", egeVersion[ 0 ], egeVersion[ 1 ], egeVersion[ 2 ] );
         global::fpsAnalyzer->calculateDeltaAndMark();
         global::fpsAnalyzer->setLastDelta( 1.0f / 60.0f );
 }

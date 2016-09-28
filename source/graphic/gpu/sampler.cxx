@@ -17,6 +17,8 @@ Sampler::Sampler(): Object( generateSampler() )
 {
         setMagFilter( sampler::Filter::LINEAR );
         setMinFilter( sampler::Filter::LINEAR );
+        glSamplerParameteri( id, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
+        glSamplerParameteri( id, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
 }
 
 

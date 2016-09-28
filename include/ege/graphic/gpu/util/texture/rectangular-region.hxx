@@ -20,20 +20,19 @@ namespace ege
                                         class RectangularRegion
                                         {
                                                 private:
-                                                        unsigned int x;
-                                                        unsigned int y;
                                                         float uv[ 8 ];
-
-                                                        void calculateUV();
 
                                                 public:
                                                         const gpu::Texture2D& texture;
+                                                        const unsigned int x;
+                                                        const unsigned int y;
                                                         const unsigned int width;
                                                         const unsigned int height;
 
                                                         RectangularRegion( const gpu::Texture2D& texture, unsigned int x, unsigned int y, unsigned int width, unsigned int height );
                                                         RectangularRegion( const gpu::Texture2D& texture );
-                                                        const float* getUVCoordinates();
+                                                        void recalculateUV();
+                                                        const float* getUVCoordinates() const;
                                         };
                                 }
                         }

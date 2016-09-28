@@ -6,11 +6,9 @@ using namespace ege::graphic::gpu::util::texture;
 
 
 RectangularRegion::RectangularRegion( const Texture2D &texture, unsigned int x, unsigned int y, unsigned int width, unsigned int height ):
-        texture( texture ), width( width ), height( height )
+        texture( texture ), width( width ), height( height ), x( x ), y( y )
 {
-        this->x = x;
-        this->y = y;
-        calculateUV();
+        recalculateUV();
 }
 
 
@@ -20,7 +18,7 @@ RectangularRegion::RectangularRegion( const Texture2D &texture ): RectangularReg
 }
 
 
-void RectangularRegion::calculateUV()
+void RectangularRegion::recalculateUV()
 {
         const float tw = ( float ) texture.width;
         const float th = ( float ) texture.height;
@@ -44,7 +42,7 @@ void RectangularRegion::calculateUV()
 }
 
 
-const float* RectangularRegion::getUVCoordinates()
+const float* RectangularRegion::getUVCoordinates() const
 {
         return uv;
 }

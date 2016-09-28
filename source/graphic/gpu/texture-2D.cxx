@@ -35,3 +35,12 @@ Texture2D::~Texture2D()
 {
 
 }
+
+
+void Texture2D::substitute( unsigned int x, unsigned int y, const util::image::Buffer& imageBuffer )
+{
+        glBindTexture( GL_TEXTURE_2D, id );
+        glBindBuffer( GL_PIXEL_UNPACK_BUFFER, object::getId( imageBuffer.getBuffer() ) );
+        const void* offset = reinterpret_cast< const void* >( ( size_t ) imageBuffer.getInBufferOffset() );
+        glTexSubImage2D( GL_TEXTURE_2D, 0, x, y, imageBuffer.width, imageBuffer.height, ( GLenum ) imageBuffer.format, GL_UNSIGNED_BYTE, offset );
+}

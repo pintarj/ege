@@ -24,6 +24,7 @@ namespace ege
                                         Texture2D( const util::image::Buffer& imageBuffer );
                                         Texture2D( unsigned int width, unsigned int height, texture::Format format = texture::Format::RGBA );
                                         virtual ~Texture2D();
+                                        void substitute( unsigned int x, unsigned int y, const util::image::Buffer& imageBuffer );
                         };
                 }
         }

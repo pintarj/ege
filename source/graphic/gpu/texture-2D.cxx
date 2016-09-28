@@ -22,6 +22,15 @@ Texture2D::Texture2D( const util::image::Buffer& imageBuffer ): Texture2D( image
 }
 
 
+Texture2D::Texture2D( unsigned int width, unsigned int height, texture::Format format ):
+        Texture( GL_TEXTURE_2D, format ), width( width ), height( height )
+{
+        glBindTexture( GL_TEXTURE_2D, id );
+        glBindBuffer( GL_PIXEL_UNPACK_BUFFER, 0 );
+        glTexImage2D( GL_TEXTURE_2D, 0, ( GLenum ) format, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr );
+}
+
+
 Texture2D::~Texture2D()
 {
 

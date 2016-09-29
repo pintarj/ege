@@ -36,6 +36,7 @@ struct DynamicAtlas::Node
         Node* getOwnershipOfFirst();
         Node* destroyUntil( unsigned int size );
         static void decrementRootSize( DynamicAtlas::Node** root, unsigned int size );
+        unsigned int canBeReducesTo();
 };
 
 
@@ -204,7 +205,9 @@ void DynamicAtlas::Node::calculateFragmentation( unsigned int x, unsigned int y,
 
 void DynamicAtlas::Node::assign( RectangularRegion* owner, unsigned int x, unsigned int y, unsigned int width, unsigned int height )
 {
-        if ( size == width && size == height )
+        const unsigned int minNodeSize = 1;
+
+        if ( ( size == width && size == height ) || size == minNodeSize )
         {
                 this->owner = owner;
                 return;
@@ -301,7 +304,10 @@ DynamicAtlas::Node* DynamicAtlas::Node::destroyUntil( unsigned int size )
                 return this;
 
         if ( !isFragmented() )
+        {
+                delete this;
                 return nullptr;
+        }
 
         DynamicAtlas::Node* firstLower = getOwnershipOfFirst();
         delete this;
@@ -313,6 +319,22 @@ void DynamicAtlas::Node::decrementRootSize( DynamicAtlas::Node** root, unsigned 
 {
         DynamicAtlas::Node* result = ( *root )->destroyUntil( size );
         *root = ( result != nullptr ) ? result : new DynamicAtlas::Node( 0, 0, size );
+}
+
+
+unsigned int DynamicAtlas::Node::canBeReducesTo()
+{
+        if ( isFragmented() )
+        {
+                return ( ( !lowers[ 1 ]->isOwned() && !lowers[ 1 ]->isFragmented() )
+                        && ( !lowers[ 2 ]->isOwned() && !lowers[ 2 ]->isFragmented() )
+                        && ( !lowers[ 3 ]->isOwned() && !lowers[ 3 ]->isFragmented() ) )
+                        ? lowers[ 0 ]->canBeReducesTo() : size;
+        }
+        else
+        {
+                return isOwned() ? size : 0;
+        }
 }
 
 
@@ -418,6 +440,10 @@ void DynamicAtlas::remove( const RectangularRegion* region )
 
         usedPixels -= region->width * region->height;
         root->unassign( region->x, region->y, region->width, region->height );
+
+        unsigned int canBeReducedTo = root->canBeReducesTo();
+        canBeReducedTo = canBeReducedTo < edgeThreshold ? edgeThreshold : canBeReducedTo;
+        changeEdgeSize( canBeReducedTo );
 }
 
 

@@ -1,7 +1,7 @@
 
 
 template < typename unit >
-ege::graphic::gpu::util::buffer::WriteMapper< unit >::WriteMapper( gpu::Buffer* buffer, size_t unitsPerSector, size_t sectorsCount, size_t offset ):
+ege::graphic::gpu::buffer::util::WriteMapper< unit >::WriteMapper( gpu::Buffer* buffer, size_t unitsPerSector, size_t sectorsCount, size_t offset ):
         Mapper< unit >( buffer, unitsPerSector, sectorsCount, offset )
 {
 
@@ -9,7 +9,7 @@ ege::graphic::gpu::util::buffer::WriteMapper< unit >::WriteMapper( gpu::Buffer* 
 
 
 template < typename unit >
-void ege::graphic::gpu::util::buffer::WriteMapper< unit >::mapSector( size_t index, std::initializer_list <gpu::buffer::map::WriteAccess> access, size_t includeNPrevUnits )
+void ege::graphic::gpu::buffer::util::WriteMapper< unit >::mapSector( size_t index, std::initializer_list <gpu::buffer::map::WriteAccess> access, size_t includeNPrevUnits )
 {
         unmap();
         size_t prevUnitsInBytes = includeNPrevUnits * sizeof( unit );
@@ -20,28 +20,28 @@ void ege::graphic::gpu::util::buffer::WriteMapper< unit >::mapSector( size_t ind
 
 
 template < typename unit >
-const ege::graphic::gpu::buffer::map::WriteRange& ege::graphic::gpu::util::buffer::WriteMapper< unit >::getRange()
+const ege::graphic::gpu::buffer::map::WriteRange& ege::graphic::gpu::buffer::util::WriteMapper< unit >::getRange()
 {
         return *range;
 }
 
 
 template < typename unit >
-unit* ege::graphic::gpu::util::buffer::WriteMapper< unit >::getMappedArea()
+unit* ege::graphic::gpu::buffer::util::WriteMapper< unit >::getMappedArea()
 {
         return this->mappedArea;
 }
 
 
 template < typename unit >
-size_t ege::graphic::gpu::util::buffer::WriteMapper< unit >::getMappedSectorIndex()
+size_t ege::graphic::gpu::buffer::util::WriteMapper< unit >::getMappedSectorIndex()
 {
 
 }
 
 
 template < typename unit >
-void ege::graphic::gpu::util::buffer::WriteMapper< unit >::unmap()
+void ege::graphic::gpu::buffer::util::WriteMapper< unit >::unmap()
 {
         if ( range != nullptr )
         {
@@ -55,7 +55,7 @@ void ege::graphic::gpu::util::buffer::WriteMapper< unit >::unmap()
 
 
 template < typename unit >
-void ege::graphic::gpu::util::buffer::WriteMapper< unit >::flush()
+void ege::graphic::gpu::buffer::util::WriteMapper< unit >::flush()
 {
         if ( range == nullptr )
                 return;

@@ -1,7 +1,7 @@
 
 
-#ifndef EGE_GRAPHIC_GPU_UTIL_IMAGE_BUFFER_HXX
-#define EGE_GRAPHIC_GPU_UTIL_IMAGE_BUFFER_HXX
+#ifndef EGE_GRAPHIC_GPU_TEXTURE_UTIL_IMAGE_BUFFER_HXX
+#define EGE_GRAPHIC_GPU_TEXTURE_UTIL_IMAGE_BUFFER_HXX
 
 
 #include <ege/graphic/gpu/buffer.hxx>
@@ -14,11 +14,11 @@ namespace ege
         {
                 namespace gpu
                 {
-                        namespace util
+                        namespace texture
                         {
-                                namespace image
+                                namespace util
                                 {
-                                        namespace buffer
+                                        namespace imageBuffer
                                         {
                                                 enum class Format
                                                 {
@@ -55,22 +55,22 @@ namespace ege
                                                 }
                                         }
 
-                                        class Buffer
+                                        class ImageBuffer
                                         {
                                                 private:
-                                                        std::shared_ptr< ege::graphic::gpu::Buffer > buffer;
+                                                        std::shared_ptr< Buffer > buffer;
                                                         unsigned int offset;
 
                                                 public:
                                                         const unsigned int width;
                                                         const unsigned int height;
-                                                        const buffer::Format format;
+                                                        const imageBuffer::Format format;
 
-                                                        Buffer( unsigned int width, unsigned int height, buffer::Format format,
-                                                                std::shared_ptr< ege::graphic::gpu::Buffer > buffer, unsigned int offset = 0 );
+                                                        ImageBuffer( unsigned int width, unsigned int height, imageBuffer::Format format,
+                                                                std::shared_ptr< Buffer > buffer, unsigned int offset = 0 );
 
-                                                        virtual ~Buffer();
-                                                        const ege::graphic::gpu::Buffer& getBuffer() const;
+                                                        virtual ~ImageBuffer();
+                                                        const Buffer& getBuffer() const;
                                                         unsigned int getInBufferOffset() const;
                                         };
                                 }

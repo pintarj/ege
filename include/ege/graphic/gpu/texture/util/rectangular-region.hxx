@@ -1,10 +1,10 @@
 
 
-#ifndef EGE_GRAPHIC_GPU_UTIL_TEXTURE_RECTANGULAR_REGION_HXX
-#define EGE_GRAPHIC_GPU_UTIL_TEXTURE_RECTANGULAR_REGION_HXX
+#ifndef EGE_GRAPHIC_GPU_TEXTURE_UTIL_RECTANGULAR_REGION_HXX
+#define EGE_GRAPHIC_GPU_TEXTURE_UTIL_RECTANGULAR_REGION_HXX
 
 
-#include <ege/graphic/gpu/texture-2D.hxx>
+#include <ege/graphic/gpu/texture/texture-2D.hxx>
 
 
 namespace ege
@@ -13,9 +13,9 @@ namespace ege
         {
                 namespace gpu
                 {
-                        namespace util
+                        namespace texture
                         {
-                                namespace texture
+                                namespace util
                                 {
                                         class RectangularRegion
                                         {
@@ -23,14 +23,14 @@ namespace ege
                                                         float uv[ 8 ];
 
                                                 public:
-                                                        const gpu::Texture2D& texture;
+                                                        const Texture2D& texture;
                                                         const unsigned int x;
                                                         const unsigned int y;
                                                         const unsigned int width;
                                                         const unsigned int height;
 
-                                                        RectangularRegion( const gpu::Texture2D& texture, unsigned int x, unsigned int y, unsigned int width, unsigned int height );
-                                                        RectangularRegion( const gpu::Texture2D& texture );
+                                                        RectangularRegion( const Texture2D& texture, unsigned int x, unsigned int y, unsigned int width, unsigned int height );
+                                                        RectangularRegion( const Texture2D& texture );
                                                         void recalculateUV();
                                                         const float* getUVCoordinates() const;
                                         };

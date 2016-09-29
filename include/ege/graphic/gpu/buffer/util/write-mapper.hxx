@@ -1,11 +1,11 @@
 
 
-#ifndef EGE_GRAPHIC_GPU_UTIL_BUFFER_WRITE_MAPPER_HXX
-#define EGE_GRAPHIC_GPU_UTIL_BUFFER_WRITE_MAPPER_HXX
+#ifndef EGE_GRAPHIC_GPU_BUFFER_UTIL_WRITE_MAPPER_HXX
+#define EGE_GRAPHIC_GPU_BUFFER_UTIL_WRITE_MAPPER_HXX
 
 
 #include <ege/graphic/gpu/buffer.hxx>
-#include <ege/graphic/gpu/util/buffer/mapper.hxx>
+#include <ege/graphic/gpu/buffer/util/mapper.hxx>
 
 
 namespace ege
@@ -14,9 +14,9 @@ namespace ege
         {
                 namespace gpu
                 {
-                        namespace util
+                        namespace buffer
                         {
-                                namespace buffer
+                                namespace util
                                 {
                                         template < typename unit >
                                         class WriteMapper: public Mapper< unit >

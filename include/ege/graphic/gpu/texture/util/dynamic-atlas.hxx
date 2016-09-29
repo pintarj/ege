@@ -1,12 +1,12 @@
 
 
-#ifndef EGE_GRAPHIC_GPU_UTIL_TEXTURE_DYNAMIC_ATLAS_HXX
-#define EGE_GRAPHIC_GPU_UTIL_TEXTURE_DYNAMIC_ATLAS_HXX
+#ifndef EGE_GRAPHIC_GPU_TEXTURE_UTIL_DYNAMIC_ATLAS_HXX
+#define EGE_GRAPHIC_GPU_TEXTURE_UTIL_DYNAMIC_ATLAS_HXX
 
 
-#include <ege/graphic/gpu/texture-2D.hxx>
-#include <ege/graphic/gpu/util/image/buffer.hxx>
-#include <ege/graphic/gpu/util/texture/rectangular-region.hxx>
+#include <ege/graphic/gpu/texture/texture-2D.hxx>
+#include <ege/graphic/gpu/texture/util/image-buffer.hxx>
+#include <ege/graphic/gpu/texture/util/rectangular-region.hxx>
 #include <set>
 
 
@@ -16,9 +16,9 @@ namespace ege
         {
                 namespace gpu
                 {
-                        namespace util
+                        namespace texture
                         {
-                                namespace texture
+                                namespace util
                                 {
                                         class DynamicAtlas
                                         {
@@ -39,7 +39,7 @@ namespace ege
                                                 public:
                                                         DynamicAtlas( unsigned int edgeThreshold = 256 );
                                                         virtual ~DynamicAtlas();
-                                                        const RectangularRegion* insert( const image::Buffer& imageBuffer );
+                                                        const RectangularRegion* insert( const ImageBuffer& imageBuffer );
                                                         void remove( const RectangularRegion* region );
                                                         void removeAll();
                                                         const Texture2D& getTexture();

@@ -5,7 +5,7 @@
 
 
 #include <ege/graphic/gpu/buffer.hxx>
-#include <ege/graphic/gpu/util/buffer/write-mapper.hxx>
+#include <ege/graphic/gpu/buffer/util/write-mapper.hxx>
 
 
 namespace ege
@@ -14,9 +14,9 @@ namespace ege
         {
                 namespace gpu
                 {
-                        namespace util
+                        namespace buffer
                         {
-                                namespace buffer
+                                namespace util
                                 {
                                         template < typename unit >
                                         class StreamWriteMapper: public WriteMapper< unit >

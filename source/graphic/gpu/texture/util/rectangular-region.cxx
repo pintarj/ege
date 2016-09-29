@@ -1,8 +1,7 @@
-#include <ege/graphic/gpu/util/texture/rectangular-region.hxx>
+#include <ege/graphic/gpu/texture/util/rectangular-region.hxx>
 
 
-using namespace ege::graphic::gpu;
-using namespace ege::graphic::gpu::util::texture;
+using namespace ege::graphic::gpu::texture::util;
 
 
 RectangularRegion::RectangularRegion( const Texture2D &texture, unsigned int x, unsigned int y, unsigned int width, unsigned int height ):

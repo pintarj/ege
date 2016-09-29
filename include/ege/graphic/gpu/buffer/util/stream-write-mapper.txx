@@ -1,7 +1,7 @@
 
 
 template < typename unit >
-ege::graphic::gpu::util::buffer::StreamWriteMapper< unit >::StreamWriteMapper( gpu::Buffer* buffer, size_t unitsPerSector, size_t sectorsCount, size_t offset ):
+ege::graphic::gpu::buffer::util::StreamWriteMapper< unit >::StreamWriteMapper( gpu::Buffer* buffer, size_t unitsPerSector, size_t sectorsCount, size_t offset ):
         WriteMapper< unit >( buffer, unitsPerSector, sectorsCount, offset )
 {
         prepareSector( 0 );
@@ -9,7 +9,7 @@ ege::graphic::gpu::util::buffer::StreamWriteMapper< unit >::StreamWriteMapper( g
 
 
 template < typename unit >
-void ege::graphic::gpu::util::buffer::StreamWriteMapper< unit >::prepareSector( size_t index, size_t includeNPrevUnits )
+void ege::graphic::gpu::buffer::util::StreamWriteMapper< unit >::prepareSector( size_t index, size_t includeNPrevUnits )
 {
         this->mapSector( index, { gpu::buffer::map::WriteAccess::INVALIDATE_RANGE, gpu::buffer::map::WriteAccess::UNSYNCHRONIZED, gpu::buffer::map::WriteAccess::FLUSH_EXPLICIT }, includeNPrevUnits );
         flushedUnits = 0;
@@ -18,7 +18,7 @@ void ege::graphic::gpu::util::buffer::StreamWriteMapper< unit >::prepareSector( 
 
 
 template < typename unit >
-void ege::graphic::gpu::util::buffer::StreamWriteMapper< unit >::performFlush()
+void ege::graphic::gpu::buffer::util::StreamWriteMapper< unit >::performFlush()
 {
         if ( flushedUnits == nextIndex )
                 return;
@@ -29,7 +29,7 @@ void ege::graphic::gpu::util::buffer::StreamWriteMapper< unit >::performFlush()
 
 
 template < typename unit >
-unit* ege::graphic::gpu::util::buffer::StreamWriteMapper< unit >::mapNext()
+unit* ege::graphic::gpu::buffer::util::StreamWriteMapper< unit >::mapNext()
 {
         if ( nextIndex == this->unitsPerSector )
         {
@@ -46,7 +46,7 @@ unit* ege::graphic::gpu::util::buffer::StreamWriteMapper< unit >::mapNext()
 
 
 template < typename unit >
-unit* ege::graphic::gpu::util::buffer::StreamWriteMapper< unit >::mapNext( size_t nUnits )
+unit* ege::graphic::gpu::buffer::util::StreamWriteMapper< unit >::mapNext( size_t nUnits )
 {
         if ( ( nextIndex + nUnits - 1 ) >= this->unitsPerSector )
         {
@@ -65,7 +65,7 @@ unit* ege::graphic::gpu::util::buffer::StreamWriteMapper< unit >::mapNext( size_
 
 
 template < typename unit >
-void ege::graphic::gpu::util::buffer::StreamWriteMapper< unit >::reset()
+void ege::graphic::gpu::buffer::util::StreamWriteMapper< unit >::reset()
 {
         prepareSector( 0 );
 }

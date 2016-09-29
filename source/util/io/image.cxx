@@ -1,15 +1,17 @@
 #include <ege/util/io/image.hxx>
 #include <ege/exception.hxx>
+#include <ege/graphic/gpu/buffer.hxx>
 #include <cstring>
 #include <memory>
 #include <png.h>
 
 
-using namespace ege::graphic;
+using namespace ege::graphic::gpu;
+using namespace ege::graphic::gpu::texture::util;
 using namespace ege::util::io;
 
 
-gpu::util::image::Buffer* image::loadPng( const char* fileName )
+ImageBuffer* image::loadPng( const char* fileName )
 {
         std::FILE* file = std::fopen( fileName, "rb" );
 
@@ -52,8 +54,8 @@ gpu::util::image::Buffer* image::loadPng( const char* fileName )
         png_init_io( png_ptr, file );
         png_set_sig_bytes( png_ptr, 8 );
         png_read_info( png_ptr, info_ptr );
-        size_t width = png_get_image_width( png_ptr, info_ptr );
-        size_t height = png_get_image_height( png_ptr, info_ptr );
+        unsigned int width = static_cast< unsigned int >( png_get_image_width( png_ptr, info_ptr ) );
+        unsigned int height = static_cast< unsigned int >( png_get_image_height( png_ptr, info_ptr ) );
         png_byte color_type = png_get_color_type( png_ptr, info_ptr );
         png_get_bit_depth( png_ptr, info_ptr );
         png_set_interlace_handling( png_ptr );
@@ -66,16 +68,16 @@ gpu::util::image::Buffer* image::loadPng( const char* fileName )
                 Exception::throwNew( "error while reading data from png file %s", fileName );
         }
 
-        gpu::util::image::buffer::Format format;
+        imageBuffer::Format format;
 
         switch ( color_type )
         {
                 case PNG_COLOR_TYPE_RGBA:
-                        format = gpu::util::image::buffer::Format::RGBA;
+                        format = imageBuffer::Format::RGBA;
                         break;
 
                 case PNG_COLOR_TYPE_RGB:
-                        format = gpu::util::image::buffer::Format::RGB;
+                        format = imageBuffer::Format::RGB;
                         break;
 
                 default:
@@ -85,9 +87,9 @@ gpu::util::image::Buffer* image::loadPng( const char* fileName )
                         return nullptr;
         }
 
-        const size_t rowBytes = width * gpu::util::image::buffer::format::bytesPerPixel( format );
-        std::shared_ptr< gpu::Buffer > pixels( new gpu::Buffer( height * rowBytes, gpu::buffer::usage::Frequency::STATIC, gpu::buffer::usage::Nature::DRAW ) );
-        gpu::buffer::map::WriteRange* writeRange = new gpu::buffer::map::WriteRange( *pixels );
+        const unsigned int rowBytes = width * imageBuffer::format::bytesPerPixel( format );
+        std::shared_ptr< Buffer > pixels( new Buffer( height * rowBytes, buffer::usage::Frequency::STATIC, buffer::usage::Nature::DRAW ) );
+        buffer::map::WriteRange* writeRange = new buffer::map::WriteRange( *pixels );
         png_bytep* rowPointers = new png_bytep[ height ];
 
         for ( size_t i = 0; i < height; ++i )
@@ -98,11 +100,11 @@ gpu::util::image::Buffer* image::loadPng( const char* fileName )
         png_destroy_read_struct( &png_ptr, &info_ptr, nullptr );
         std::fclose( file );
         delete writeRange;
-        return new gpu::util::image::Buffer( ( unsigned int ) width, ( unsigned int ) height, format, pixels );
+        return new ImageBuffer( ( unsigned int ) width, ( unsigned int ) height, format, pixels );
 }
 
 
-gpu::util::image::Buffer* image::load( const char* fileName )
+ImageBuffer* image::load( const char* fileName )
 {
         const char* lastPoint = std::strrchr( fileName, '.' );
 

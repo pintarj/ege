@@ -1,12 +1,12 @@
-#include <ege/graphic/gpu/texture-2D.hxx>
+#include <ege/graphic/gpu/texture/texture-2D.hxx>
 #include <GL/glew.h>
 #include <cstddef>
 
 
-using namespace ege::graphic::gpu;
+using namespace ege::graphic::gpu::texture;
 
 
-Texture2D::Texture2D( const util::image::Buffer& imageBuffer, texture::Format format ):
+Texture2D::Texture2D( const util::ImageBuffer& imageBuffer, texture::Format format ):
         Texture( GL_TEXTURE_2D, format ), width( imageBuffer.width ), height( imageBuffer.height )
 {
         glBindTexture( GL_TEXTURE_2D, id );
@@ -16,7 +16,7 @@ Texture2D::Texture2D( const util::image::Buffer& imageBuffer, texture::Format fo
 }
 
 
-Texture2D::Texture2D( const util::image::Buffer& imageBuffer ): Texture2D( imageBuffer, ( texture::Format ) ( ( GLenum ) imageBuffer.format ) )
+Texture2D::Texture2D( const util::ImageBuffer& imageBuffer ): Texture2D( imageBuffer, ( texture::Format ) ( ( GLenum ) imageBuffer.format ) )
 {
 
 }
@@ -37,7 +37,7 @@ Texture2D::~Texture2D()
 }
 
 
-void Texture2D::substitute( unsigned int x, unsigned int y, const util::image::Buffer& imageBuffer )
+void Texture2D::substitute( unsigned int x, unsigned int y, const util::ImageBuffer& imageBuffer )
 {
         glBindTexture( GL_TEXTURE_2D, id );
         glBindBuffer( GL_PIXEL_UNPACK_BUFFER, object::getId( imageBuffer.getBuffer() ) );

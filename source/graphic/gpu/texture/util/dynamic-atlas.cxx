@@ -1,11 +1,11 @@
-#include <ege/graphic/gpu/util/texture/dynamic-atlas.hxx>
+#include <ege/graphic/gpu/texture/util/dynamic-atlas.hxx>
 #include <ege/exception.hxx>
 #include <ege/engine.hxx>
 
 
 using namespace ege;
 using namespace ege::graphic::gpu;
-using namespace ege::graphic::gpu::util::texture;
+using namespace ege::graphic::gpu::texture::util;
 
 
 struct DynamicAtlas::Node
@@ -299,7 +299,7 @@ DynamicAtlas::~DynamicAtlas()
 }
 
 
-const RectangularRegion* DynamicAtlas::insert( const image::Buffer& imageBuffer )
+const RectangularRegion* DynamicAtlas::insert( const ImageBuffer& imageBuffer )
 {
         unsigned int width = imageBuffer.width;
         unsigned int height = imageBuffer.height;
@@ -337,7 +337,7 @@ void DynamicAtlas::removeAll()
 }
 
 
-const Texture2D& DynamicAtlas::getTexture()
+const texture::Texture2D& DynamicAtlas::getTexture()
 {
         return *texture;
 }

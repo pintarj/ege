@@ -7,8 +7,8 @@
 #include <ege/graphic/gpu/program.hxx>
 #include <ege/graphic/gpu/sampler.hxx>
 #include <ege/graphic/gpu/vertex-array.hxx>
-#include <ege/graphic/gpu/util/buffer/stream-write-mapper.hxx>
-#include <ege/graphic/gpu/util/texture/rectangular-region.hxx>
+#include <ege/graphic/gpu/buffer/util/stream-write-mapper.hxx>
+#include <ege/graphic/gpu/texture/util/rectangular-region.hxx>
 
 
 namespace ege
@@ -32,7 +32,7 @@ namespace ege
                                         const unsigned int textureUnit;
                                         gpu::Program* program;
                                         gpu::Buffer* buffer;
-                                        gpu::util::buffer::StreamWriteMapper< Vertex >* mapper;
+                                        gpu::buffer::util::StreamWriteMapper< Vertex >* mapper;
                                         gpu::VertexArray* vertexArray;
                                         const gpu::Texture* texture;
                                         gpu::Sampler sampler;
@@ -44,7 +44,7 @@ namespace ege
                                         TextureRegionsStreamDrawer();
                                         virtual ~TextureRegionsStreamDrawer();
                                         void setMVPMatrix( const float* mvpMatrix );
-                                        void draw( gpu::util::texture::RectangularRegion& region, float x, float y );
+                                        void draw( const gpu::texture::util::RectangularRegion& region, float x, float y );
                                         void flush();
                         };
                 }

@@ -43,7 +43,7 @@ TextureRegionsStreamDrawer::TextureRegionsStreamDrawer(): textureUnit( 0 )
         const size_t unitsPerSector = 2048;
         const size_t sectorsCount = 2;
         buffer = new Buffer( unitsPerSector * sectorsCount * sizeof( Vertex ), buffer::usage::Frequency::STREAM, buffer::usage::Nature::DRAW );
-        mapper = new util::buffer::StreamWriteMapper< Vertex >( buffer, unitsPerSector, sectorsCount );
+        mapper = new buffer::util::StreamWriteMapper< Vertex >( buffer, unitsPerSector, sectorsCount );
         vertexArray = new gpu::VertexArray();
         vertexArray->enableAttribute( 0 );
         vertexArray->enableAttribute( 1 );
@@ -75,7 +75,7 @@ void TextureRegionsStreamDrawer::setMVPMatrix( const float* mvpMatrix )
 }
 
 
-void TextureRegionsStreamDrawer::draw( gpu::util::texture::RectangularRegion& region, float x, float y )
+void TextureRegionsStreamDrawer::draw( const texture::util::RectangularRegion& region, float x, float y )
 {
         if ( &region.texture != texture )
         {

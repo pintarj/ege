@@ -13,7 +13,7 @@ static inline unsigned int createTexture()
 }
 
 
-Texture::Texture( unsigned int type, texture::Format format ): Object( createTexture() ), type( type ), format( format )
+Texture::Texture( texture::Type type, texture::Format format ): Object( createTexture() ), type( type ), format( format )
 {
 
 }
@@ -28,5 +28,5 @@ Texture::~Texture()
 void Texture::bindAtUnit( unsigned int index ) const
 {
         glActiveTexture( GL_TEXTURE0 + index );
-        glBindTexture( type, id );
+        glBindTexture( ( GLenum ) type, id );
 }

@@ -24,9 +24,9 @@ namespace ege
                                                 unsigned int height;
 
                                         protected:
-                                                TwoDimensionalTexture( unsigned int type, const util::ImageBuffer& imageBuffer, Format format );
-                                                TwoDimensionalTexture( unsigned int type, const util::ImageBuffer& imageBuffer );
-                                                TwoDimensionalTexture( unsigned int type, unsigned int width, unsigned int height, Format format );
+                                                TwoDimensionalTexture( Type type, const util::ImageBuffer& imageBuffer, Format format );
+                                                TwoDimensionalTexture( Type type, const util::ImageBuffer& imageBuffer );
+                                                TwoDimensionalTexture( Type type, unsigned int width, unsigned int height, Format format );
 
                                         public:
                                                 virtual ~TwoDimensionalTexture();

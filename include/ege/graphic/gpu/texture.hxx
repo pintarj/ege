@@ -5,6 +5,7 @@
 
 
 #include <ege/graphic/gpu/object.hxx>
+#include <ege/graphic/gpu/texture/type.hxx>
 #include <cstdint>
 
 
@@ -54,12 +55,12 @@ namespace ege
                         class Texture: public Object
                         {
                                 protected:
-                                        const unsigned int type;
                                         const texture::Format format;
-
-                                        Texture( unsigned int type, texture::Format format );
+                                        Texture( texture::Type type, texture::Format format );
 
                                 public:
+                                        const texture::Type type;
+
                                         virtual ~Texture();
                                         void bindAtUnit( unsigned int index ) const;
                         };

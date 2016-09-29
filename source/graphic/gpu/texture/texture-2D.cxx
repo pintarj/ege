@@ -7,21 +7,21 @@ using namespace ege::graphic::gpu::texture;
 
 
 Texture2D::Texture2D( const util::ImageBuffer& imageBuffer, Format format ):
-        TwoDimensionalTexture( GL_TEXTURE_2D, imageBuffer, format )
+        TwoDimensionalTexture( Type::TEX_2D, imageBuffer, format )
 {
 
 }
 
 
 Texture2D::Texture2D( const util::ImageBuffer& imageBuffer ):
-        TwoDimensionalTexture( GL_TEXTURE_2D, imageBuffer )
+        TwoDimensionalTexture( Type::TEX_2D, imageBuffer )
 {
 
 }
 
 
 Texture2D::Texture2D( unsigned int width, unsigned int height, Format format ):
-        TwoDimensionalTexture( GL_TEXTURE_2D, width, height, format )
+        TwoDimensionalTexture( Type::TEX_2D, width, height, format )
 {
 
 }

@@ -53,10 +53,8 @@ namespace ege
 
                         class Texture: public Object
                         {
-                                private:
-                                        const unsigned int type;
-
                                 protected:
+                                        const unsigned int type;
                                         const texture::Format format;
 
                                         Texture( unsigned int type, texture::Format format );

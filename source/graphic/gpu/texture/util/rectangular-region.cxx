@@ -11,7 +11,7 @@ RectangularRegion::RectangularRegion( const Texture2D &texture, unsigned int x, 
 }
 
 
-RectangularRegion::RectangularRegion( const Texture2D &texture ): RectangularRegion( texture, 0, 0, texture.width, texture.height )
+RectangularRegion::RectangularRegion( const Texture2D &texture ): RectangularRegion( texture, 0, 0, texture.getWidth(), texture.getHeight() )
 {
 
 }
@@ -19,8 +19,8 @@ RectangularRegion::RectangularRegion( const Texture2D &texture ): RectangularReg
 
 void RectangularRegion::recalculateUV()
 {
-        const float tw = ( float ) texture.width;
-        const float th = ( float ) texture.height;
+        const float tw = ( float ) texture.getWidth();
+        const float th = ( float ) texture.getHeight();
         const float fx = ( float ) x;
         const float fy = ( float ) y;
         const float fw = ( float ) width;

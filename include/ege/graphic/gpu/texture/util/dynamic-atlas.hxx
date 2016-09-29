@@ -35,6 +35,7 @@ namespace ege
 
                                                         void clear();
                                                         void reset();
+                                                        void changeEdgeSize( unsigned int size );
 
                                                 public:
                                                         DynamicAtlas( unsigned int edgeThreshold = 256 );

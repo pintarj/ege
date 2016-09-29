@@ -14,10 +14,12 @@ struct DynamicAtlas::Node
         unsigned int y;
         unsigned int size;
         Node** lowers;
+        bool haveOwnershipOfFirst;
         RectangularRegion* owner;
 
         Node( unsigned int x, unsigned int y, unsigned int size );
         ~Node();
+        void fragment( Node* firstLower );
         void fragment();
         void defragment();
         inline bool isFragmented();
@@ -29,7 +31,25 @@ struct DynamicAtlas::Node
 
         void assign( RectangularRegion* owner, unsigned int x, unsigned int y, unsigned int width, unsigned int height );
         void unassign( unsigned int x, unsigned int y, unsigned int width, unsigned int height );
+        void insert( Node* lower );
+        static void incrementRootSize( DynamicAtlas::Node** root, unsigned int size );
+        Node* getOwnershipOfFirst();
+        Node* destroyUntil( unsigned int size );
+        static void decrementRootSize( DynamicAtlas::Node** root, unsigned int size );
 };
+
+
+constexpr static unsigned int nextPowerOfTwo( unsigned int n )
+{
+        // Thanks to: http://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2
+        n--;
+        n |= n >> 1;
+        n |= n >> 2;
+        n |= n >> 4;
+        n |= n >> 8;
+        n |= n >> 16;
+        return n + 1;
+}
 
 
 DynamicAtlas::Node::Node( unsigned int x, unsigned int y, unsigned int size )
@@ -39,6 +59,7 @@ DynamicAtlas::Node::Node( unsigned int x, unsigned int y, unsigned int size )
         this->size = size;
         this->lowers = nullptr;
         this->owner = nullptr;
+        this->haveOwnershipOfFirst = true;
 }
 
 
@@ -49,7 +70,7 @@ DynamicAtlas::Node::~Node()
 }
 
 
-void DynamicAtlas::Node::fragment()
+void DynamicAtlas::Node::fragment( Node* firstLower )
 {
         unsigned int half = size >> 1;
         unsigned int x0 = x;
@@ -58,10 +79,16 @@ void DynamicAtlas::Node::fragment()
         unsigned int y1 = y0 + half;
 
         lowers = new Node*[ 4 ];
-        lowers[ 0 ] = new Node( x0, y0, half );
+        lowers[ 0 ] = firstLower;
         lowers[ 1 ] = new Node( x0, y1, half );
         lowers[ 2 ] = new Node( x1, y0, half );
         lowers[ 3 ] = new Node( x1, y1, half );
+}
+
+
+void DynamicAtlas::Node::fragment()
+{
+        fragment( new Node( x, y, size >> 1 ) );
 }
 
 
@@ -79,7 +106,9 @@ bool DynamicAtlas::Node::isOwned()
 
 void DynamicAtlas::Node::defragment()
 {
-        delete lowers[ 0 ];
+        if ( haveOwnershipOfFirst )
+                delete lowers[ 0 ];
+
         delete lowers[ 1 ];
         delete lowers[ 2 ];
         delete lowers[ 3 ];
@@ -98,7 +127,7 @@ DynamicAtlas::Node* DynamicAtlas::Node::fastSearch( unsigned int width, unsigned
                 {
                         for ( uint8_t i = 0; i < 4; ++i )
                         {
-                                Node* result = lowers[ i ]->fastSearch( width, height );
+                                DynamicAtlas::Node* result = lowers[ i ]->fastSearch( width, height );
 
                                 if ( result != nullptr )
                                         return result;
@@ -237,6 +266,56 @@ void DynamicAtlas::Node::unassign( unsigned int x, unsigned int y, unsigned int 
 }
 
 
+void DynamicAtlas::Node::insert( Node* lower )
+{
+        if ( size >> 1 == lower->size )
+        {
+                fragment( lower );
+        }
+        else
+        {
+                fragment();
+                lowers[ 0 ]->insert( lower );
+        }
+}
+
+
+void DynamicAtlas::Node::incrementRootSize( DynamicAtlas::Node** root, unsigned int size )
+{
+        DynamicAtlas::Node* newRoot = new Node( 0, 0, size );
+        newRoot->insert( *root );
+        *root = newRoot;
+}
+
+
+DynamicAtlas::Node* DynamicAtlas::Node::getOwnershipOfFirst()
+{
+        haveOwnershipOfFirst = false;
+        return lowers[ 0 ];
+}
+
+
+DynamicAtlas::Node* DynamicAtlas::Node::destroyUntil( unsigned int size )
+{
+        if ( this->size == size )
+                return this;
+
+        if ( !isFragmented() )
+                return nullptr;
+
+        DynamicAtlas::Node* firstLower = getOwnershipOfFirst();
+        delete this;
+        return firstLower->destroyUntil( size );
+}
+
+
+void DynamicAtlas::Node::decrementRootSize( DynamicAtlas::Node** root, unsigned int size )
+{
+        DynamicAtlas::Node* result = ( *root )->destroyUntil( size );
+        *root = ( result != nullptr ) ? result : new DynamicAtlas::Node( 0, 0, size );
+}
+
+
 void DynamicAtlas::clear()
 {
         if ( root != nullptr )
@@ -272,21 +351,30 @@ void DynamicAtlas::reset()
 }
 
 
+void DynamicAtlas::changeEdgeSize( unsigned int size )
+{
+        if ( size == edgeSize )
+                return;
+
+        if ( size > edgeSize )
+                Node::incrementRootSize( &root, size );
+        else
+                Node::decrementRootSize( &root, size );
+
+        texture->resize( size, size, true );
+        edgeSize = size;
+        totalPixels = size * size;
+
+        for ( auto region : regions )
+                region->recalculateUV();
+}
+
+
 DynamicAtlas::DynamicAtlas( unsigned int edgeThreshold )
 {
-        // Thanks to: http://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2
-
-        edgeThreshold--;
-        edgeThreshold |= edgeThreshold >> 1;
-        edgeThreshold |= edgeThreshold >> 2;
-        edgeThreshold |= edgeThreshold >> 4;
-        edgeThreshold |= edgeThreshold >> 8;
-        edgeThreshold |= edgeThreshold >> 16;
-        edgeThreshold++;
-
+        edgeThreshold = nextPowerOfTwo( edgeThreshold );
         static const unsigned int minimumEdgeThreshold = 32;
         this->edgeThreshold = ( edgeThreshold < minimumEdgeThreshold ) ? minimumEdgeThreshold : edgeThreshold;
-
         texture = nullptr;
         root = nullptr;
         reset();
@@ -304,13 +392,15 @@ const RectangularRegion* DynamicAtlas::insert( const ImageBuffer& imageBuffer )
         unsigned int width = imageBuffer.width;
         unsigned int height = imageBuffer.height;
 
-        if ( width * height + usedPixels > totalPixels )
-                Exception::throwNew( "no sufficient space to insert image" );
-
         Node* suitable;
 
-        if ( ( suitable = root->fastSearch( width, height ) ) == nullptr )
-                Exception::throwNew( "no suitable node found to insert image" );
+        if ( ( width * height + usedPixels > totalPixels )
+                || ( ( suitable = root->fastSearch( width, height ) ) == nullptr ) )
+        {
+                unsigned int max = ( width < height ) ? height : width;
+                changeEdgeSize( 2 * nextPowerOfTwo( max ) );
+                suitable = root->lowers[ 1 ];
+        }
 
         RectangularRegion* region = new RectangularRegion( *texture, suitable->x, suitable->y, width, height );
         root->assign( region, suitable->x, suitable->y, width, height );

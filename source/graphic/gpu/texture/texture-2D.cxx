@@ -6,7 +6,7 @@
 using namespace ege::graphic::gpu::texture;
 
 
-Texture2D::Texture2D( const util::ImageBuffer& imageBuffer, texture::Format format ):
+Texture2D::Texture2D( const util::ImageBuffer& imageBuffer, Format format ):
         TwoDimensionalTexture( GL_TEXTURE_2D, imageBuffer, format )
 {
 
@@ -20,7 +20,7 @@ Texture2D::Texture2D( const util::ImageBuffer& imageBuffer ):
 }
 
 
-Texture2D::Texture2D( unsigned int width, unsigned int height, texture::Format format ):
+Texture2D::Texture2D( unsigned int width, unsigned int height, Format format ):
         TwoDimensionalTexture( GL_TEXTURE_2D, width, height, format )
 {
 

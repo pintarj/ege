@@ -18,6 +18,7 @@ ADD_LIBRARY( ege-core SHARED
         source/graphic/gpu/shader.cxx
         source/graphic/gpu/texture.cxx
         source/graphic/gpu/vertex-array.cxx
+        source/graphic/gpu/texture/texture-rectangle.cxx
         source/graphic/gpu/texture/texture-2D.cxx
         source/graphic/gpu/texture/two-dimensional-texture.cxx
         source/graphic/gpu/texture/util/image-buffer.cxx

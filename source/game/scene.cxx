@@ -10,6 +10,7 @@ Scene::Scene(): engineResources( ege::engine::resources )
         nextScene = nullptr;
         stopEngine = false;
         restartEngine = false;
+        deleteOnExchange = true;
 }
 
 
@@ -31,6 +32,12 @@ void Scene::requireEngineRestart()
         restartEngine = true;
         stopEngine = true;
         engineResources->logger->log( util::log::Level::INFO, "engine restart required" );
+}
+
+
+void Scene::doNotDeleteOnExchange()
+{
+        deleteOnExchange = false;
 }
 
 

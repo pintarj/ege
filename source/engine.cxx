@@ -167,12 +167,20 @@ void Engine::start()
                 {
 stop_engine_label:
                         global::restartRequired = global::currentScene->restartEngine;
+
+                        if ( global::currentScene->deleteOnExchange )
+                                delete global::currentScene;
+
                         break;
                 }
 
                 if ( global::currentScene->nextScene != nullptr )
                 {
-                        global::currentScene = global::currentScene->nextScene;
+                        game::Scene* previousScene = global::currentScene;
+                        global::currentScene = previousScene->nextScene;
+
+                        if ( previousScene->deleteOnExchange )
+                                delete previousScene;
                 }
                 else
                 {

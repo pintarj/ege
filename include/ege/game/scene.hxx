@@ -26,6 +26,7 @@ namespace ege
                                 Scene* nextScene;
                                 bool stopEngine;
                                 bool restartEngine;
+                                bool deleteOnExchange;
 
                         protected:
                                 engine::Resources* const engineResources;
@@ -34,6 +35,7 @@ namespace ege
                                 void setNextScene( Scene& scene );
                                 void requireEngineStop();
                                 void requireEngineRestart();
+                                void doNotDeleteOnExchange();
                                 virtual void update( float delta ) = 0;
                                 virtual void render() = 0;
                                 virtual void shouldClose();

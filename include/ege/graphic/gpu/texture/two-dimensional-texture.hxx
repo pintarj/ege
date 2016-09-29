@@ -33,6 +33,11 @@ namespace ege
                                                 unsigned int getWidth() const;
                                                 unsigned int getHeight() const;
                                                 void substitute( unsigned int x, unsigned int y, const util::ImageBuffer& imageBuffer );
+
+                                                void resize( unsigned int width, unsigned int height, unsigned int sourceX, unsigned int sourceY,
+                                                        unsigned int destinationX, unsigned int destinationY, unsigned int copyWidth, unsigned int copyHeight );
+
+                                                void resize( unsigned int width, unsigned int height, bool keepData = true );
                                 };
                         }
                 }

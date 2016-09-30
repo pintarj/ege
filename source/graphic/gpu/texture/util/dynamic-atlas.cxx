@@ -8,35 +8,61 @@ using namespace ege::graphic::gpu;
 using namespace ege::graphic::gpu::texture::util;
 
 
-struct DynamicAtlas::Node
+class Node
 {
-        unsigned int x;
-        unsigned int y;
-        unsigned int size;
-        Node** lowers;
-        bool haveOwnershipOfFirst;
-        RectangularRegion* owner;
+        private:
+                Node** fragments;
+                bool firstFragmentOwned;
+                RectangularRegion* owner;
 
-        Node( unsigned int x, unsigned int y, unsigned int size );
-        ~Node();
-        void fragment( Node* firstLower );
-        void fragment();
-        void defragment();
-        inline bool isFragmented();
-        inline bool isOwned();
-        Node* fastSearch( unsigned int width, unsigned int height );
+                void calculateFragmentsCoordinates( unsigned int x, unsigned int y, unsigned int width, unsigned int height,
+                        unsigned int ( * coordinates )[ 2 ][ 4 ], bool ( * activeFragments )[ 4 ] );
 
-        inline void calculateFragmentation( unsigned int x, unsigned int y, unsigned int width, unsigned int height,
-                unsigned int ( * coordinates )[ 2 ][ 4 ], bool ( * activeFragments )[ 4 ] );
+                void fragmentUnsafe( Node* firstFragment );
+                void fragment( Node* firstFragment );
+                void fragment();
+                void defragment();
+                void setOwner( RectangularRegion* owner );
+                void removeOwner();
 
-        void assign( RectangularRegion* owner, unsigned int x, unsigned int y, unsigned int width, unsigned int height );
-        void unassign( unsigned int x, unsigned int y, unsigned int width, unsigned int height );
-        void insert( Node* lower );
-        static void incrementRootSize( DynamicAtlas::Node** root, unsigned int size );
-        Node* getOwnershipOfFirst();
-        Node* destroyUntil( unsigned int size );
-        static void decrementRootSize( DynamicAtlas::Node** root, unsigned int size );
-        unsigned int canBeReducesTo();
+        public:
+                unsigned int const x;
+                unsigned int const y;
+                unsigned int const size;
+                DynamicAtlas::NodesGroup* const nodes;
+
+                Node( unsigned int x, unsigned int y, unsigned int size, DynamicAtlas::NodesGroup* nodes );
+                ~Node();
+                bool isFragmented() const;
+                Node* getFirstFragment();
+                bool isOwned() const;
+                bool isUsed() const;
+                const Node** getFragments() const;
+                Node* searchFastly( unsigned int width, unsigned int height );
+                void assign( RectangularRegion* owner, unsigned int x, unsigned int y, unsigned int width, unsigned int height );
+                void unassign( unsigned int x, unsigned int y, unsigned int width, unsigned int height );
+                void insert( Node* node );
+};
+
+
+class DynamicAtlas::NodesGroup
+{
+        friend Node;
+
+        private:
+                unsigned int nodesCount;
+                unsigned int minNodeSize;
+                Node* root;
+
+                void incrementSize( unsigned int size );
+                void decrementSize( unsigned int size );
+
+        public:
+                NodesGroup( unsigned int rootSize, unsigned int minNodeSize );
+                ~NodesGroup();
+                void changeSize( unsigned int size );
+                unsigned int canReduceSizeTo();
+                Node* getRoot();
 };
 
 
@@ -53,99 +79,7 @@ constexpr static unsigned int nextPowerOfTwo( unsigned int n )
 }
 
 
-DynamicAtlas::Node::Node( unsigned int x, unsigned int y, unsigned int size )
-{
-        this->x = x;
-        this->y = y;
-        this->size = size;
-        this->lowers = nullptr;
-        this->owner = nullptr;
-        this->haveOwnershipOfFirst = true;
-}
-
-
-DynamicAtlas::Node::~Node()
-{
-        if ( isFragmented() )
-                defragment();
-}
-
-
-void DynamicAtlas::Node::fragment( Node* firstLower )
-{
-        unsigned int half = size >> 1;
-        unsigned int x0 = x;
-        unsigned int y0 = y;
-        unsigned int x1 = x0 + half;
-        unsigned int y1 = y0 + half;
-
-        lowers = new Node*[ 4 ];
-        lowers[ 0 ] = firstLower;
-        lowers[ 1 ] = new Node( x0, y1, half );
-        lowers[ 2 ] = new Node( x1, y0, half );
-        lowers[ 3 ] = new Node( x1, y1, half );
-}
-
-
-void DynamicAtlas::Node::fragment()
-{
-        fragment( new Node( x, y, size >> 1 ) );
-}
-
-
-inline bool DynamicAtlas::Node::isFragmented()
-{
-        return lowers != nullptr;
-}
-
-
-bool DynamicAtlas::Node::isOwned()
-{
-        return owner != nullptr;
-}
-
-
-void DynamicAtlas::Node::defragment()
-{
-        if ( haveOwnershipOfFirst )
-                delete lowers[ 0 ];
-
-        delete lowers[ 1 ];
-        delete lowers[ 2 ];
-        delete lowers[ 3 ];
-        delete lowers;
-        lowers = nullptr;
-}
-
-
-DynamicAtlas::Node* DynamicAtlas::Node::fastSearch( unsigned int width, unsigned int height )
-{
-        if ( isFragmented() )
-        {
-                unsigned int half = size >> 1;
-
-                if ( width <= half && height <= half )
-                {
-                        for ( uint8_t i = 0; i < 4; ++i )
-                        {
-                                DynamicAtlas::Node* result = lowers[ i ]->fastSearch( width, height );
-
-                                if ( result != nullptr )
-                                        return result;
-                        }
-                }
-        }
-        else
-        {
-                if ( !isOwned() )
-                        return this;
-        }
-
-        return nullptr;
-}
-
-
-void DynamicAtlas::Node::calculateFragmentation( unsigned int x, unsigned int y, unsigned int width, unsigned int height,
+void Node::calculateFragmentsCoordinates( unsigned int x, unsigned int y, unsigned int width, unsigned int height,
         unsigned int ( * coordinates )[ 2 ][ 4 ], bool ( * activeFragments )[ 4 ] )
 {
         unsigned int half = size >> 1;
@@ -203,147 +137,294 @@ void DynamicAtlas::Node::calculateFragmentation( unsigned int x, unsigned int y,
 }
 
 
-void DynamicAtlas::Node::assign( RectangularRegion* owner, unsigned int x, unsigned int y, unsigned int width, unsigned int height )
+bool Node::isFragmented() const
 {
-        const unsigned int minNodeSize = 1;
+        return fragments != nullptr;
+}
 
-        if ( ( size == width && size == height ) || size == minNodeSize )
+
+void Node::fragmentUnsafe( Node* firstFragment )
+{
+        const unsigned int half = size >> 1;
+        const unsigned int x1 = x + half;
+        const unsigned int y1 = y + half;
+
+        fragments = new Node*[ 4 ];
+        fragments[ 0 ] = firstFragment;
+        fragments[ 1 ] = new Node( x, y1, half, nodes );
+        fragments[ 2 ] = new Node( x1, y, half, nodes );
+        fragments[ 3 ] = new Node( x1, y1, half, nodes );
+}
+
+
+void Node::fragment( Node* firstFragment )
+{
+        if ( isFragmented() )
+                return;
+
+        fragmentUnsafe( firstFragment );
+}
+
+
+void Node::fragment()
+{
+        if ( isFragmented() )
+                return;
+
+        fragmentUnsafe( new Node( x, y, size >> 1, nodes ) );
+}
+
+
+void Node::defragment()
+{
+        if ( !isFragmented() )
+                return;
+
+        if ( firstFragmentOwned )
+                delete fragments[ 0 ];
+
+        delete fragments[ 1 ];
+        delete fragments[ 2 ];
+        delete fragments[ 3 ];
+        delete fragments;
+        fragments = nullptr;
+}
+
+
+Node* Node::getFirstFragment()
+{
+        return fragments[ 0 ];
+}
+
+
+void Node::setOwner( RectangularRegion* owner )
+{
+        this->owner = owner;
+}
+
+
+void Node::removeOwner()
+{
+        this->owner = nullptr;
+}
+
+
+bool Node::isOwned() const
+{
+        return owner != nullptr;
+}
+
+
+bool Node::isUsed() const
+{
+        return isFragmented() || isOwned();
+}
+
+
+const Node** Node::getFragments() const
+{
+        return const_cast< const Node** >( fragments );
+}
+
+
+Node* Node::searchFastly( unsigned int width, unsigned int height )
+{
+        const unsigned int half = size >> 1;
+
+        if ( width > size || height > size )
+                return nullptr;
+
+        if ( !isFragmented() )
+                return isOwned() ? nullptr : this;
+
+        for ( uint8_t i = 0; i < 4; ++i )
+        {
+                Node* result = fragments[ i ]->searchFastly( width, height );
+
+                if ( result != nullptr )
+                        return result;
+        }
+
+        return nullptr;
+}
+
+
+void Node::assign( RectangularRegion* owner, unsigned int x, unsigned int y, unsigned int width, unsigned int height )
+{
+        if ( ( size == width && size == height ) || size == nodes->minNodeSize )
         {
                 this->owner = owner;
                 return;
         }
 
-        if ( !isFragmented() )
-                fragment();
+        fragment();
 
         unsigned int coordinates[ 2 ][ 4 ];
         bool activeFragments[ 4 ];
-        calculateFragmentation( x, y, width, height, &coordinates, &activeFragments );
+        calculateFragmentsCoordinates( x, y, width, height, &coordinates, &activeFragments );
 
         if ( activeFragments[ 0 ] )
-                lowers[ 0 ]->assign( owner, coordinates[ 0 ][ 0 ], coordinates[ 0 ][ 1 ], coordinates[ 0 ][ 2 ], coordinates[ 0 ][ 3 ] );
+                fragments[ 0 ]->assign( owner, coordinates[ 0 ][ 0 ], coordinates[ 0 ][ 1 ], coordinates[ 0 ][ 2 ], coordinates[ 0 ][ 3 ] );
 
         if ( activeFragments[ 1 ] )
-                lowers[ 1 ]->assign( owner, coordinates[ 0 ][ 0 ], coordinates[ 1 ][ 1 ], coordinates[ 0 ][ 2 ], coordinates[ 1 ][ 3 ] );
+                fragments[ 1 ]->assign( owner, coordinates[ 0 ][ 0 ], coordinates[ 1 ][ 1 ], coordinates[ 0 ][ 2 ], coordinates[ 1 ][ 3 ] );
 
         if ( activeFragments[ 2 ] )
-                lowers[ 2 ]->assign( owner, coordinates[ 1 ][ 0 ], coordinates[ 0 ][ 1 ], coordinates[ 1 ][ 2 ], coordinates[ 0 ][ 3 ] );
+                fragments[ 2 ]->assign( owner, coordinates[ 1 ][ 0 ], coordinates[ 0 ][ 1 ], coordinates[ 1 ][ 2 ], coordinates[ 0 ][ 3 ] );
 
         if ( activeFragments[ 3 ] )
-                lowers[ 3 ]->assign( owner, coordinates[ 1 ][ 0 ], coordinates[ 1 ][ 1 ], coordinates[ 1 ][ 2 ], coordinates[ 1 ][ 3 ] );
+                fragments[ 3 ]->assign( owner, coordinates[ 1 ][ 0 ], coordinates[ 1 ][ 1 ], coordinates[ 1 ][ 2 ], coordinates[ 1 ][ 3 ] );
 }
 
 
-void DynamicAtlas::Node::unassign( unsigned int x, unsigned int y, unsigned int width, unsigned int height )
+void Node::unassign( unsigned int x, unsigned int y, unsigned int width, unsigned int height )
 {
-        if ( isFragmented() )
+        if ( !isFragmented() )
         {
-                unsigned int coordinates[ 2 ][ 4 ];
-                bool activeFragments[ 4 ];
-                calculateFragmentation( x, y, width, height, &coordinates, &activeFragments );
-
-                if ( activeFragments[ 0 ] )
-                        lowers[ 0 ]->unassign( coordinates[ 0 ][ 0 ], coordinates[ 0 ][ 1 ], coordinates[ 0 ][ 2 ], coordinates[ 0 ][ 3 ] );
-
-                if ( activeFragments[ 1 ] )
-                        lowers[ 1 ]->unassign( coordinates[ 0 ][ 0 ], coordinates[ 1 ][ 1 ], coordinates[ 0 ][ 2 ], coordinates[ 1 ][ 3 ] );
-
-                if ( activeFragments[ 2 ] )
-                        lowers[ 2 ]->unassign( coordinates[ 1 ][ 0 ], coordinates[ 0 ][ 1 ], coordinates[ 1 ][ 2 ], coordinates[ 0 ][ 3 ] );
-
-                if ( activeFragments[ 3 ] )
-                        lowers[ 3 ]->unassign( coordinates[ 1 ][ 0 ], coordinates[ 1 ][ 1 ], coordinates[ 1 ][ 2 ], coordinates[ 1 ][ 3 ] );
-
-                if ( !lowers[ 0 ]->isFragmented() && !lowers[ 0 ]->isOwned()
-                        && !lowers[ 1 ]->isFragmented() && !lowers[ 1 ]->isOwned()
-                        && !lowers[ 2 ]->isFragmented() && !lowers[ 2 ]->isOwned()
-                        && !lowers[ 3 ]->isFragmented() && !lowers[ 3 ]->isOwned() )
-                {
-                        defragment();
-                }
+                removeOwner();
+                return;
         }
-        else
-        {
-                owner = nullptr;
-        }
+
+        unsigned int coordinates[ 2 ][ 4 ];
+        bool activeFragments[ 4 ];
+        calculateFragmentsCoordinates( x, y, width, height, &coordinates, &activeFragments );
+
+        if ( activeFragments[ 0 ] )
+                fragments[ 0 ]->unassign( coordinates[ 0 ][ 0 ], coordinates[ 0 ][ 1 ], coordinates[ 0 ][ 2 ], coordinates[ 0 ][ 3 ] );
+
+        if ( activeFragments[ 1 ] )
+                fragments[ 1 ]->unassign( coordinates[ 0 ][ 0 ], coordinates[ 1 ][ 1 ], coordinates[ 0 ][ 2 ], coordinates[ 1 ][ 3 ] );
+
+        if ( activeFragments[ 2 ] )
+                fragments[ 2 ]->unassign( coordinates[ 1 ][ 0 ], coordinates[ 0 ][ 1 ], coordinates[ 1 ][ 2 ], coordinates[ 0 ][ 3 ] );
+
+        if ( activeFragments[ 3 ] )
+                fragments[ 3 ]->unassign( coordinates[ 1 ][ 0 ], coordinates[ 1 ][ 1 ], coordinates[ 1 ][ 2 ], coordinates[ 1 ][ 3 ] );
+
+        if ( !fragments[ 0 ]->isUsed() && !fragments[ 1 ]->isUsed() && !fragments[ 2 ]->isUsed() && !fragments[ 3 ]->isUsed() )
+                defragment();
 }
 
 
-void DynamicAtlas::Node::insert( Node* lower )
+void Node::insert( Node* node )
 {
-        if ( size >> 1 == lower->size )
+        if ( size >> 1 == node->size )
         {
-                fragment( lower );
+                fragment( node );
         }
         else
         {
                 fragment();
-                lowers[ 0 ]->insert( lower );
+                fragments[ 0 ]->insert( node );
         }
 }
 
 
-void DynamicAtlas::Node::incrementRootSize( DynamicAtlas::Node** root, unsigned int size )
+Node::Node( unsigned int x, unsigned int y, unsigned int size, DynamicAtlas::NodesGroup* nodes ):
+        x( x ), y( y ), size( size ), nodes( nodes ), fragments( nullptr ), firstFragmentOwned( true ), owner( nullptr )
 {
-        DynamicAtlas::Node* newRoot = new Node( 0, 0, size );
-        newRoot->insert( *root );
-        *root = newRoot;
+        ++nodes->nodesCount;
 }
 
 
-DynamicAtlas::Node* DynamicAtlas::Node::getOwnershipOfFirst()
+Node::~Node()
 {
-        haveOwnershipOfFirst = false;
-        return lowers[ 0 ];
+        defragment();
+        --nodes->nodesCount;
 }
 
 
-DynamicAtlas::Node* DynamicAtlas::Node::destroyUntil( unsigned int size )
+void DynamicAtlas::NodesGroup::incrementSize( unsigned int size )
 {
-        if ( this->size == size )
-                return this;
+        Node* newRoot = new Node( 0, 0, size, this );
+        newRoot->insert( root );
+        root = newRoot;
+}
 
-        if ( !isFragmented() )
+
+void DynamicAtlas::NodesGroup::decrementSize( unsigned int size )
+{
+        Node* newRoot = root;
+
+        while ( newRoot->size != size )
         {
-                delete this;
-                return nullptr;
+                if ( !newRoot->isFragmented() )
+                {
+                        delete newRoot;
+                        root = new Node( 0, 0, size, this );
+                        return;
+                }
+
+                Node* firstFragment = newRoot->getFirstFragment();
+                delete newRoot;
+                newRoot = firstFragment;
         }
 
-        DynamicAtlas::Node* firstLower = getOwnershipOfFirst();
-        delete this;
-        return firstLower->destroyUntil( size );
+        root = newRoot;
 }
 
 
-void DynamicAtlas::Node::decrementRootSize( DynamicAtlas::Node** root, unsigned int size )
+DynamicAtlas::NodesGroup::NodesGroup( unsigned int rootSize, unsigned int minNodeSize ):
+        root( new Node( 0, 0, rootSize, this ) ), minNodeSize( minNodeSize ), nodesCount( 0 )
 {
-        DynamicAtlas::Node* result = ( *root )->destroyUntil( size );
-        *root = ( result != nullptr ) ? result : new DynamicAtlas::Node( 0, 0, size );
+
 }
 
 
-unsigned int DynamicAtlas::Node::canBeReducesTo()
+DynamicAtlas::NodesGroup::~NodesGroup()
 {
-        if ( isFragmented() )
-        {
-                return ( ( !lowers[ 1 ]->isOwned() && !lowers[ 1 ]->isFragmented() )
-                        && ( !lowers[ 2 ]->isOwned() && !lowers[ 2 ]->isFragmented() )
-                        && ( !lowers[ 3 ]->isOwned() && !lowers[ 3 ]->isFragmented() ) )
-                        ? lowers[ 0 ]->canBeReducesTo() : size;
-        }
+        delete root;
+
+        if ( nodesCount != 0 )
+                ege::engine::resources->logger->log(
+                        ege::util::log::Level::WARNING,
+                        "memory leak detected in nodes of texture dynamic atlas: %d nodes (%d bytes)",
+                        nodesCount, sizeof( Node ) + ( nodesCount - 1 ) * ( sizeof( Node ) + sizeof( Node* ) ) );
+}
+
+
+void DynamicAtlas::NodesGroup::changeSize( unsigned int size )
+{
+        if ( root->size == size )
+                return;
+
+        if ( root->size < size )
+                incrementSize( size );
         else
+                decrementSize( size );
+}
+
+
+unsigned int DynamicAtlas::NodesGroup::canReduceSizeTo()
+{
+        const Node* node = const_cast< const Node* >( root );
+
+        while ( true )
         {
-                return isOwned() ? size : 0;
+                const Node** fragments = node->getFragments();
+
+                if ( !node->isFragmented() || fragments[ 1 ]->isUsed() || fragments[ 2 ]->isUsed() || fragments[ 3 ]->isUsed() )
+                        break;
+
+                node = fragments[ 0 ];
         }
+
+        return node->isUsed() ? node->size : 0;
+}
+
+
+Node* DynamicAtlas::NodesGroup::getRoot()
+{
+        return root;
 }
 
 
 void DynamicAtlas::clear()
 {
-        if ( root != nullptr )
+        if ( nodes != nullptr )
         {
-                delete root;
-                root = nullptr;
+                delete nodes;
+                nodes = nullptr;
         }
 
         if ( texture != nullptr )
@@ -369,7 +450,7 @@ void DynamicAtlas::reset()
         edgeSize = edgeThreshold;
         totalPixels = edgeThreshold * edgeThreshold;
         usedPixels = 0;
-        root = new Node( 0, 0, edgeThreshold );
+        nodes = new NodesGroup( edgeThreshold, 2 );
 }
 
 
@@ -378,11 +459,7 @@ void DynamicAtlas::changeEdgeSize( unsigned int size )
         if ( size == edgeSize )
                 return;
 
-        if ( size > edgeSize )
-                Node::incrementRootSize( &root, size );
-        else
-                Node::decrementRootSize( &root, size );
-
+        nodes->changeSize( size );
         texture->resize( size, size, true );
         edgeSize = size;
         totalPixels = size * size;
@@ -398,7 +475,7 @@ DynamicAtlas::DynamicAtlas( unsigned int edgeThreshold )
         static const unsigned int minimumEdgeThreshold = 32;
         this->edgeThreshold = ( edgeThreshold < minimumEdgeThreshold ) ? minimumEdgeThreshold : edgeThreshold;
         texture = nullptr;
-        root = nullptr;
+        nodes = nullptr;
         reset();
 }
 
@@ -414,18 +491,18 @@ const RectangularRegion* DynamicAtlas::insert( const ImageBuffer& imageBuffer )
         unsigned int width = imageBuffer.width;
         unsigned int height = imageBuffer.height;
 
-        Node* suitable;
+        const Node* suitable;
 
         if ( ( width * height + usedPixels > totalPixels )
-                || ( ( suitable = root->fastSearch( width, height ) ) == nullptr ) )
+                || ( ( suitable = nodes->getRoot()->searchFastly( width, height ) ) == nullptr ) )
         {
                 unsigned int max = ( width < height ) ? height : width;
                 changeEdgeSize( 2 * nextPowerOfTwo( max ) );
-                suitable = root->lowers[ 1 ];
+                suitable = nodes->getRoot()->getFragments()[ 1 ];
         }
 
         RectangularRegion* region = new RectangularRegion( *texture, suitable->x, suitable->y, width, height );
-        root->assign( region, suitable->x, suitable->y, width, height );
+        nodes->getRoot()->assign( region, suitable->x, suitable->y, width, height );
         texture->substitute( suitable->x, suitable->y, imageBuffer );
         usedPixels += region->width * region->height;
         regions.insert( region );
@@ -439,9 +516,9 @@ void DynamicAtlas::remove( const RectangularRegion* region )
                 Exception::throwNew( "invalid argument: specified region is not contained in atlas (or no more)" );
 
         usedPixels -= region->width * region->height;
-        root->unassign( region->x, region->y, region->width, region->height );
+        nodes->getRoot()->unassign( region->x, region->y, region->width, region->height );
 
-        unsigned int canBeReducedTo = root->canBeReducesTo();
+        unsigned int canBeReducedTo = nodes->canReduceSizeTo();
         canBeReducedTo = canBeReducedTo < edgeThreshold ? edgeThreshold : canBeReducedTo;
         changeEdgeSize( canBeReducedTo );
 }

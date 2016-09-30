@@ -22,16 +22,17 @@ namespace ege
                                 {
                                         class DynamicAtlas
                                         {
-                                                private:
-                                                        struct Node;
+                                                public:
+                                                        class NodesGroup;
 
+                                                private:
                                                         Texture2D* texture;
                                                         unsigned int edgeThreshold;
                                                         unsigned int edgeSize;
                                                         unsigned int totalPixels;
                                                         unsigned int usedPixels;
                                                         std::set< RectangularRegion* > regions;
-                                                        Node* root;
+                                                        NodesGroup* nodes;
 
                                                         void clear();
                                                         void reset();

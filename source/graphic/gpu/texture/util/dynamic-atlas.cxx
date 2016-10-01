@@ -376,10 +376,14 @@ DynamicAtlas::NodesGroup::~NodesGroup()
         delete root;
 
         if ( nodesCount != 0 )
-                ege::engine::resources->logger->log(
-                        ege::util::log::Level::WARNING,
-                        "memory leak detected in nodes of texture dynamic atlas: %d nodes (%d bytes)",
-                        nodesCount, sizeof( Node ) + ( nodesCount - 1 ) * ( sizeof( Node ) + sizeof( Node* ) ) );
+        {
+                unsigned int minLostBytes = nodesCount * sizeof( Node );
+                unsigned int maxLostBytes = nodesCount * ( sizeof( Node ) + sizeof( sizeof( Node* ) ) );
+
+                ege::engine::resources->logger->log( ege::util::log::Level::WARNING,
+                        "memory leak detected in nodes of texture dynamic atlas: %d nodes (%d to %d bytes)",
+                        nodesCount, minLostBytes, maxLostBytes );
+        }
 }
 
 

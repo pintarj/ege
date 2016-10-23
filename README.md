@@ -6,7 +6,7 @@ it prepares an OpenGL 4+ context and it starts your scene.
 
 ## What it can do?
 
-Currently (at version 0.1.1) it can't do much:
+Currently (at version 0.1.2) it can't do much:
 
 * draw in low-level using an OpenGL-like system (more or less)
 * listen keyboard's key events (press/release)

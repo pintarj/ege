@@ -633,7 +633,7 @@ void DynamicAtlas::clear()
 void DynamicAtlas::reset()
 {
         clear();
-        texture = new Texture2D( edgeThreshold, edgeThreshold );
+        texture = new TextureRectangle( edgeThreshold, edgeThreshold );
         edgeSize = edgeThreshold;
         totalPixels = edgeThreshold * edgeThreshold;
         usedPixels = 0;
@@ -733,7 +733,7 @@ void DynamicAtlas::removeAll()
 }
 
 
-const texture::Texture2D& DynamicAtlas::getTexture()
+const texture::TextureRectangle& DynamicAtlas::getTexture()
 {
         return *texture;
 }

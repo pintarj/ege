@@ -25,10 +25,10 @@ static const char* ege_graphic_program_mvp_texture_program_vShader =
 static const char*  ege_graphic_program_mvp_texture_program_fShader =
         "#version 400\n"
         "precision mediump float;\n"
-        "uniform sampler2D tex;\n"
+        "uniform sampler2DRect tex;\n"
         "in vec2 ts;\n"
         "void main(){\n"
-        "    gl_FragColor = texture2D( tex, ts );\n"
+        "    gl_FragColor = texture2DRect( tex, ts );\n"
         "}\n"
 ;
 

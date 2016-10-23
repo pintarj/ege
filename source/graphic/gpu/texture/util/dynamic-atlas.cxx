@@ -1,6 +1,7 @@
 #include <ege/graphic/gpu/texture/util/dynamic-atlas.hxx>
 #include <ege/exception.hxx>
 #include <ege/engine.hxx>
+#include <cstring>
 
 
 using namespace ege;
@@ -14,6 +15,7 @@ class Node
                 Node** fragments;
                 bool firstFragmentOwned;
                 RectangularRegion* owner;
+                unsigned int freePixels;
 
                 void calculateFragmentsCoordinates( unsigned int x, unsigned int y, unsigned int width, unsigned int height,
                         unsigned int ( * coordinates )[ 2 ][ 4 ], bool ( * activeFragments )[ 4 ] );
@@ -38,10 +40,10 @@ class Node
                 bool isOwned() const;
                 bool isUsed() const;
                 const Node** getFragments() const;
-                Node* searchFastly( unsigned int width, unsigned int height );
                 void assign( RectangularRegion* owner, unsigned int x, unsigned int y, unsigned int width, unsigned int height );
                 void unassign( unsigned int x, unsigned int y, unsigned int width, unsigned int height );
                 void insert( Node* node );
+                unsigned int getFreePixels() const;
 };
 
 
@@ -76,6 +78,195 @@ constexpr static unsigned int nextPowerOfTwo( unsigned int n )
         n |= n >> 8;
         n |= n >> 16;
         return n + 1;
+}
+
+
+constexpr static unsigned int nextRepetitionOf( unsigned int value, unsigned int m )
+{
+        unsigned int mod = value % m;
+
+        if ( mod == 0 )
+                return value;
+        else
+                return value + m - mod;
+}
+
+
+constexpr static unsigned int calculateStartLevel( unsigned int w, unsigned int h, unsigned int rootSize )
+{
+        unsigned int value = ( rootSize * rootSize ) / ( w * h * 64 );
+        unsigned int log = 0;
+
+        while ( true )
+        {
+                if ( value == 0 )
+                        break;
+
+                value >>= 2;
+                ++log;
+        }
+
+        return log;
+}
+
+
+static void fillUsageImage( bool* image, unsigned int width, unsigned int unit, const Node* node, const Node* origin )
+{
+        if ( node->size == unit || !node->isFragmented() )
+        {
+                if ( !node->isUsed() )
+                        return;
+
+                unsigned int limit = node->size / unit;
+                unsigned int relX = ( node->x - origin->x ) / unit;
+                unsigned int relY = ( node->y - origin->y ) / unit;
+
+                for ( int i = 0; i < limit; ++i )
+                        for ( int j = 0; j < limit; ++j )
+                                image[ width * ( relY + i ) + relX + j ] = true;
+        }
+        else
+        {
+                const Node** fragments = node->getFragments();
+
+                for ( uint8_t i = 0; i < 4; ++i )
+                        fillUsageImage( image, width, unit, fragments[ i ], origin );
+        }
+}
+
+
+static bool* getUsageImage( const Node* node, unsigned int level, unsigned int* dimensions )
+{
+        unsigned int unit = node->size >> level;
+        unsigned int unitsPerSize = node->size / unit;
+        size_t size = unitsPerSize * unitsPerSize;
+        bool* image = new bool[ size ];
+        memset( image, 0, size );
+        dimensions[ 0 ] = unitsPerSize;
+        dimensions[ 1 ] = unitsPerSize;
+        fillUsageImage( image, unitsPerSize, unit, node, node );
+        return image;
+}
+
+
+static bool calculateSolutions( bool* image, unsigned int* dimensions, int w, int h, unsigned int* solution )
+{
+        unsigned int solW = dimensions[ 0 ] + 1 - w;
+        unsigned int* sums = new unsigned int[ dimensions[ 1 ] * solW ];
+        memset( sums, 0, dimensions[ 1 ] * solW * 4 );
+
+        for ( int y = 0; y < dimensions[ 1 ]; ++y )
+        {
+                bool* row = &image[ y * dimensions[ 0 ] ];
+                unsigned int* sumsRow = &sums[ y * solW ];
+                unsigned int rowSum = 0;
+
+                for ( int x = 0, limit = w - 1; x < limit; ++x )
+                        if ( row[ x ] )
+                                ++rowSum;
+
+                for ( int x = 0; x < solW; ++x )
+                {
+                        if ( row[ x + w - 1 ] )
+                                ++rowSum;
+
+                        sumsRow[ x ] = rowSum;
+
+                        if ( row[ x ] )
+                                --rowSum;
+                }
+        }
+
+        for ( unsigned int x = 0; x < dimensions[ 0 ]; ++x )
+        {
+                unsigned int lastY = 0;
+                unsigned int count = 0;
+
+                for ( unsigned int y = 0; y < dimensions[ 1 ]; ++y )
+                {
+                        if ( sums[ y * solW + x ] == 0 )
+                        {
+                                ++count;
+
+                                if ( count == h )
+                                        break;
+                        }
+                        else
+                        {
+                                lastY = y + 1;
+                                count = 0;
+                        }
+                }
+
+                if ( count == h )
+                {
+                        solution[ 0 ] = x;
+                        solution[ 1 ] = lastY;
+                        delete sums;
+                        return true;
+                }
+        }
+
+        delete sums;
+        return false;
+}
+
+
+static bool searchNLevelsDeeper( unsigned int w, unsigned int h, const Node* node, unsigned int deeper, unsigned int* solution, unsigned int minUnitSize )
+{
+        if ( node->getFreePixels() < ( w * h ) )
+                return false;
+
+        if ( deeper != 0 )
+        {
+                if ( node->isOwned() )
+                        return false;
+
+                if ( node->isFragmented() )
+                {
+                        const Node** fragments = node->getFragments();
+                        unsigned int deeperLevel = deeper - 1;
+
+                        for ( uint8_t i = 0; i < 4; ++i )
+                                if ( searchNLevelsDeeper( w, h, fragments[ i ], deeperLevel, solution, minUnitSize ) )
+                                        return true;
+                }
+                else
+                {
+                        solution[ 0 ] = node->x;
+                        solution[ 1 ] = node->y;
+                        return true;
+                }
+        }
+        else
+        {
+                for ( unsigned int level = 0; true; ++level )
+                {
+                        unsigned int unit = node->size >> level;
+                        unsigned int leveledW = w / unit + ( ( w % unit != 0 ) ? 1 : 0 );
+                        unsigned int leveledH = h / unit + ( ( h % unit != 0 ) ? 1 : 0 );
+                        unsigned int dimensions[ 2 ];
+                        bool* image = getUsageImage( node, level, dimensions );
+                        bool solutionFound = calculateSolutions( image, dimensions, leveledW, leveledH, solution );
+                        delete image;
+
+                        if ( !solutionFound )
+                        {
+                                if ( unit == minUnitSize )
+                                        return false;
+                                else
+                                        continue;
+                        }
+
+                        unsigned int solX = node->x + solution[ 0 ] * unit;
+                        unsigned int solY = node->y + solution[ 1 ] * unit;
+                        solution[ 0 ] = solX;
+                        solution[ 1 ] = solY;
+                        return true;
+                }
+        }
+
+        return false;
 }
 
 
@@ -227,30 +418,10 @@ const Node** Node::getFragments() const
 }
 
 
-Node* Node::searchFastly( unsigned int width, unsigned int height )
-{
-        const unsigned int half = size >> 1;
-
-        if ( width > size || height > size )
-                return nullptr;
-
-        if ( !isFragmented() )
-                return isOwned() ? nullptr : this;
-
-        for ( uint8_t i = 0; i < 4; ++i )
-        {
-                Node* result = fragments[ i ]->searchFastly( width, height );
-
-                if ( result != nullptr )
-                        return result;
-        }
-
-        return nullptr;
-}
-
-
 void Node::assign( RectangularRegion* owner, unsigned int x, unsigned int y, unsigned int width, unsigned int height )
 {
+        freePixels -= width * height;
+
         if ( ( size == width && size == height ) || size == nodes->minNodeSize )
         {
                 this->owner = owner;
@@ -320,10 +491,17 @@ void Node::insert( Node* node )
 }
 
 
+unsigned int Node::getFreePixels() const
+{
+        return freePixels;
+}
+
+
 Node::Node( unsigned int x, unsigned int y, unsigned int size, DynamicAtlas::NodesGroup* nodes ):
         x( x ), y( y ), size( size ), nodes( nodes ), fragments( nullptr ), firstFragmentOwned( true ), owner( nullptr )
 {
         ++nodes->nodesCount;
+        freePixels = size * size;
 }
 
 
@@ -337,7 +515,12 @@ Node::~Node()
 void DynamicAtlas::NodesGroup::incrementSize( unsigned int size )
 {
         Node* newRoot = new Node( 0, 0, size, this );
-        newRoot->insert( root );
+
+        if ( root->isUsed() )
+                newRoot->insert( root );
+        else
+                delete root;
+
         root = newRoot;
 }
 
@@ -454,7 +637,8 @@ void DynamicAtlas::reset()
         edgeSize = edgeThreshold;
         totalPixels = edgeThreshold * edgeThreshold;
         usedPixels = 0;
-        nodes = new NodesGroup( edgeThreshold, 2 );
+        minUnitSize = 8;
+        nodes = new NodesGroup( edgeThreshold, minUnitSize );
 }
 
 
@@ -494,20 +678,35 @@ const RectangularRegion* DynamicAtlas::insert( const ImageBuffer& imageBuffer )
 {
         unsigned int width = imageBuffer.width;
         unsigned int height = imageBuffer.height;
+        unsigned int max = nextPowerOfTwo( width < height ? height : width );
+        unsigned int leveledW = nextRepetitionOf( width, minUnitSize );
+        unsigned int leveledH = nextRepetitionOf( height, minUnitSize );
+        unsigned int solution[ 2 ];
+        Node* root = nodes->getRoot();
 
-        const Node* suitable;
-
-        if ( ( width * height + usedPixels > totalPixels )
-                || ( ( suitable = nodes->getRoot()->searchFastly( width, height ) ) == nullptr ) )
+        if ( !searchNLevelsDeeper( leveledW, leveledH, root, calculateStartLevel( max, max, root->size ), solution, minUnitSize ) )
         {
-                unsigned int max = ( width < height ) ? height : width;
-                changeEdgeSize( 2 * nextPowerOfTwo( max ) );
-                suitable = nodes->getRoot()->getFragments()[ 1 ];
+                unsigned int max = nextPowerOfTwo( ( width < height ) ? height : width );
+                solution[ 0 ] = 0;
+
+                if ( root->isUsed() )
+                {
+                        unsigned int half = max < root->size ? root->size : max;
+                        changeEdgeSize( 2 * half );
+                        solution[ 1 ] = half;
+                }
+                else
+                {
+                        if ( max > root->size )
+                                changeEdgeSize( max );
+
+                        solution[ 1 ] = 0;
+                }
         }
 
-        RectangularRegion* region = new RectangularRegion( *texture, suitable->x, suitable->y, width, height );
-        nodes->getRoot()->assign( region, suitable->x, suitable->y, width, height );
-        texture->substitute( suitable->x, suitable->y, imageBuffer );
+        RectangularRegion* region = new RectangularRegion( *texture, solution[ 0 ], solution[ 1 ], width, height );
+        nodes->getRoot()->assign( region, solution[ 0 ], solution[ 1 ], width, height );
+        texture->substitute( solution[ 0 ], solution[ 1 ], imageBuffer );
         usedPixels += region->width * region->height;
         regions.insert( region );
         return region;

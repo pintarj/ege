@@ -31,6 +31,7 @@ namespace ege
                                                         unsigned int edgeSize;
                                                         unsigned int totalPixels;
                                                         unsigned int usedPixels;
+                                                        unsigned int minUnitSize;
                                                         std::set< RectangularRegion* > regions;
                                                         NodesGroup* nodes;
 

@@ -651,9 +651,6 @@ void DynamicAtlas::changeEdgeSize( unsigned int size )
         texture->resize( size, size, true );
         edgeSize = size;
         totalPixels = size * size;
-
-        for ( auto region : regions )
-                region->recalculateUV();
 }
 
 

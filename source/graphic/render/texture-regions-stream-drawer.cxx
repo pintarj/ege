@@ -155,3 +155,9 @@ void TextureRegionsStreamDrawer::flush()
         mapper->reset();
         unitsToDraw = 0;
 }
+
+
+Sampler& TextureRegionsStreamDrawer::getSampler()
+{
+        return sampler;
+}

@@ -46,6 +46,7 @@ namespace ege
                                         void setMVPMatrix( const float* mvpMatrix );
                                         void draw( const gpu::texture::util::RectangularRegion& region, float x, float y );
                                         void flush();
+                                        gpu::Sampler& getSampler();
                         };
                 }
         }

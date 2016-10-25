@@ -61,6 +61,10 @@ static bool createImageFor( FT_Face face, unsigned int size, unsigned int charco
                 bitmap.width = 1;
                 pixelsSize = 4;
                 pixels = new unsigned char[ pixelsSize ];
+                pixels[ 0 ] = 0;
+                pixels[ 1 ] = 0;
+                pixels[ 2 ] = 0;
+                pixels[ 3 ] = 0;
         }
         else
         {

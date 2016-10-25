@@ -11,6 +11,7 @@ Currently (at version 0.1.2) it can't do much:
 * draw in low-level using an OpenGL-like system (more or less)
 * listen keyboard's key events (press/release)
 * load PNG images
+* load font glyphs
 * insert/delete images from a texture dynamic atlas
 * use GPU buffer mappers
 
@@ -76,14 +77,15 @@ make
 
 EGE depend on some third-party libraries:
 
-* glfw3
-* glew
-* png
+* GLFW 3
+* GLEW
+* PNG
+* FreeType 2
 
 In Ubuntu 16.04 (maybe also some previous versions) you can install these by typing command:
 
 ``` bash
-sudo apt-get install libglfw3-dev libglew-dev libpng-dev
+sudo apt-get install libglfw3-dev libglew-dev libpng-dev libfreetype6-dev
 ```
 
 **Have fun, Janez.**

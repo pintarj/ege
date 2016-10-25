@@ -29,6 +29,15 @@ namespace ege
                 {
                         class FrameBuffer;
 
+                        namespace context
+                        {
+                                namespace blend
+                                {
+                                        void enable();
+                                        void disable();
+                                }
+                        }
+
                         class Context
                         {
                                 friend Engine;

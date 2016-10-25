@@ -8,6 +8,18 @@ using namespace ege;
 using namespace ege::graphic::gpu;
 
 
+void context::blend::enable()
+{
+        glEnable( GL_BLEND );
+}
+
+
+void context::blend::disable()
+{
+        glDisable( GL_BLEND );
+}
+
+
 Context::Context( const hardware::monitor::VideoMode& videoMode ): defaultFrameBuffer( new FrameBuffer( 0 ) )
 {
         defaultFrameBuffer->width = videoMode.width;
@@ -33,6 +45,8 @@ Context::Context( const hardware::monitor::VideoMode& videoMode ): defaultFrameB
         glewExperimental = GL_TRUE;
         GLenum error = glewInit();
         glGetError();
+
+        glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 
         if ( error != GLEW_OK )
                 Exception::throwNew( "could not initialize GLEW: %s", glewGetErrorString( error ) );

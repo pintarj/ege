@@ -8,6 +8,8 @@ ADD_LIBRARY( ege-core SHARED
         source/version.cxx
         source/engine.cxx
         source/game/scene.cxx
+        source/graphic/font/face.cxx
+        source/graphic/font/glyph.cxx
         source/graphic/gpu/buffer.cxx
         source/graphic/gpu/context.cxx
         source/graphic/gpu/draw.cxx
@@ -33,4 +35,4 @@ ADD_LIBRARY( ege-core SHARED
         source/util/log/logger.cxx
         )
 SET_PROPERTY( TARGET ege-core PROPERTY CXX_STANDARD 14 )
-TARGET_LINK_LIBRARIES( ege-core GLEW glfw png )
+TARGET_LINK_LIBRARIES( ege-core GLEW glfw png freetype )

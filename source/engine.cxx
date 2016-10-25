@@ -2,6 +2,7 @@
 #include <ege/exception.hxx>
 #include <ege/version.hxx>
 #include <ege/graphic/gpu/context.hxx>
+#include <private/ege/graphic/font/library.hxx>
 #include <ege/util/log/logger.hxx>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -104,6 +105,8 @@ Engine::Engine()
         global::keyboard = new hardware::Keyboard();
         ege::engine::resources = new engine::Resources();
 
+        graphic::font::library::initialize();
+
         global::monitor->createGPUContext();
         graphic::gpu::frameBuffer::setClearColor( 0.0, 0.0, 0.0, 0.0 );
         global::monitor->getGPUContext().getDefaultFrameBuffer().bindAsDrawTarget();
@@ -135,6 +138,7 @@ Engine::~Engine()
         delete global::fpsAnalyzer;
         delete global::monitor;
         delete global::keyboard;
+        graphic::font::library::destroy();
         glfwTerminate();
 
         GLenum glError = glGetError();

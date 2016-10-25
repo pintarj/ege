@@ -3,6 +3,7 @@
 #include <ege/exception.hxx>
 #include <ege/graphic/gpu/texture/texture-rectangle.hxx>
 #include <ege/graphic/gpu/texture/util/dynamic-atlas.hxx>
+#include <private/ege/graphic/font/library.hxx>
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
@@ -31,25 +32,10 @@ class AtlasGlyph: public Glyph
 };
 
 
-static bool initialized = false;
-static FT_Library library;
-
-
 struct Face::Private
 {
         FT_Face face;
 };
-
-
-static const char* getFTErrorMessage( FT_Error error )
-{
-        #undef __FTERRORS_H__
-        #define FT_ERRORDEF( e, v, s )  case e: return s;
-        #define FT_ERROR_START_LIST     switch ( error ) {
-        #define FT_ERROR_END_LIST       }
-        #include FT_ERRORS_H
-        return "unknown error";
-}
 
 
 static bool createImageFor( FT_Face face, unsigned int size, unsigned int charcode, texture::util::ImageBuffer** imageBuffer, FT_GlyphSlot* glyphSlot )
@@ -148,22 +134,10 @@ AtlasGlyph::~AtlasGlyph()
 
 Face::Face( const char* fileName ): _private( new Face::Private )
 {
-        FT_Error error = 0;
-
-        if ( !initialized )
-        {
-                error = FT_Init_FreeType( &library );
-
-                if ( error )
-                        Exception::throwNew( "could not initialize FreeType: %s", getFTErrorMessage( error ) );
-
-                initialized = true;
-        }
-
-        error = FT_New_Face( library, fileName, 0, &this->_private->face );
+        FT_Error error = FT_New_Face( library::instance, fileName, 0, &this->_private->face );
 
         if ( error )
-                Exception::throwNew( "could not load font face from file \"%s\": %s", fileName, getFTErrorMessage( error ) );
+                Exception::throwNew( "could not load font face from file \"%s\": %s", fileName, library::getErrorMessage( error ) );
 }
 
 

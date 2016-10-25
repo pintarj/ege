@@ -66,32 +66,45 @@ static bool createImageFor( FT_Face face, unsigned int size, unsigned int charco
         FT_Render_Glyph( glyph, FT_RENDER_MODE_NORMAL );
         FT_Bitmap bitmap = glyph->bitmap;
 
-        unsigned int pixelsSize = bitmap.rows * bitmap.width * 4;
-        unsigned char* pixels = new unsigned char[ pixelsSize ];
+        unsigned int pixelsSize;
+        unsigned char* pixels;
 
-        for ( unsigned int y = 0; y < bitmap.rows; ++y )
+        if ( bitmap.rows == 0 && bitmap.width == 0 )
         {
-                unsigned char* row = &pixels[ 4 * bitmap.width * y ];
-                unsigned char* buffer_row = &bitmap.buffer[ bitmap.width * ( bitmap.rows - y - 1 ) ];
+                bitmap.rows = 1;
+                bitmap.width = 1;
+                pixelsSize = 4;
+                pixels = new unsigned char[ pixelsSize ];
+        }
+        else
+        {
+                pixelsSize = bitmap.rows * bitmap.width * 4;
+                pixels = new unsigned char[ pixelsSize ];
 
-                for ( unsigned x = 0; x < bitmap.width; ++x )
+                for ( unsigned int y = 0; y < bitmap.rows; ++y )
                 {
-                        unsigned offset = x << 2;
+                        unsigned char* row = &pixels[ 4 * bitmap.width * y ];
+                        unsigned char* buffer_row = &bitmap.buffer[ bitmap.width * ( bitmap.rows - y - 1 ) ];
 
-                        if ( buffer_row[ x ] == 0 )
+                        for ( unsigned x = 0; x < bitmap.width; ++x )
                         {
-                                row[ offset + 0 ] = 0;
-                                row[ offset + 1 ] = 0;
-                                row[ offset + 2 ] = 0;
-                        }
-                        else
-                        {
-                                row[ offset + 0 ] = 255;
-                                row[ offset + 1 ] = 255;
-                                row[ offset + 2 ] = 255;
-                        }
+                                unsigned offset = x << 2;
 
-                        row[ offset + 3 ] = buffer_row[ x ];
+                                if ( buffer_row[ x ] == 0 )
+                                {
+                                        row[ offset + 0 ] = 0;
+                                        row[ offset + 1 ] = 0;
+                                        row[ offset + 2 ] = 0;
+                                }
+                                else
+                                {
+                                        row[ offset + 0 ] = 255;
+                                        row[ offset + 1 ] = 255;
+                                        row[ offset + 2 ] = 255;
+                                }
+
+                                row[ offset + 3 ] = buffer_row[ x ];
+                        }
                 }
         }
 

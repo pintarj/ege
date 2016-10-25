@@ -36,7 +36,7 @@ namespace ege
                                                         virtual void performFlush() = 0;
 
                                                 public:
-                                                        virtual ~WriteMapper() {};
+                                                        virtual ~WriteMapper();
                                                         void flush();
                                         };
                                 }

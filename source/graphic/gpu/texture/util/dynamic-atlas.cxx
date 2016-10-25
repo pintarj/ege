@@ -177,7 +177,7 @@ static bool calculateSolutions( bool* image, unsigned int* dimensions, int w, in
                 }
         }
 
-        for ( unsigned int x = 0; x < dimensions[ 0 ]; ++x )
+        for ( unsigned int x = 0; x < solW; ++x )
         {
                 unsigned int lastY = 0;
                 unsigned int count = 0;
@@ -202,12 +202,12 @@ static bool calculateSolutions( bool* image, unsigned int* dimensions, int w, in
                 {
                         solution[ 0 ] = x;
                         solution[ 1 ] = lastY;
-                        delete sums;
+                        delete[] sums;
                         return true;
                 }
         }
 
-        delete sums;
+        delete[] sums;
         return false;
 }
 
@@ -248,7 +248,7 @@ static bool searchNLevelsDeeper( unsigned int w, unsigned int h, const Node* nod
                         unsigned int dimensions[ 2 ];
                         bool* image = getUsageImage( node, level, dimensions );
                         bool solutionFound = calculateSolutions( image, dimensions, leveledW, leveledH, solution );
-                        delete image;
+                        delete[] image;
 
                         if ( !solutionFound )
                         {
@@ -377,7 +377,7 @@ void Node::defragment()
         delete fragments[ 1 ];
         delete fragments[ 2 ];
         delete fragments[ 3 ];
-        delete fragments;
+        delete[] fragments;
         fragments = nullptr;
 }
 
@@ -717,6 +717,7 @@ void DynamicAtlas::remove( const RectangularRegion* region )
 
         usedPixels -= region->width * region->height;
         nodes->getRoot()->unassign( region->x, region->y, region->width, region->height );
+        delete region;
 
         unsigned int canBeReducedTo = nodes->canReduceSizeTo();
         canBeReducedTo = canBeReducedTo < edgeThreshold ? edgeThreshold : canBeReducedTo;

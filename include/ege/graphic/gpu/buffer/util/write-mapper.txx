@@ -2,9 +2,17 @@
 
 template < typename unit >
 ege::graphic::gpu::buffer::util::WriteMapper< unit >::WriteMapper( gpu::Buffer* buffer, size_t unitsPerSector, size_t sectorsCount, size_t offset ):
-        Mapper< unit >( buffer, unitsPerSector, sectorsCount, offset )
+        Mapper< unit >( buffer, unitsPerSector, sectorsCount, offset ), range( nullptr ), mappedArea( nullptr ), mappedSectorIndex( -1 )
 {
 
+}
+
+
+template < typename unit >
+ege::graphic::gpu::buffer::util::WriteMapper< unit >::~WriteMapper()
+{
+        if ( range != nullptr )
+                delete range;
 }
 
 
@@ -36,7 +44,7 @@ unit* ege::graphic::gpu::buffer::util::WriteMapper< unit >::getMappedArea()
 template < typename unit >
 size_t ege::graphic::gpu::buffer::util::WriteMapper< unit >::getMappedSectorIndex()
 {
-
+        return mappedSectorIndex;
 }
 
 

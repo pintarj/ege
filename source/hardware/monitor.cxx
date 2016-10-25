@@ -65,10 +65,13 @@ Monitor::Monitor( void* glfwMonitor ): glfwMonitor( glfwMonitor )
 
 Monitor::~Monitor()
 {
+        if ( this->context != nullptr )
+                delete this->context;
+
         for ( unsigned int i = 0; i < videoModesCount; ++i )
                 delete videoModes[ i ];
 
-        delete videoModes;
+        delete[] videoModes;
 }
 
 

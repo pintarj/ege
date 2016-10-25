@@ -96,7 +96,7 @@ ImageBuffer* image::loadPng( const char* fileName )
                 rowPointers[ height - i - 1 ] = &( ( uint8_t* ) writeRange->mappedMemory )[ i * rowBytes ];
 
         png_read_image( png_ptr, rowPointers );
-        delete rowPointers;
+        delete[] rowPointers;
         png_destroy_read_struct( &png_ptr, &info_ptr, nullptr );
         std::fclose( file );
         delete writeRange;

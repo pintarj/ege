@@ -111,7 +111,7 @@ static bool createImageFor( FT_Face face, unsigned int size, unsigned int charco
         using namespace buffer::usage;
         using namespace texture::util;
         std::shared_ptr< Buffer > buffer( new Buffer( pixelsSize, Frequency::STREAM, Nature::READ, pixels ) );
-        delete pixels;
+        delete[] pixels;
         *imageBuffer = new ImageBuffer( bitmap.width, bitmap.rows, imageBuffer::Format::RGBA, buffer );
         return true;
 }

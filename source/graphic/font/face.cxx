@@ -2,12 +2,33 @@
 #include <ege/engine.hxx>
 #include <ege/exception.hxx>
 #include <ege/graphic/gpu/texture/texture-rectangle.hxx>
+#include <ege/graphic/gpu/texture/util/dynamic-atlas.hxx>
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
 
 using namespace ege::graphic::font;
+using namespace ege::graphic::gpu;
 using namespace ege;
+
+
+class StandAloneGlyph: public Glyph
+{
+        public:
+                StandAloneGlyph( texture::util::ImageBuffer* image, FT_GlyphSlot glyph );
+                virtual ~StandAloneGlyph();
+};
+
+
+class AtlasGlyph: public Glyph
+{
+        private:
+                texture::util::DynamicAtlas& atlas;
+
+        public:
+                AtlasGlyph( texture::util::ImageBuffer* image, FT_GlyphSlot glyph, texture::util::DynamicAtlas& atlas );
+                virtual ~AtlasGlyph();
+};
 
 
 static bool initialized = false;
@@ -31,43 +52,17 @@ static const char* getFTErrorMessage( FT_Error error )
 }
 
 
-Face::Face( const char* fileName ): _private( new Face::Private )
+static bool createImageFor( FT_Face face, unsigned int size, unsigned int charcode, texture::util::ImageBuffer** imageBuffer, FT_GlyphSlot* glyphSlot )
 {
-        FT_Error error = 0;
-
-        if ( !initialized )
-        {
-                error = FT_Init_FreeType( &library );
-
-                if ( error )
-                        Exception::throwNew( "could not initialize FreeType: %s", getFTErrorMessage( error ) );
-
-                initialized = true;
-        }
-
-        error = FT_New_Face( library, fileName, 0, &this->_private->face );
-
-        if ( error )
-                Exception::throwNew( "could not load font face from file \"%s\": %s", fileName, getFTErrorMessage( error ) );
-}
-
-
-Face::~Face()
-{
-        FT_Done_Face( this->_private->face );
-}
-
-
-Glyph* Face::createGlyph( unsigned int size, unsigned int charcode )
-{
-        FT_Set_Pixel_Sizes( this->_private->face, 0, size );
-        FT_UInt index = FT_Get_Char_Index( this->_private->face, charcode );
+        FT_Set_Pixel_Sizes( face, 0, size );
+        FT_UInt index = FT_Get_Char_Index( face, charcode );
 
         if ( index == 0 )
-                return nullptr;
+                return false;
 
-        FT_Load_Glyph( this->_private->face, index, 0 );
-        FT_GlyphSlot glyph = this->_private->face->glyph;
+        FT_Load_Glyph( face, index, 0 );
+        FT_GlyphSlot glyph = face->glyph;
+        *glyphSlot = face->glyph;
         FT_Render_Glyph( glyph, FT_RENDER_MODE_NORMAL );
         FT_Bitmap bitmap = glyph->bitmap;
 
@@ -100,11 +95,94 @@ Glyph* Face::createGlyph( unsigned int size, unsigned int charcode )
                 }
         }
 
-        std::shared_ptr< gpu::Buffer > buffer( new gpu::Buffer( pixelsSize, gpu::buffer::usage::Frequency::STREAM, gpu::buffer::usage::Nature::READ, pixels ) );
+        using namespace buffer::usage;
+        using namespace texture::util;
+        std::shared_ptr< Buffer > buffer( new Buffer( pixelsSize, Frequency::STREAM, Nature::READ, pixels ) );
         delete pixels;
-        gpu::texture::util::ImageBuffer* image = new gpu::texture::util::ImageBuffer( bitmap.width, bitmap.rows, gpu::texture::util::imageBuffer::Format::RGBA, buffer );
-        gpu::texture::TextureRectangle* texture = new gpu::texture::TextureRectangle( *image );
+        *imageBuffer = new ImageBuffer( bitmap.width, bitmap.rows, imageBuffer::Format::RGBA, buffer );
+        return true;
+}
+
+
+StandAloneGlyph::StandAloneGlyph( texture::util::ImageBuffer* image, FT_GlyphSlot glyph ):
+        Glyph( glyph -> bitmap_left, glyph -> bitmap_top, ( float ) glyph -> advance.x / 64.0f,
+               new texture::util::RectangularRegion( *new texture::TextureRectangle( *image ) ) )
+{
+
+}
+
+
+StandAloneGlyph::~StandAloneGlyph()
+{
+        delete &region->texture;
+        delete region;
+}
+
+
+AtlasGlyph::AtlasGlyph( texture::util::ImageBuffer* image, FT_GlyphSlot glyph, texture::util::DynamicAtlas& atlas ):
+        Glyph( glyph -> bitmap_left, glyph -> bitmap_top, ( float ) glyph -> advance.x / 64.0f,
+               atlas.insert( *image ) ), atlas( atlas )
+{
+
+}
+
+
+AtlasGlyph::~AtlasGlyph()
+{
+        atlas.remove( this->region );
+}
+
+
+Face::Face( const char* fileName ): _private( new Face::Private )
+{
+        FT_Error error = 0;
+
+        if ( !initialized )
+        {
+                error = FT_Init_FreeType( &library );
+
+                if ( error )
+                        Exception::throwNew( "could not initialize FreeType: %s", getFTErrorMessage( error ) );
+
+                initialized = true;
+        }
+
+        error = FT_New_Face( library, fileName, 0, &this->_private->face );
+
+        if ( error )
+                Exception::throwNew( "could not load font face from file \"%s\": %s", fileName, getFTErrorMessage( error ) );
+}
+
+
+Face::~Face()
+{
+        FT_Done_Face( this->_private->face );
+}
+
+
+Glyph* Face::createGlyph( unsigned int size, unsigned int charcode )
+{
+        texture::util::ImageBuffer* image;
+        FT_GlyphSlot glyph;
+
+        if( !createImageFor( this->_private->face, size, charcode, &image, &glyph ) )
+                return nullptr;
+
+        StandAloneGlyph* result = new StandAloneGlyph( image, glyph );
         delete image;
-        gpu::texture::util::RectangularRegion* region = new gpu::texture::util::RectangularRegion( *texture );
-        return new Glyph( glyph -> bitmap_left, glyph -> bitmap_top, ( float ) glyph -> advance.x / 64.0f, region, true );
+        return result;
+}
+
+
+Glyph* Face::createGlyph( unsigned int size, unsigned int charcode, gpu::texture::util::DynamicAtlas& atlas )
+{
+        texture::util::ImageBuffer* image;
+        FT_GlyphSlot glyph;
+
+        if( !createImageFor( this->_private->face, size, charcode, &image, &glyph ) )
+                return nullptr;
+
+        AtlasGlyph* result = new AtlasGlyph( image, glyph, atlas );
+        delete image;
+        return result;
 }

@@ -5,6 +5,7 @@
 
 
 #include <ege/graphic/font/glyph.hxx>
+#include <ege/graphic/gpu/texture/util/dynamic-atlas.hxx>
 #include <memory>
 
 
@@ -14,8 +15,6 @@ namespace ege
         {
                 namespace font
                 {
-                        class Glyph;
-
                         class Face
                         {
                                 private:
@@ -26,6 +25,7 @@ namespace ege
                                         Face( const char* fileName );
                                         virtual ~Face();
                                         Glyph* createGlyph( unsigned int size, unsigned int charcode );
+                                        Glyph* createGlyph( unsigned int size, unsigned int charcode, gpu::texture::util::DynamicAtlas& atlas );
                         };
                 }
         }

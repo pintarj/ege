@@ -115,7 +115,7 @@ Engine::Engine()
         global::keyboard->listenOnWindows( glfwWindows, 1 );
 
         global::currentScene = global::configurations.createInitialScene();
-        global::currentScene = new game::EGEStartScene( global::currentScene );
+        global::currentScene = new game::EGEStartScene( *global::currentScene );
 
         if ( global::currentScene == nullptr )
                 Exception::throwNew( "no initial scenario defined" );

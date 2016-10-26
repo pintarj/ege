@@ -7,6 +7,7 @@
 #include <ege/graphic/gpu/context.hxx>
 #include <ege/graphic/gpu/object.hxx>
 #include <ege/graphic/gpu/texture/texture-rectangle.hxx>
+#include <ege/graphic/gpu/sampler.hxx>
 
 
 namespace ege
@@ -42,6 +43,11 @@ namespace ege
                                         void attachColorBuffer( const texture::TextureRectangle& texture );
                                         void detachColorBuffer();
                                         void bindAsDrawTarget() const;
+
+                                        static void blit( const FrameBuffer& destination, const FrameBuffer& source,
+                                                unsigned int dstX0, unsigned int dstY0, unsigned int dstX1, unsigned int dstY1,
+                                                unsigned int srcX0, unsigned int srcY0, unsigned int srcX1, unsigned int srcY1,
+                                                sampler::Filter filter );
                         };
                 }
         }

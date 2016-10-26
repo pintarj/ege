@@ -86,3 +86,14 @@ void FrameBuffer::bindAsDrawTarget() const
         glViewport( 0, 0, width, height );
         glBindFramebuffer( GL_DRAW_FRAMEBUFFER, id );
 }
+
+
+void FrameBuffer::blit( const FrameBuffer& destination, const FrameBuffer& source,
+        unsigned int dstX0, unsigned int dstY0, unsigned int dstX1, unsigned int dstY1,
+        unsigned int srcX0, unsigned int srcY0, unsigned int srcX1, unsigned int srcY1,
+        sampler::Filter filter )
+{
+        glBindFramebuffer( GL_DRAW_FRAMEBUFFER, object::getId( destination ) );
+        glBindFramebuffer( GL_READ_FRAMEBUFFER, object::getId( source ) );
+        glBlitFramebuffer( srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, GL_COLOR_BUFFER_BIT, ( GLenum ) filter );
+}

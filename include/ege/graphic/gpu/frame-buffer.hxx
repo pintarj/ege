@@ -6,6 +6,7 @@
 
 #include <ege/graphic/gpu/context.hxx>
 #include <ege/graphic/gpu/object.hxx>
+#include <ege/graphic/gpu/texture/texture-rectangle.hxx>
 
 
 namespace ege
@@ -36,6 +37,8 @@ namespace ege
                                 public:
                                         FrameBuffer();
                                         virtual ~FrameBuffer();
+                                        void attachColorBuffer( const texture::TextureRectangle& texture );
+                                        void detachColorBuffer();
                                         void bindAsDrawTarget() const;
                         };
                 }

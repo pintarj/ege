@@ -43,7 +43,7 @@ void VertexArray::setAttributeFormatAndBindVertexBuffer(  unsigned int index, ui
                                                           bool normalized, const gpu::Buffer& buffer, unsigned int offset, unsigned int stride  )
 {
         glBindVertexArray( id );
-        glBindBuffer( GL_ARRAY_BUFFER, buffer.id );
+        glBindBuffer( GL_ARRAY_BUFFER, object::getId( buffer ) );
         glVertexAttribPointer( index, size, ( GLenum ) type, ( GLboolean ) ( normalized ? GL_TRUE : GL_FALSE ), stride, reinterpret_cast< const void* >( ( size_t ) offset ) );
 }
 

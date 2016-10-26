@@ -32,7 +32,7 @@ void frameBuffer::clearColorBuffer( float r, float g, float b, float a )
 }
 
 
-FrameBuffer::FrameBuffer( unsigned int id ): Object( id )
+FrameBuffer::FrameBuffer( unsigned int id ): Object( id ), width( 0 ), height( 0 )
 {
 
 }
@@ -48,6 +48,22 @@ FrameBuffer::~FrameBuffer()
 {
         if ( id != 0 )
                 glDeleteFramebuffers( 1, &id );
+}
+
+
+void FrameBuffer::attachColorBuffer( const texture::TextureRectangle& texture )
+{
+        glBindFramebuffer( GL_READ_FRAMEBUFFER, id );
+        glFramebufferTexture2D( GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, ( GLenum ) texture.type, object::getId( texture ), 0 );
+        this->width = texture.getWidth();
+        this->height = texture.getHeight();
+}
+
+
+void FrameBuffer::detachColorBuffer()
+{
+        glBindFramebuffer( GL_READ_FRAMEBUFFER, id );
+        glFramebufferTexture2D( GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_RECTANGLE, 0, 0 );
 }
 
 

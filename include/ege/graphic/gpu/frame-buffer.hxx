@@ -31,12 +31,14 @@ namespace ege
                                 private:
                                         unsigned int width;
                                         unsigned int height;
+                                        const Texture* colorBuffer;
 
                                         FrameBuffer( unsigned int id );
 
                                 public:
                                         FrameBuffer();
                                         virtual ~FrameBuffer();
+                                        bool isDefault() const;
                                         void attachColorBuffer( const texture::TextureRectangle& texture );
                                         void detachColorBuffer();
                                         void bindAsDrawTarget() const;

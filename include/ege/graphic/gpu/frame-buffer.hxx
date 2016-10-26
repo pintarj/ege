@@ -42,6 +42,8 @@ namespace ege
                                         bool isDefault() const;
                                         void attachColorBuffer( const texture::TextureRectangle& texture );
                                         void detachColorBuffer();
+                                        unsigned int getWidth() const;
+                                        unsigned int getHeight() const;
                                         void bindAsDrawTarget() const;
 
                                         static void blit( const FrameBuffer& destination, const FrameBuffer& source,

@@ -81,6 +81,18 @@ void FrameBuffer::detachColorBuffer()
 }
 
 
+unsigned int FrameBuffer::getWidth() const
+{
+        return width;
+}
+
+
+unsigned int FrameBuffer::getHeight() const
+{
+        return height;
+}
+
+
 void FrameBuffer::bindAsDrawTarget() const
 {
         glViewport( 0, 0, width, height );

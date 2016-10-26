@@ -20,8 +20,8 @@ namespace ege
                                 public:
                                         Program( std::initializer_list< const Shader* > shaders );
                                         virtual ~Program();
-                                        void use();
-                                        int getUniformLocation( const char* uniformName );
+                                        void use() const;
+                                        int getUniformLocation( const char* uniformName ) const;
                                         void uniform( unsigned int location, int v0 );
                                         void uniformMatrix4x4( unsigned int location, unsigned int count, bool transpose, const float* matrix4x4 );
                         };

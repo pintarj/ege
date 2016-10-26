@@ -39,13 +39,13 @@ Program::~Program()
 }
 
 
-void Program::use()
+void Program::use() const
 {
         glUseProgram( id );
 }
 
 
-int Program::getUniformLocation( const char* uniformName )
+int Program::getUniformLocation( const char* uniformName ) const
 {
         return glGetUniformLocation( id, uniformName );
 }

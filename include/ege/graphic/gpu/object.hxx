@@ -11,7 +11,6 @@ namespace ege
                 namespace gpu
                 {
                         class Object;
-                        class VertexArray;
 
                         namespace object
                         {
@@ -20,7 +19,6 @@ namespace ege
 
                         class Object
                         {
-                                friend VertexArray;
                                 friend unsigned int object::getId( const Object &object );
 
                                 protected:

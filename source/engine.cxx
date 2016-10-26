@@ -3,6 +3,7 @@
 #include <ege/version.hxx>
 #include <ege/graphic/gpu/context.hxx>
 #include <private/ege/graphic/font/library.hxx>
+#include <private/ege/game/ege-start-scene.hxx>
 #include <ege/util/log/logger.hxx>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -114,6 +115,7 @@ Engine::Engine()
         global::keyboard->listenOnWindows( glfwWindows, 1 );
 
         global::currentScene = global::configurations.createInitialScene();
+        global::currentScene = new game::EGEStartScene( global::currentScene );
 
         if ( global::currentScene == nullptr )
                 Exception::throwNew( "no initial scenario defined" );

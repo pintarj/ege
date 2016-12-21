@@ -136,23 +136,25 @@ void ege::resource::Manager< K, R, C >::requireOnly( std::set< K > const& keys, 
 template< typename K, typename R, typename C >
 void ege::resource::Manager< K, R, C >::requireOnlyUnloadOthers( std::set< K > const& keys, bool async )
 {
-        std::lock_guard< std::mutex > lock( resourcesMutex );
-        auto newResources = new std::map< K, std::pair< std::shared_ptr< R >, bool >, C >();
-
-        for ( K const& key : keys )
         {
-                auto i = resources->find( key );
+                std::lock_guard< std::mutex > lock( resourcesMutex );
+                auto newResources = new std::map< K, std::pair< std::shared_ptr< R >, bool >, C >();
 
-                if ( i == resources->end() )
-                        continue;
+                for ( K const& key : keys )
+                {
+                        auto i = resources->find( key );
 
-                newResources->insert( *i );
-                resources->erase( i );
+                        if ( i == resources->end() )
+                                continue;
+
+                        newResources->insert( *i );
+                        resources->erase( i );
+                }
+
+                resources->clear();
+                delete resources;
+                resources = newResources;
         }
-
-        resources->clear();
-        delete resources;
-        resources = newResources;
         requireOnly( keys, async );
 }
 

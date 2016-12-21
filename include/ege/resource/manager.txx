@@ -29,63 +29,77 @@ void ege::resource::Manager< K, R, C >::startAsyncLoad()
         scheduler = std::async( std::launch::async, [ this ] ()
                 {
                         {
+                                // Wait that startAsyncLoad() returns.
                                 std::lock_guard< std::mutex > lock( this->loadingMutex );
                         }
 
                         while ( true )
                         {
-                                std::unique_lock< std::mutex > lock( this->loadingsMutex );
-
+                                while ( true )
                                 {
-                                        std::lock_guard< std::mutex > lock( this->loadingQueueMutex );
+                                        std::unique_lock< std::mutex > lock( this->loadingsMutex );
 
-                                        if ( this->loadingsQueue.size() == 0 )
-                                                break;
+                                        {
+                                                std::lock_guard< std::mutex > lock( this->loadingQueueMutex );
+
+                                                if ( this->loadingsQueue.size() == 0 )
+                                                        break;
+                                        }
+
+                                        loadingCompletedSignal.wait( lock, [ this ] ()
+                                                {
+                                                        moveLoadedResources();
+                                                        return this->loadings.size() < this->maxParallelLoadings;
+                                                } );
+
+                                        K* key = nullptr;
+
+                                        {
+                                                std::lock_guard< std::mutex > lock( this->loadingQueueMutex );
+                                                key = &this->loadingsQueue.front();
+                                        }
+
+                                        std::shared_ptr< ege::resource::Loader< R > > loader = factory.load( *key );
+
+                                        loadings[ *key ] = std::pair< std::shared_ptr< Loader< R > >, std::future< void > >( loader, loader->asyncComplete( [ this, key, loader ] ()
+                                                {
+                                                        std::lock_guard< std::mutex > lock1( this->loadingsMutex );
+                                                        this->loadedQueue.push( *key );
+                                                        this->loadingCompletedSignal.notify_all();
+                                                } ) );
+
+                                        {
+                                                std::lock_guard< std::mutex > lock( this->loadingQueueMutex );
+                                                this->loadingsQueue.pop();
+                                        }
                                 }
 
-                                loadingCompletedSignal.wait( lock, [ this ] ()
+                                {
+                                        std::unique_lock< std::mutex > lock( this->loadingsMutex );
+
+                                        this->loadingCompletedSignal.wait( lock, [ this ] ()
                                         {
                                                 moveLoadedResources();
-                                                return this->loadings.size() < this->maxParallelLoadings;
+                                                return this->loadings.size() == 0;
                                         } );
-
-                                K* key = nullptr;
-
-                                {
-                                        std::lock_guard< std::mutex > lock( this->loadingQueueMutex );
-                                        key = &this->loadingsQueue.front();
                                 }
 
-                                std::shared_ptr< ege::resource::Loader< R > > loader = factory.load( *key );
+                                {
+                                        std::lock_guard< std::mutex > lock( this->loadingMutex );
 
-                                loadings[ *key ] = std::pair< std::shared_ptr< Loader< R > >, std::future< void > >( loader, loader->asyncComplete( [ this, key, loader ] ()
                                         {
-                                                std::lock_guard< std::mutex > lock1( this->loadingsMutex );
-                                                this->loadedQueue.push( *key );
-                                                this->loadingCompletedSignal.notify_all();
-                                        } ) );
+                                                std::lock_guard< std::mutex > lock( this->loadingQueueMutex );
 
-                                {
-                                        std::lock_guard< std::mutex > lock( this->loadingQueueMutex );
-                                        this->loadingsQueue.pop();
+                                                if ( this->loadingsQueue.size() != 0 )
+                                                        continue;
+                                        }
+
+                                        this->loading = false;
+                                        this->consistentStateSignal.notify_all();
+                                        return;
                                 }
                         }
 
-                        {
-                                std::unique_lock< std::mutex > lock( this->loadingsMutex );
-
-                                this->loadingCompletedSignal.wait( lock, [ this ] ()
-                                {
-                                        moveLoadedResources();
-                                        return this->loadings.size() == 0;
-                                } );
-                        }
-
-                        {
-                                std::lock_guard< std::mutex > lock( this->loadingMutex );
-                                this->loading = false;
-                                this->consistentStateSignal.notify_all();
-                        }
                 } );
 }
 
@@ -104,6 +118,8 @@ ege::resource::Manager< K, R, C >::Manager( ege::resource::Factory< K, R >& fact
 template< typename K, typename R, typename C >
 ege::resource::Manager< K, R, C >::~Manager()
 {
+        // TODO Here should stop the loading threads.
+        waitConsistentState();
         unloadAll();
         delete resources;
 }
@@ -120,6 +136,7 @@ void ege::resource::Manager< K, R, C >::requireOnly( std::set< K > const& keys, 
 template< typename K, typename R, typename C >
 void ege::resource::Manager< K, R, C >::requireOnlyUnloadOthers( std::set< K > const& keys, bool async )
 {
+        std::lock_guard< std::mutex > lock( resourcesMutex );
         auto newResources = new std::map< K, std::pair< std::shared_ptr< R >, bool >, C >();
 
         for ( K const& key : keys )
@@ -143,19 +160,24 @@ void ege::resource::Manager< K, R, C >::requireOnlyUnloadOthers( std::set< K > c
 template< typename K, typename R, typename C >
 void ege::resource::Manager< K, R, C >::require( std::set< K > const& keys, bool async )
 {
-        for ( K const& key : keys )
         {
-                auto i = resources->find( key );
+                std::lock_guard< std::mutex > lock( resourcesMutex );
 
-                if ( i != resources->end() )
+                for ( K const& key : keys )
                 {
-                        i->second.second = true;
-                        continue;
-                }
+                        auto i = resources->find( key );
+                        auto end = resources->end();
 
-                {
-                        std::lock_guard< std::mutex > lock( loadingQueueMutex );
-                        loadingsQueue.push( key );
+                        if ( i != end )
+                        {
+                                i->second.second = true;
+                                continue;
+                        }
+
+                        {
+                                std::lock_guard< std::mutex > lock( loadingQueueMutex );
+                                loadingsQueue.push( key );
+                        }
                 }
         }
 
@@ -169,6 +191,8 @@ void ege::resource::Manager< K, R, C >::require( std::set< K > const& keys, bool
 template< typename K, typename R, typename C >
 void ege::resource::Manager< K, R, C >::dismiss( std::set< K > const& keys )
 {
+        std::lock_guard< std::mutex > lock( resourcesMutex );
+
         for ( K const& key : keys )
         {
                 auto i = resources->find( key );
@@ -184,6 +208,8 @@ void ege::resource::Manager< K, R, C >::dismiss( std::set< K > const& keys )
 template< typename K, typename R, typename C >
 void ege::resource::Manager< K, R, C >::dismissAll()
 {
+        std::lock_guard< std::mutex > lock( resourcesMutex );
+
         for ( auto i = resources->begin(); i != resources->end(); ++i )
                 i->second.second = false;
 }
@@ -192,6 +218,8 @@ void ege::resource::Manager< K, R, C >::dismissAll()
 template< typename K, typename R, typename C >
 void ege::resource::Manager< K, R, C >::unloadNotRequired()
 {
+        std::lock_guard< std::mutex > lock( resourcesMutex );
+
         for ( auto i = resources->begin(); i != resources->end(); )
         {
                 bool required = i->second.second;
@@ -229,15 +257,18 @@ void ege::resource::Manager< K, R, C >::waitConsistentState()
 
 
 template< typename K, typename R, typename C >
-bool ege::resource::Manager< K, R, C >::isLoaded( K const& key ) const
+bool ege::resource::Manager< K, R, C >::isLoaded( K const& key )
 {
+        std::lock_guard< std::mutex > lock( resourcesMutex );
         return resources->find( key ) != resources->end();
 }
 
 
 template< typename K, typename R, typename C >
-std::shared_ptr< R > ege::resource::Manager< K, R, C >::get( K const& key ) const
+std::shared_ptr< R > ege::resource::Manager< K, R, C >::get( K const& key )
 {
+        std::lock_guard< std::mutex > lock( resourcesMutex );
+
         auto i = resources->find( key );
 
         if ( i == resources->end() )
@@ -248,7 +279,7 @@ std::shared_ptr< R > ege::resource::Manager< K, R, C >::get( K const& key ) cons
 
 
 template< typename K, typename R, typename C >
-std::shared_ptr< R > ege::resource::Manager< K, R, C >::operator [] ( K const& key ) const
+std::shared_ptr< R > ege::resource::Manager< K, R, C >::operator [] ( K const& key )
 {
         return get( key );
 }

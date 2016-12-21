@@ -23,10 +23,10 @@ namespace ege
                                 const unsigned maxParallelLoadings;
                                 Factory< K, R >& factory;
                                 std::map< K, std::pair< std::shared_ptr< R >, bool >, C >* resources;
-
                                 std::queue< K > loadingsQueue;
                                 std::map< K, std::pair< std::shared_ptr< Loader< R > >, std::future< void > >, C > loadings;
                                 std::queue< K > loadedQueue;
+                                std::mutex resourcesMutex;
                                 std::mutex loadingMutex;
                                 std::mutex loadingsMutex;
                                 std::mutex loadingQueueMutex;
@@ -50,9 +50,9 @@ namespace ege
                                 void unloadAll();
                                 bool isInConsistentState();
                                 void waitConsistentState();
-                                bool isLoaded( K const& key ) const;
-                                std::shared_ptr< R > get( K const& key ) const;
-                                std::shared_ptr< R > operator [] ( K const& key ) const;
+                                bool isLoaded( K const& key );
+                                std::shared_ptr< R > get( K const& key );
+                                std::shared_ptr< R > operator [] ( K const& key );
                 };
         }
 }

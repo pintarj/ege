@@ -105,8 +105,8 @@ void ege::resource::Manager< K, R, C >::startAsyncLoad()
 
 
 template< typename K, typename R, typename C >
-ege::resource::Manager< K, R, C >::Manager( ege::resource::Factory< K, R >& factory ):
-        maxParallelLoadings( std::thread::hardware_concurrency() * 1 ),
+ege::resource::Manager< K, R, C >::Manager( ege::resource::Factory< K, R >& factory, unsigned threadsPerCore ):
+        maxParallelLoadings( std::thread::hardware_concurrency() * threadsPerCore ),
         loading( false ),
         factory( factory ),
         resources( new std::map< K, std::pair< std::shared_ptr< R >, bool >, C >() )

@@ -39,7 +39,7 @@ namespace ege
                                 void startAsyncLoad();
 
                         public:
-                                Manager( Factory< K, R >& factory );
+                                Manager( Factory< K, R >& factory, unsigned threadsPerCore = 4 );
                                 virtual ~Manager();
                                 void requireOnly( std::set< K > const& keys, bool async = false );
                                 void requireOnlyUnloadOthers( std::set< K > const& keys, bool async = false );

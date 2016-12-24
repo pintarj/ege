@@ -21,7 +21,7 @@ namespace ege
                         public:
                                 EGEStartScene( Scene& initialScene );
                                 virtual ~EGEStartScene();
-                                void update( float delta );
+                                void performUpdate( float delta );
                                 void render();
                 };
         }

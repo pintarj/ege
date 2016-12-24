@@ -18,7 +18,7 @@ EGEStartScene::~EGEStartScene()
 }
 
 
-void EGEStartScene::update( float delta )
+void EGEStartScene::performUpdate( float delta )
 {
         elapsedTime += delta;
 

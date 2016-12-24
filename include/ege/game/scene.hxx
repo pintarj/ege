@@ -5,6 +5,7 @@
 
 
 #include <ege/engine.hxx>
+#include <ege/game/updateable.hxx>
 
 
 namespace ege
@@ -18,7 +19,7 @@ namespace ege
 
         namespace game
         {
-                class Scene
+                class Scene: public Updateable
                 {
                         friend Engine;
 
@@ -36,7 +37,6 @@ namespace ege
                                 void requireEngineStop();
                                 void requireEngineRestart();
                                 void doNotDeleteOnExchange();
-                                virtual void update( float delta ) = 0;
                                 virtual void render() = 0;
                                 virtual void shouldClose();
 

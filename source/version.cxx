@@ -1,7 +1,7 @@
 #include <ege/version.hxx>
 
 
-void ege::version::get( uint32_t* major, uint32_t* minor, uint32_t* build )
+void ege::version::get( unsigned* major, unsigned* minor, unsigned* build )
 {
         if ( major != nullptr )
                 *major = EGE_VERSION_MAJOR;

@@ -71,7 +71,7 @@ void Keyboard::listenOnWindows( void** windows, unsigned int count )
 Keyboard::Keyboard()
 {
         if ( global::keyboardInstanced.exchange( true ) )
-                Exception::throwNew( "could not create second interface to keyboard" );
+                ege::exception::throwNew( "could not create second interface to keyboard" );
 
         std::memset( global::keysPressed, 0, sizeof( global::keysPressed ) );
 }

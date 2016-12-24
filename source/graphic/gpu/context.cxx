@@ -35,7 +35,7 @@ Context::Context( const hardware::monitor::VideoMode& videoMode ): defaultFrameB
         glfwContext = glfwCreateWindow( videoMode.width, videoMode.height, "", glfwMonitor, NULL );
 
         if ( glfwContext == nullptr )
-                Exception::throwNew( "could not create OpenGL context" );
+                ege::exception::throwNew( "could not create OpenGL context" );
 
         engine::resources->logger->log( util::log::Level::INFO, "OpenGL %d.%d context created", contextMajor, contextMinor );
 
@@ -49,7 +49,7 @@ Context::Context( const hardware::monitor::VideoMode& videoMode ): defaultFrameB
         glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 
         if ( error != GLEW_OK )
-                Exception::throwNew( "could not initialize GLEW: %s", glewGetErrorString( error ) );
+                ege::exception::throwNew( "could not initialize GLEW: %s", glewGetErrorString( error ) );
 
         engine::resources->logger->log( util::log::Level::INFO, "GLEW %s initialized", glewGetString( GLEW_VERSION ) );
 }

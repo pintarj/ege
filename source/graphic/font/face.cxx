@@ -141,7 +141,7 @@ Face::Face( const char* fileName ): _private( new Face::Private )
         FT_Error error = FT_New_Face( library::instance, fileName, 0, &this->_private->face );
 
         if ( error )
-                Exception::throwNew( "could not load font face from file \"%s\": %s", fileName, library::getErrorMessage( error ) );
+                ege::exception::throwNew( "could not load font face from file \"%s\": %s", fileName, library::getErrorMessage( error ) );
 }
 
 

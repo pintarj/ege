@@ -24,12 +24,12 @@ const char* ege::graphic::font::library::getErrorMessage( FT_Error error )
 void ege::graphic::font::library::initialize()
 {
         if ( initialized.exchange( true ) )
-                Exception::throwNew( "FreeType library was already initialized" );
+                ege::exception::throwNew( "FreeType library was already initialized" );
 
         FT_Error error = FT_Init_FreeType( &ege::graphic::font::library::instance );
 
         if ( error )
-                Exception::throwNew( "could not initialize FreeType: %s", ege::graphic::font::library::getErrorMessage( error ) );
+                ege::exception::throwNew( "could not initialize FreeType: %s", ege::graphic::font::library::getErrorMessage( error ) );
 
         FT_Int major, minor, patch;
         FT_Library_Version( ege::graphic::font::library::instance, &major, &minor, &patch );
@@ -41,7 +41,7 @@ void ege::graphic::font::library::initialize()
 void ege::graphic::font::library::destroy()
 {
         if ( !initialized.exchange( false ) )
-                Exception::throwNew( "FreeType library was already destroyed (or was never initialized)" );
+                ege::exception::throwNew( "FreeType library was already destroyed (or was never initialized)" );
 
         FT_Done_FreeType( ege::graphic::font::library::instance );
 }

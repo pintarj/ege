@@ -56,7 +56,7 @@ void ege::game::Updateable::update( float delta )
 void ege::game::Updateable::addDependency( std::shared_ptr< Updateable > updateable )
 {
         if ( cycleDetected( updateable ) )
-                ege::Exception::throwNew( "cycle detected in updateable dependencies" );
+                ege::exception::throwNew( "cycle detected in updateable dependencies" );
 
         dependencies.insert( updateable );
 }

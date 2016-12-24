@@ -5,22 +5,29 @@
 
 
 #include <exception>
+#include <string>
 
 
 namespace ege
 {
+        namespace exception
+        {
+                void throwNew( std::string const& formatted, ... );
+        }
+
         class Exception: public std::exception
         {
-                private:
-                        const char* message;
+                friend void ege::exception::throwNew( std::string const& formatted, ... );
 
-                        Exception( const char* message );
+                private:
+                        const std::string message;
+
+                        Exception( std::string const& message );
 
                 public:
-                        virtual ~Exception() {};
+                        virtual ~Exception();
                         virtual const char* what() const throw();
                         void consume();
-                        static void throwNew( const char * formatted, ... );
         };
 }
 

@@ -1,41 +1,46 @@
 #include <ege/exception.hxx>
-#include <exception>
-#include <cstring>
-#include <cstddef>
-#include <cstdlib>
 #include <cstdarg>
 #include <cstdio>
+#include <cstdlib>
 #include <ege/engine.hxx>
 
 
-using namespace ege;
-
-
-Exception::Exception( const char* message ): message( message )
+ege::Exception::Exception( std::string const& message ):
+        message( message )
 {
 
 }
 
 
-const char* Exception::what() const throw()
+ege::Exception::~Exception()
 {
-        return message;
+
 }
 
 
-void Exception::consume()
+const char* ege::Exception::what() const throw()
 {
-        engine::resources->logger->log( util::log::Level::ERROR, what() );
-        delete this;
+        return message.c_str();
 }
 
 
-void Exception::throwNew( const char * formatted, ... )
+void ege::Exception::consume()
+{
+        ege::engine::resources->logger->log( ege::util::log::Level::ERROR, what() );
+}
+
+
+void ege::exception::throwNew( std::string const& formatted, ... )
 {
         va_list args;
         va_start( args, formatted );
-        char* message;
-        vasprintf( &message, formatted, args );
+        char* ptr;
+
+        if ( vasprintf( &ptr, formatted.c_str(), args ) == -1 )
+                throw Exception( "exception and later out of memory occoured" );
+
         va_end( args );
-        throw new Exception( message );
+        std::string message( ptr );
+        std::free( ptr );
+        throw Exception( message );
 }

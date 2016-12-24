@@ -61,7 +61,7 @@ bool FrameBuffer::isDefault() const
 void FrameBuffer::attachColorBuffer( const texture::TextureRectangle& texture )
 {
         if ( isDefault() )
-                Exception::throwNew( "can't attach a color buffer to the default framebuffer" );
+                ege::exception::throwNew( "can't attach a color buffer to the default framebuffer" );
 
         glBindFramebuffer( GL_READ_FRAMEBUFFER, id );
         glFramebufferTexture2D( GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, ( GLenum ) texture.type, object::getId( texture ), 0 );
@@ -74,7 +74,7 @@ void FrameBuffer::attachColorBuffer( const texture::TextureRectangle& texture )
 void FrameBuffer::detachColorBuffer()
 {
         if ( isDefault() )
-                Exception::throwNew( "can't detach the color buffer from the default framebuffer" );
+                ege::exception::throwNew( "can't detach the color buffer from the default framebuffer" );
 
         glBindFramebuffer( GL_READ_FRAMEBUFFER, id );
         glFramebufferTexture2D( GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_RECTANGLE, 0, 0 );

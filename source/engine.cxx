@@ -61,7 +61,7 @@ void engine::start( const std::function< void( engine::Configurations& ) > &conf
         try
         {
                 if ( global::started.exchange( true ) )
-                        Exception::throwNew( "an attempt to start engine was done, but engine is already started" );
+                        ege::exception::throwNew( "an attempt to start engine was done, but engine is already started" );
 
                 while ( true )
                 {
@@ -84,9 +84,9 @@ void engine::start( const std::function< void( engine::Configurations& ) > &conf
 
                 global::started = false;
         }
-        catch ( ege::Exception* e )
+        catch ( ege::Exception e )
         {
-                e->consume();
+                e.consume();
         }
 }
 
@@ -94,7 +94,7 @@ void engine::start( const std::function< void( engine::Configurations& ) > &conf
 Engine::Engine()
 {
         if( glfwInit() == GL_FALSE )
-                Exception::throwNew( "could not initialize GLFW" );
+                ege::exception::throwNew( "could not initialize GLFW" );
 
         int glfwVersion[ 3 ];
         glfwGetVersion( &glfwVersion[ 0 ], &glfwVersion[ 1 ], &glfwVersion[ 2 ] );
@@ -118,12 +118,12 @@ Engine::Engine()
         global::currentScene = new game::EGEStartScene( *global::currentScene );
 
         if ( global::currentScene == nullptr )
-                Exception::throwNew( "no initial scenario defined" );
+                ege::exception::throwNew( "no initial scenario defined" );
 
         GLenum glError = glGetError();
 
         if ( glError != GL_NO_ERROR )
-                Exception::throwNew( "GL error (%d) during engine initialization", glError );
+                ege::exception::throwNew( "GL error (%d) during engine initialization", glError );
 
         uint32_t egeVersion[ 3 ];
         version::get( &egeVersion[ 0 ], &egeVersion[ 1 ], &egeVersion[ 2 ] );
@@ -146,7 +146,7 @@ Engine::~Engine()
         GLenum glError = glGetError();
 
         if ( glError != GL_NO_ERROR )
-                Exception::throwNew( "GL error (%d) during engine termination", glError );
+                ege::exception::throwNew( "GL error (%d) during engine termination", glError );
 }
 
 
@@ -198,7 +198,7 @@ stop_engine_label:
                 GLenum glError = glGetError();
 
                 if ( glError != GL_NO_ERROR )
-                        Exception::throwNew( "GL error (%d) during engine execution", glError );
+                        ege::exception::throwNew( "GL error (%d) during engine execution", glError );
 
                 global::fpsAnalyzer->calculateDeltaAndMark();
         }

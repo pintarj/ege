@@ -713,7 +713,7 @@ const RectangularRegion* DynamicAtlas::insert( const ImageBuffer& imageBuffer )
 void DynamicAtlas::remove( const RectangularRegion* region )
 {
         if ( regions.erase( const_cast< RectangularRegion* >( region ) ) == 0 )
-                Exception::throwNew( "invalid argument: specified region is not contained in atlas (or no more)" );
+                ege::exception::throwNew( "invalid argument: specified region is not contained in atlas (or no more)" );
 
         usedPixels -= region->width * region->height;
         nodes->getRoot()->unassign( region->x, region->y, region->width, region->height );

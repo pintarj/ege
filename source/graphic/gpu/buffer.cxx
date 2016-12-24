@@ -65,7 +65,7 @@ buffer::map::Range::Range( Buffer &buffer, unsigned int offset, unsigned int len
         buffer( buffer ), offset( offset ), length( length ), access( access )
 {
         if ( buffer.mappedRange != nullptr )
-                Exception::throwNew( "can't map gpu buffer, because it's already mapped" );
+                ege::exception::throwNew( "can't map gpu buffer, because it's already mapped" );
 
         buffer.mappedRange = this;
         glBindBuffer( GL_COPY_WRITE_BUFFER, buffer.id );

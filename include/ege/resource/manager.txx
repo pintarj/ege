@@ -129,7 +129,7 @@ std::shared_ptr< R > ege::resource::Manager< K, R, C >::get( K const& key ) cons
         auto i = resources->find( key );
 
         if ( i == resources->end() )
-                ege::Exception::throwNew( "trying to get an unloaded resource" );
+                ege::exception::throwNew( "trying to get an unloaded resource" );
 
         return i->second.first;
 }

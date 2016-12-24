@@ -1,5 +1,4 @@
 #include <ege/graphic/render/texture-regions-stream-drawer.hxx>
-#include <ege/graphic/geometry/matrix.hxx>
 #include <ege/graphic/gpu/draw.hxx>
 #include <ege/graphic/gpu/shader.hxx>
 
@@ -51,9 +50,7 @@ TextureRegionsStreamDrawer::TextureRegionsStreamDrawer(): textureUnit( 0 )
         vertexArray->setAttributeFormatAndBindVertexBuffer( 1, 2, vertexArray::attribute::Type::FLOAT, false, *buffer, offsetof( Vertex, u ), sizeof( Vertex ) );
         mvpLocation = static_cast< unsigned int>( program->getUniformLocation( "mvp" ) );
         texLocation = static_cast< unsigned int>( program->getUniformLocation( "tex" ) );
-        float matrix[ 16 ];
-        geometry::matrix::identity( matrix );
-        setMVPMatrix( matrix );
+        setMVPMatrix( ege::math::matrix::identity() );
         program->uniform( texLocation, textureUnit );
         unitsToDraw = 0;
         texture = nullptr;
@@ -69,9 +66,9 @@ TextureRegionsStreamDrawer::~TextureRegionsStreamDrawer()
 }
 
 
-void TextureRegionsStreamDrawer::setMVPMatrix( const float* mvpMatrix )
+void TextureRegionsStreamDrawer::setMVPMatrix( ege::math::Matrix< 4, 4, float > const& mvpMatrix )
 {
-        program->uniformMatrix4x4( mvpLocation, 1, false, mvpMatrix );
+        program->uniformMatrix4x4( mvpLocation, 1, true, &mvpMatrix[ 0 ][ 0 ] );
 }
 
 

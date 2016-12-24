@@ -23,6 +23,48 @@ namespace ege
 
                 template < unsigned M, unsigned N, unsigned P, typename T = float >
                 Matrix< M, P, T > operator * ( Matrix< M, N, T > const& left, Matrix< N, P, T > const& right );
+
+                namespace matrix
+                {
+                        template < unsigned M = 4, typename T = float >
+                        Matrix< M, M, T > identity();
+
+                        template < typename T = float >
+                        Matrix< 4, 4, T > scale( T x, T y, T z );
+
+                        template < typename T = float >
+                        Matrix< 4, 4, T > translate( T x, T y, T z );
+
+                        template < typename T = float >
+                        Matrix< 4, 4, T > rotateX( T radians );
+
+                        template < typename T = float >
+                        Matrix< 4, 4, T > rotateY( T radians );
+
+                        template < typename T = float >
+                        Matrix< 4, 4, T > rotateZ( T radians );
+
+                        template < typename T = float >
+                        Matrix< 4, 4, T > rotate( T radians, T vx, T vy, T vz );
+
+                        template < typename T = float >
+                        Matrix< 4, 4, T > frustum( T left, T right, T bottom, T top, T near, T far );
+
+                        template < typename T = float >
+                        Matrix< 4, 4, T > perspective( T radians, T ratio, T near, T far );
+
+                        template < typename T = float >
+                        Matrix< 4, 4, T > ortho( T left, T right, T bottom, T top, T near, T far );
+
+                        template < typename T = float >
+                        Matrix< 4, 4, T > ortho2D( T left, T right, T bottom, T top );
+
+                        template < typename T = float >
+                        Matrix< 4, 4, T > fromOriginLookAt( T centerX, T centerY, T centerZ, T upX, T upY, T upZ );
+                        
+                        template < typename T = float >
+                        Matrix< 4, 4, T > lookAt( T eyeX, T eyeY, T eyeZ, T centerX, T centerY, T centerZ, T upX, T upY, T upZ );
+                }
         }
 }
 

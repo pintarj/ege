@@ -9,6 +9,7 @@
 #include <ege/graphic/gpu/vertex-array.hxx>
 #include <ege/graphic/gpu/buffer/util/stream-write-mapper.hxx>
 #include <ege/graphic/gpu/texture/util/rectangular-region.hxx>
+#include <ege/math/matrix.hxx>
 
 
 namespace ege
@@ -43,7 +44,7 @@ namespace ege
                                 public:
                                         TextureRegionsStreamDrawer();
                                         virtual ~TextureRegionsStreamDrawer();
-                                        void setMVPMatrix( const float* mvpMatrix );
+                                        void setMVPMatrix( ege::math::Matrix< 4, 4, float > const& mvpMatrix );
                                         void draw( const gpu::texture::util::RectangularRegion& region, float x, float y );
                                         void flush();
                                         gpu::Sampler& getSampler();

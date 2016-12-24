@@ -9,6 +9,7 @@ ADD_LIBRARY( ege-core SHARED
         source/engine.cxx
         source/game/scene.cxx
         source/game/ege-start-scene.cxx
+        source/game/updateable.cxx
         source/graphic/font/face.cxx
         source/graphic/font/glyph.cxx
         source/graphic/font/library.cxx

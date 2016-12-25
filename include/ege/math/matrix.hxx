@@ -4,6 +4,9 @@
 #define EGE_MATH_MATRIX_HXX
 
 
+#include <ege/math/vector.hxx>
+
+
 namespace ege
 {
         namespace math
@@ -33,7 +36,13 @@ namespace ege
                         Matrix< 4, 4, T > scale( T x, T y, T z );
 
                         template < typename T = float >
+                        Matrix< 4, 4, T > scale( Vector< 3, T > const& vector );
+
+                        template < typename T = float >
                         Matrix< 4, 4, T > translate( T x, T y, T z );
+
+                        template < typename T = float >
+                        Matrix< 4, 4, T > translate( Vector< 3, T > const& vector );
 
                         template < typename T = float >
                         Matrix< 4, 4, T > rotateX( T radians );
@@ -45,7 +54,10 @@ namespace ege
                         Matrix< 4, 4, T > rotateZ( T radians );
 
                         template < typename T = float >
-                        Matrix< 4, 4, T > rotate( T radians, T vx, T vy, T vz );
+                        Matrix< 4, 4, T > rotate( T radians, T vx, T vy, T vz, bool normalize = true );
+
+                        template < typename T = float >
+                        Matrix< 4, 4, T > rotate( T radians, Vector< 3, T > const& vector, bool normalize = true );
 
                         template < typename T = float >
                         Matrix< 4, 4, T > frustum( T left, T right, T bottom, T top, T near, T far );
@@ -61,9 +73,15 @@ namespace ege
 
                         template < typename T = float >
                         Matrix< 4, 4, T > fromOriginLookAt( T centerX, T centerY, T centerZ, T upX, T upY, T upZ );
-                        
+
+                        template < typename T = float >
+                        Matrix< 4, 4, T > fromOriginLookAt( Vector< 3, T > const& center, Vector< 3, T > const& up );
+
                         template < typename T = float >
                         Matrix< 4, 4, T > lookAt( T eyeX, T eyeY, T eyeZ, T centerX, T centerY, T centerZ, T upX, T upY, T upZ );
+
+                        template < typename T = float >
+                        Matrix< 4, 4, T > lookAt( Vector< 3, T > const& eye, Vector< 3, T > const& center, Vector< 3, T > const& up );
                 }
         }
 }

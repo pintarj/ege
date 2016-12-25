@@ -98,6 +98,13 @@ ege::math::Matrix< 4, 4, T > ege::math::matrix::scale( T x, T y, T z )
 
 
 template < typename T = float >
+ege::math::Matrix< 4, 4, T > ege::math::matrix::scale( Vector< 3, T > const& vector )
+{
+        return scale( vector[ 0 ], vector[ 1 ], vector[ 2 ] );
+}
+
+
+template < typename T = float >
 ege::math::Matrix< 4, 4, T > ege::math::matrix::translate( T x, T y, T z )
 {
         T matrix[ 4 ][ 4 ];
@@ -123,6 +130,13 @@ ege::math::Matrix< 4, 4, T > ege::math::matrix::translate( T x, T y, T z )
         matrix[ 3 ][ 3 ] = 1;
 
         return ege::math::Matrix< 4, 4, T >( matrix );
+}
+
+
+template < typename T = float >
+ege::math::Matrix< 4, 4, T > ege::math::matrix::translate( Vector< 3, T > const& vector )
+{
+        return translate( vector[ 0 ], vector[ 1 ], vector[ 2 ] );
 }
 
 
@@ -223,10 +237,19 @@ ege::math::Matrix< 4, 4, T > ege::math::matrix::rotateZ( T radians )
 
 
 template < typename T = float >
-ege::math::Matrix< 4, 4, T > ege::math::matrix::rotate( T radians, T x, T y, T z )
+ege::math::Matrix< 4, 4, T > ege::math::matrix::rotate( T radians, T x, T y, T z, bool normalize )
 {
         T matrix[ 4 ][ 4 ];
-        
+
+        if ( normalize )
+        {
+                T length = std::sqrt( x * x + y * y + z * z );
+                T factor = 1 / length;
+                x *= factor;
+                y *= factor;
+                z *= factor;
+        }
+
         T sin       = std::sin( radians );
         T cos       = std::cos( radians );
         T mcos      = 1 - cos;
@@ -259,9 +282,23 @@ ege::math::Matrix< 4, 4, T > ege::math::matrix::rotate( T radians, T x, T y, T z
         matrix[ 3 ][ 1 ] = 0;
         matrix[ 3 ][ 2 ] = 0;
         matrix[ 3 ][ 3 ] = 1;
-        
+
         return ege::math::Matrix< 4, 4, T >( matrix );
 }
+
+
+template < typename T = float >
+ege::math::Matrix< 4, 4, T > ege::math::matrix::rotate( T radians, Vector< 3, T > const& vector, bool normalize )
+{
+        if ( normalize )
+        {
+                Vector< 3, T > normalized = vector.normalized();
+                return rotate( radians, normalized[ 0 ], normalized[ 1 ], normalized[ 2 ], false );
+        }
+        else
+                return rotate( radians, vector[ 0 ], vector[ 1 ], vector[ 2 ], false );
+}
+
 
 template < typename T = float >
 ege::math::Matrix< 4, 4, T > ege::math::matrix::frustum( T left, T right, T bottom, T top, T near, T far )
@@ -398,7 +435,7 @@ template < typename T = float >
 ege::math::Matrix< 4, 4, T > ege::math::matrix::fromOriginLookAt( T centerX, T centerY, T centerZ, T upX, T upY, T upZ )
 {
         T matrix[ 4 ][ 4 ];
-        
+
         T icl = 1 / std::sqrt( ( centerX * centerX ) + ( centerY * centerY ) + ( centerZ * centerZ ) );
         T ncx = centerX * icl;
         T ncy = centerY * icl;
@@ -415,23 +452,30 @@ ege::math::Matrix< 4, 4, T > ege::math::matrix::fromOriginLookAt( T centerX, T c
         matrix[ 0 ][ 1 ] = mx4;
         matrix[ 0 ][ 2 ] = mx8;
         matrix[ 0 ][ 3 ] = 0;
-        
+
         matrix[ 1 ][ 0 ] = ( snY * ncz ) - ( snZ * ncy );
         matrix[ 1 ][ 1 ] = ( snZ * ncx ) - ( snX * ncz );
         matrix[ 1 ][ 2 ] = ( snX * ncy ) - ( snY * ncx );
         matrix[ 1 ][ 3 ] = 0;
-        
+
         matrix[ 2 ][ 0 ] = -ncx;
         matrix[ 2 ][ 1 ] = -ncy;
         matrix[ 2 ][ 2 ] = -ncz;
         matrix[ 2 ][ 3 ] = 0;
-        
+
         matrix[ 3 ][ 0 ] = 0;
         matrix[ 3 ][ 1 ] = 0;
         matrix[ 3 ][ 2 ] = 0;
         matrix[ 3 ][ 3 ] = 1;
-        
+
         return ege::math::Matrix< 4, 4, T >( matrix );
+}
+
+
+template < typename T = float >
+ege::math::Matrix< 4, 4, T > ege::math::matrix::fromOriginLookAt( Vector< 3, T > const& center, Vector< 3, T > const& up )
+{
+        return fromOriginLookAt( center[ 0 ], center[ 1 ], center[ 2 ], up[ 0 ], up[ 1 ], up[ 2 ] );
 }
 
 
@@ -441,4 +485,11 @@ ege::math::Matrix< 4, 4, T > ege::math::matrix::lookAt( T eyeX, T eyeY, T eyeZ, 
         ege::math::Matrix< 4, 4, T > left = ege::math::matrix::fromOriginLookAt< T >( centerX, centerY, centerZ, upX, upY, upZ );
         ege::math::Matrix< 4, 4, T > right = ege::math::matrix::translate< T >( -eyeX, -eyeY, -eyeZ );
         return left * right;
+}
+
+
+template < typename T = float >
+ege::math::Matrix< 4, 4, T > ege::math::matrix::lookAt( Vector< 3, T > const& eye, Vector< 3, T > const& center, Vector< 3, T > const& up )
+{
+        return lookAt( eye[ 0 ], eye[ 1 ], eye[ 2 ], center[ 0 ], center[ 1 ], center[ 2 ], up[ 0 ], up[ 1 ], up[ 2 ] );
 }

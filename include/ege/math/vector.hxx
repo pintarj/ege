@@ -4,6 +4,9 @@
 #define EGE_MATH_VECTOR_HXX
 
 
+#include <initializer_list>
+
+
 namespace ege
 {
         namespace math
@@ -17,6 +20,7 @@ namespace ege
                         public:
                                 Vector();
                                 Vector( T ( & raw )[ N ] );
+                                Vector( std::initializer_list< T > list );
                                 T length() const;
                                 Vector< N, T > normalized() const;
                                 T& operator [] ( unsigned index );

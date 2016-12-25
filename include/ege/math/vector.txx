@@ -1,4 +1,5 @@
 #include <cmath>
+#include <cstddef>
 
 
 template < unsigned N, typename T >
@@ -14,6 +15,16 @@ ege::math::Vector< N, T >::Vector( T ( & raw )[ N ] )
 {
         for ( unsigned i = 0; i < N; ++i )
                 this->raw[ i ] = raw[ i ];
+}
+
+
+template < unsigned N, typename T >
+ege::math::Vector< N, T >::Vector( std::initializer_list< T > list )
+{
+        auto iterator = list.begin();
+
+        for ( unsigned i = 0, n = std::min( ( std::size_t ) N, list.size() ); i < n; ++i )
+                this->raw[ i ] = *iterator++;
 }
 
 

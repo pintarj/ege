@@ -11,7 +11,7 @@ namespace ege
 {
         namespace math
         {
-                template < unsigned N, typename T = float >
+                template < unsigned N = 3, typename T = float >
                 class Vector
                 {
                         private:

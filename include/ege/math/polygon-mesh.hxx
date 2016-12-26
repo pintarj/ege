@@ -32,6 +32,12 @@ namespace ege
                                 ConstIndicesIterator indicesBegin() const;
                                 ConstIndicesIterator indicesEnd() const;
                 };
+
+                namespace polygonMesh
+                {
+                        template < typename T = float >
+                        std::shared_ptr< ege::math::PolygonMesh< 3, 3, T > > icoSphere( unsigned levelOfDetail = 0, T length = ( T ) 1.0 );
+                }
         }
 }
 

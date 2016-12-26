@@ -27,6 +27,8 @@ namespace ege
 
                                 PolygonMesh( std::shared_ptr< Vector< N, T > > vertices, unsigned verticesCount, std::shared_ptr< std::array< unsigned, I > > indices, unsigned indicesCount );
                                 PolygonMesh( std::initializer_list< Vector< N, T > > vertices, std::initializer_list< std::array< unsigned, I > > indices );
+                                unsigned getVerticesCount() const;
+                                unsigned getIndicesCount() const;
                                 Vector< N, T >& operator [] ( unsigned index );
                                 Vector< N, T > const& operator [] ( unsigned index ) const;
                                 ConstIndicesIterator indicesBegin() const;

@@ -32,6 +32,20 @@ ege::math::PolygonMesh< I, N, T >::PolygonMesh( std::initializer_list< Vector< N
 
 
 template < unsigned I, unsigned N, typename T >
+unsigned ege::math::PolygonMesh< I, N, T >::getVerticesCount() const
+{
+        return verticesCount;
+}
+
+
+template < unsigned I, unsigned N, typename T >
+unsigned ege::math::PolygonMesh< I, N, T >::getIndicesCount() const
+{
+        return indicesCount;
+}
+
+
+template < unsigned I, unsigned N, typename T >
 ege::math::Vector< N, T >& ege::math::PolygonMesh< I, N, T >::operator [] ( unsigned index )
 {
         return vertices.get()[ index ];

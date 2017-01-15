@@ -3,3 +3,8 @@
 
 # CMake Build folders
 cmake-build*/
+
+# Doxygen gens
+doc/html
+doc/latex
+doc/*.tmp

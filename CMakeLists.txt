@@ -39,3 +39,7 @@ ADD_LIBRARY(ege-core SHARED
         )
 SET_PROPERTY(TARGET ege-core PROPERTY CXX_STANDARD 14)
 TARGET_LINK_LIBRARIES(ege-core GLEW glfw png freetype pthread)
+
+ADD_EXECUTABLE(0-hello-world demo/0-hello-world.cxx)
+SET_PROPERTY(TARGET 0-hello-world PROPERTY CXX_STANDARD 14)
+TARGET_LINK_LIBRARIES(0-hello-world ege-core)

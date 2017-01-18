@@ -32,12 +32,12 @@ class MainScene: public game::Scene
         {
             frameBuffer::setClearColor(0.0f, 0.0f, 0.5f, 1.0f);
         }
-        
-        void update(float delta)
+
+        void performUpdate(float delta)
         {
-        
+
         }
-        
+
         void render()
         {
             frameBuffer::clearColorBuffer();
@@ -48,10 +48,10 @@ int main()
 {
     engine::start([](engine::Configurations& conf)
         {
-            conf.createInitialScene = [] ()
+            conf.createInitialScene = []()
                 { return std::shared_ptr<game::Scene>(new MainScene); };
         });
-    
+
     return 0;
 }
 ```

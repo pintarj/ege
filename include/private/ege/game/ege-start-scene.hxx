@@ -1,31 +1,28 @@
 
-
 #ifndef EGE_GAME_EGESTARTSCENE_HXX
 #define EGE_GAME_EGESTARTSCENE_HXX
 
-
+#include <memory>
 #include <ege/game/scene.hxx>
 #include <ege/graphic/gpu/buffer.hxx>
 
-
 namespace ege
 {
-        namespace game
+    namespace game
+    {
+        class EGEStartScene: public Scene
         {
-                class EGEStartScene: public Scene
-                {
-                        private:
-                                Scene& initialScene;
-                                float elapsedTime;
+            private:
+                std::shared_ptr<Scene> initialScene;
+                float elapsedTime;
 
-                        public:
-                                EGEStartScene( Scene& initialScene );
-                                virtual ~EGEStartScene();
-                                void performUpdate( float delta );
-                                void render();
-                };
-        }
+            public:
+                EGEStartScene(std::shared_ptr<Scene> initialScene);
+                virtual ~EGEStartScene();
+                void performUpdate(float delta);
+                void render();
+        };
+    }
 }
-
 
 #endif

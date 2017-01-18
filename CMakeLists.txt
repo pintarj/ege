@@ -1,14 +1,14 @@
-CMAKE_MINIMUM_REQUIRED( VERSION 3.1 )
-PROJECT( ege CXX )
+CMAKE_MINIMUM_REQUIRED(VERSION 3.1)
+PROJECT(ege CXX)
 
-INCLUDE_DIRECTORIES( include )
+INCLUDE_DIRECTORIES(include)
 
-ADD_LIBRARY( ege-core SHARED
+ADD_LIBRARY(ege-core SHARED
+        source/engine.cxx
         source/exception.cxx
         source/version.cxx
-        source/engine.cxx
-        source/game/scene.cxx
         source/game/ege-start-scene.cxx
+        source/game/scene.cxx
         source/game/updateable.cxx
         source/graphic/font/face.cxx
         source/graphic/font/glyph.cxx
@@ -37,5 +37,5 @@ ADD_LIBRARY( ege-core SHARED
         source/util/io/image.cxx
         source/util/log/logger.cxx
         )
-SET_PROPERTY( TARGET ege-core PROPERTY CXX_STANDARD 14 )
-TARGET_LINK_LIBRARIES( ege-core GLEW glfw png freetype pthread )
+SET_PROPERTY(TARGET ege-core PROPERTY CXX_STANDARD 14)
+TARGET_LINK_LIBRARIES(ege-core GLEW glfw png freetype pthread)

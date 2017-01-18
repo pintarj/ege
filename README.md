@@ -46,9 +46,10 @@ class MainScene: public game::Scene
 
 int main()
 {
-    engine::start([]( engine::Configurations& conf)
+    engine::start([](engine::Configurations& conf)
         {
-            conf.createInitialScene = [] () { return new MainScene; };
+            conf.createInitialScene = [] ()
+                { return std::shared_ptr<game::Scene>(new MainScene); };
         });
     
     return 0;

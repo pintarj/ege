@@ -20,14 +20,14 @@ namespace ege
         void Scene::requireEngineStop()
         {
             stopRequired = true;
-            engineResources->logger->log(util::log::Level::INFO, "engine stop required");
+            engineResources->logger->log(log::Level::INFO, "engine stop required");
         }
 
         void Scene::requireEngineRestart()
         {
             restartRequired = true;
             stopRequired = true;
-            engineResources->logger->log(util::log::Level::INFO, "engine restart required");
+            engineResources->logger->log(log::Level::INFO, "engine restart required");
         }
 
         void Scene::shouldClose()

@@ -14,12 +14,12 @@ namespace ege
 
 #include <functional>
 #include <memory>
+#include <ege/log.hxx>
 #include <ege/game/scene.hxx>
 #include <ege/hardware/keyboard.hxx>
 #include <ege/hardware/monitor.hxx>
 #include <ege/util/fps/analyzer.hxx>
 #include <ege/util/fps/moderator.hxx>
-#include <ege/util/log/logger.hxx>
 
 namespace ege
 {
@@ -51,7 +51,7 @@ namespace ege
                 hardware::Monitor* const monitor;
                 util::fps::Analyzer* const fpsAnalyzer;
                 util::fps::Moderator* const fpsModerator;
-                util::log::Logger* const logger;
+                log::Logger* const logger;
 
                 friend Engine;
 

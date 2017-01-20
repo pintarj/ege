@@ -36,7 +36,6 @@ ADD_LIBRARY(ege-core SHARED
     source/util/fps/analyzer.cxx
     source/util/fps/moderator.cxx
     source/util/io/image.cxx
-    source/util/log/logger.cxx
     )
 SET_PROPERTY(TARGET ege-core PROPERTY CXX_STANDARD 14)
 TARGET_LINK_LIBRARIES(ege-core GLEW glfw png freetype pthread)

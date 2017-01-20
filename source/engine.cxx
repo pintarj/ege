@@ -6,7 +6,6 @@
 #include <ege/exception.hxx>
 #include <ege/version.hxx>
 #include <ege/graphic/gpu/context.hxx>
-#include <ege/util/log/logger.hxx>
 #include <private/ege/game/ege-start-scene.hxx>
 #include <private/ege/graphic/font/library.hxx>
 
@@ -22,7 +21,7 @@ namespace ege
         static hardware::Monitor* monitor;
         static util::fps::Analyzer* fpsAnalyzer;
         static util::fps::Moderator* fpsModerator;
-        static util::log::Logger logger;
+        static log::Logger logger;
         static std::shared_ptr<game::Scene> currentScene;
         static bool restartRequired;
     }
@@ -35,7 +34,6 @@ namespace ege
         global::monitor = nullptr;
         global::fpsAnalyzer = nullptr;
         global::fpsModerator = nullptr;
-        global::logger.setLevel(util::log::Level::INFO);
         global::currentScene = nullptr;
         global::restartRequired = false;
     }
@@ -60,20 +58,20 @@ namespace ege
             while (true)
             {
                 std::chrono::time_point<std::chrono::system_clock> start = std::chrono::system_clock::now();
-                global::logger.log(util::log::Level::INFO, "engine started");
+                global::logger.log(log::Level::INFO, "engine started");
                 initializeStaticMembers();
                 configure(global::configurations);
                 Engine* engine = new Engine();
                 std::chrono::duration<float> delta = std::chrono::system_clock::now() - start;
-                global::logger.log(util::log::Level::INFO, "engine initialized and configured (in %.3fs)", delta.count());
+                global::logger.log(log::Level::INFO, "engine initialized and configured (in %.3fs)", delta.count());
                 engine->start();
                 delete engine;
-                global::logger.log(util::log::Level::INFO, "engine stopped");
+                global::logger.log(log::Level::INFO, "engine stopped");
 
                 if (!global::restartRequired)
                     break;
 
-                global::logger.log(util::log::Level::INFO, "engine restarting");
+                global::logger.log(log::Level::INFO, "engine restarting");
             }
 
             global::started = false;
@@ -91,7 +89,7 @@ namespace ege
 
         int glfwVersion[3];
         glfwGetVersion(&glfwVersion[0], &glfwVersion[1], &glfwVersion[2]);
-        global::logger.log(util::log::Level::INFO, "GLFW %d.%d.%d initialized", glfwVersion[0], glfwVersion[1], glfwVersion[2]);
+        global::logger.log(log::Level::INFO, "GLFW %d.%d.%d initialized", glfwVersion[0], glfwVersion[1], glfwVersion[2]);
 
         global::monitor = new hardware::Monitor(glfwGetPrimaryMonitor());
         global::fpsAnalyzer = new util::fps::Analyzer();
@@ -120,7 +118,7 @@ namespace ege
 
         uint32_t egeVersion[3];
         version::get(&egeVersion[0], &egeVersion[1], &egeVersion[2]);
-        global::logger.log(util::log::Level::INFO, "EGE %d.%d.%d initialized", egeVersion[0], egeVersion[1], egeVersion[2]);
+        global::logger.log(log::Level::INFO, "EGE %d.%d.%d initialized", egeVersion[0], egeVersion[1], egeVersion[2]);
         global::fpsAnalyzer->calculateDeltaAndMark();
         global::fpsAnalyzer->setLastDelta(1.0f / 60.0f);
     }
@@ -143,7 +141,7 @@ namespace ege
 
     void Engine::start()
     {
-        global::logger.log(util::log::Level::INFO, "engine loop started");
+        global::logger.log(log::Level::INFO, "engine loop started");
 
         while (true)
         {
@@ -186,6 +184,6 @@ stop_engine_label:
             global::fpsAnalyzer->calculateDeltaAndMark();
         }
 
-        global::logger.log(util::log::Level::INFO, "engine loop stopped");
+        global::logger.log(log::Level::INFO, "engine loop stopped");
     }
 }

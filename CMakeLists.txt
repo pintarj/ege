@@ -6,6 +6,7 @@ INCLUDE_DIRECTORIES(include)
 ADD_LIBRARY(ege-core SHARED
     source/engine.cxx
     source/exception.cxx
+    source/log.cxx
     source/version.cxx
     source/game/ege-start-scene.cxx
     source/game/scene.cxx

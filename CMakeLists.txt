@@ -33,6 +33,8 @@ ADD_LIBRARY(ege-core SHARED
     source/graphic/render/texture-regions-stream-drawer.cxx
     source/hardware/keyboard.cxx
     source/hardware/monitor.cxx
+    source/opengl/program.cxx
+    source/opengl/shader.cxx
     source/util/fps/analyzer.cxx
     source/util/fps/moderator.cxx
     source/util/io/image.cxx

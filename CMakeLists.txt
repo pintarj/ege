@@ -36,6 +36,7 @@ ADD_LIBRARY(ege-core SHARED
     source/opengl/buffer.cxx
     source/opengl/program.cxx
     source/opengl/shader.cxx
+    source/opengl/vertex-array.cxx
     source/util/fps/analyzer.cxx
     source/util/fps/moderator.cxx
     source/util/io/image.cxx

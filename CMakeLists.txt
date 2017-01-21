@@ -34,6 +34,7 @@ ADD_LIBRARY(ege-core SHARED
     source/hardware/keyboard.cxx
     source/hardware/monitor.cxx
     source/opengl/buffer.cxx
+    source/opengl/drawing.cxx
     source/opengl/program.cxx
     source/opengl/shader.cxx
     source/opengl/vertex-array.cxx

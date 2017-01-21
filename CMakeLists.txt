@@ -49,3 +49,7 @@ TARGET_LINK_LIBRARIES(ege-core GLEW glfw png freetype pthread)
 ADD_EXECUTABLE(0-hello-world demo/0-hello-world.cxx)
 SET_PROPERTY(TARGET 0-hello-world PROPERTY CXX_STANDARD 14)
 TARGET_LINK_LIBRARIES(0-hello-world ege-core)
+
+ADD_EXECUTABLE(1-triangle demo/1-triangle.cxx)
+SET_PROPERTY(TARGET 1-triangle PROPERTY CXX_STANDARD 14)
+TARGET_LINK_LIBRARIES(1-triangle ege-core)

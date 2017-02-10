@@ -11,6 +11,9 @@ ADD_LIBRARY(ege-core SHARED
     source/game/ege-start-scene.cxx
     source/game/scene.cxx
     source/game/updateable.cxx
+    source/glfw/opengl-context.cxx
+    source/glfw/opengl-default-fbo.cxx
+    source/glfw/window.cxx
     source/graphic/font/face.cxx
     source/graphic/font/glyph.cxx
     source/graphic/font/library.cxx

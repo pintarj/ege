@@ -96,5 +96,11 @@ namespace ege
         {
             glClearStencil(s);
         }
+
+        DefaultFramebuffer::DefaultFramebuffer():
+            Framebuffer(0)
+        {
+
+        }
     }
 }

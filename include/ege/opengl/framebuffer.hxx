@@ -2,6 +2,7 @@
 #ifndef EGE_OPENGL_FRAMEBUFFER_HXX
 #define EGE_OPENGL_FRAMEBUFFER_HXX
 
+#include <utility>
 #include <ege/opengl/object.hxx>
 #include <ege/opengl/renderbuffer.hxx>
 #include <ege/opengl/sampler.hxx>
@@ -198,6 +199,35 @@ namespace ege
          * \param s Specifies the index used when the stencil buffer is cleared.
          * */
         void setClearStencil(int s);
+
+        /**
+         * \brief Wrapper for the default OpenGL framebuffer object.
+         *
+         * DefaultFramebuffer objects are non movable and non copyable.
+         * */
+        class DefaultFramebuffer: public Framebuffer
+        {
+            public:
+                /**
+                 * \brief Creates a default framebuffer (id=0).
+                 * */
+                DefaultFramebuffer();
+
+                DefaultFramebuffer(DefaultFramebuffer&&) = delete;
+                DefaultFramebuffer(const DefaultFramebuffer&) = delete;
+                virtual ~DefaultFramebuffer() {}
+
+                /**
+                 * \brief Returns the size, in pixels, of the framebuffer.
+                 * \return A pair where first element is width and second is height.
+                 * */
+                virtual std::pair<int, int> getSize() = 0;
+        };
+
+        /**
+         * \brief An alias for the DefaultFramebuffer.
+         * */
+        using DefaultFBO = DefaultFramebuffer;
     }
 }
 

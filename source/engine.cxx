@@ -33,6 +33,13 @@ namespace ege
         const hardware::Monitor*                                primaryMonitor;
         opengl::Context*                                        openglContext;
 
+        Configuration::WindowCreation::WindowCreation()
+        {
+            width = 800;
+            height = 600;
+            resizable = true;
+        }
+
         const std::string Configuration::getApplicationName()
         {
             return "EGE application";
@@ -41,6 +48,21 @@ namespace ege
         bool Configuration::skipStartScene()
         {
             return false;
+        }
+
+        bool Configuration::isFullscreenPreferred()
+        {
+            return true;
+        }
+
+        const hardware::VideoMode& Configuration::getPreferredVideoMode()
+        {
+            return monitors->at(0)->getCurrentVideoMode();
+        }
+
+        Configuration::WindowCreation Configuration::getPreferredWindowCreationParams()
+        {
+            return Configuration::WindowCreation();
         }
 
         static inline void checkGLErrors(const std::string& message)
@@ -59,6 +81,21 @@ namespace ege
             int glfwVersion[3];
             glfwGetVersion(&glfwVersion[0], &glfwVersion[1], &glfwVersion[2]);
             logger->log(log::Level::INFO, "GLFW %d.%d.%d initialized", glfwVersion[0], glfwVersion[1], glfwVersion[2]);
+        }
+
+        static inline void initializeWindow(Configuration& configuration)
+        {
+            std::string title = configuration.getApplicationName();
+
+            if (configuration.isFullscreenPreferred())
+            {
+                global::window = new glfw::Window(title, configuration.getPreferredVideoMode());
+            }
+            else
+            {
+                Configuration::WindowCreation c = configuration.getPreferredWindowCreationParams();
+                global::window = new glfw::Window(title, c.width, c.height, c.resizable);
+            }
         }
 
         static inline void configureInitialScene(Configuration& configuration)
@@ -83,7 +120,7 @@ namespace ege
                 primaryMonitor              = monitors->at(0).get();
                 fpsAnalyzer                 = new util::fps::Analyzer;
                 fpsModerator                = new util::fps::Moderator(*fpsAnalyzer);
-                global::window              = new glfw::Window(configuration.getApplicationName(), 800, 600);
+                initializeWindow(configuration);
                 openglContext               = &global::window->getContext();
                 keyboard                    = &global::window->getKeyboard();
                 graphic::font::library::initialize();

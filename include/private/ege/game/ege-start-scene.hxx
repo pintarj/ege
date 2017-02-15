@@ -4,7 +4,6 @@
 
 #include <memory>
 #include <ege/game/scene.hxx>
-#include <ege/graphic/gpu/buffer.hxx>
 
 namespace ege
 {

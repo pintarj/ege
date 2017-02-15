@@ -7,7 +7,6 @@
 #include <ege/exception.hxx>
 #include <ege/version.hxx>
 #include <private/ege/game/ege-start-scene.hxx>
-#include <private/ege/graphic/font/library.hxx>
 #include <private/ege/glfw/monitor.hxx>
 #include <private/ege/glfw/window.hxx>
 #include <private/ege/glfw/keyboard.hxx>
@@ -123,7 +122,6 @@ namespace ege
                 initializeWindow(configuration);
                 openglContext               = &global::window->getContext();
                 keyboard                    = &global::window->getKeyboard();
-                graphic::font::library::initialize();
                 configureInitialScene(configuration);
                 checkGLErrors("OpenGL error during engine initialization");
 
@@ -188,7 +186,6 @@ namespace ege
             delete global::window;
             delete fpsModerator;
             delete fpsAnalyzer;
-            graphic::font::library::destroy();
             glfwTerminate();
             checkGLErrors("OpenGL error during engine termination");
         }

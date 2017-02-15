@@ -31,7 +31,7 @@ void ege::graphic::font::library::initialize()
     FT_Int major, minor, patch;
     FT_Library_Version(ege::graphic::font::library::instance, &major, &minor, &patch);
 
-    engine::resources->logger->log(log::Level::INFO, "FreeType %d.%d.%d initialized", major, minor, patch);
+    engine::logger->log(log::Level::INFO, "FreeType %d.%d.%d initialized", major, minor, patch);
 }
 
 void ege::graphic::font::library::destroy()

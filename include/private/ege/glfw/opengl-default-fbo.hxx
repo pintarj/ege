@@ -10,6 +10,7 @@ namespace ege
     }
 }
 
+#include <GL/glew.h>
 #include <ege/opengl/framebuffer.hxx>
 #include <private/ege/glfw/opengl-context.hxx>
 

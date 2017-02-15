@@ -1,5 +1,5 @@
 #include <private/ege/game/ege-start-scene.hxx>
-#include <ege/graphic/gpu/frame-buffer.hxx>
+#include <ege/opengl/framebuffer.hxx>
 
 namespace ege
 {
@@ -28,7 +28,8 @@ namespace ege
 
         void EGEStartScene::render()
         {
-            graphic::gpu::frameBuffer::clearColorBuffer(0.0f, 0.0f, 0.0f, 1.0f);
+            opengl::setClearColor(0.0f, 0.0f, 0.0f);
+            opengl::clear(opengl::FBOBuffer::COLOR);
         }
     }
 }

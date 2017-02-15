@@ -11,6 +11,8 @@ ADD_LIBRARY(ege-core SHARED
     source/game/ege-start-scene.cxx
     source/game/scene.cxx
     source/game/updateable.cxx
+    source/glfw/keyboard.cxx
+    source/glfw/monitor.cxx
     source/glfw/opengl-context.cxx
     source/glfw/opengl-default-fbo.cxx
     source/glfw/window.cxx
@@ -18,9 +20,7 @@ ADD_LIBRARY(ege-core SHARED
     source/graphic/font/glyph.cxx
     source/graphic/font/library.cxx
     source/graphic/gpu/buffer.cxx
-    source/graphic/gpu/context.cxx
     source/graphic/gpu/draw.cxx
-    source/graphic/gpu/frame-buffer.cxx
     source/graphic/gpu/object.cxx
     source/graphic/gpu/program.cxx
     source/graphic/gpu/sampler.cxx
@@ -34,7 +34,6 @@ ADD_LIBRARY(ege-core SHARED
     source/graphic/gpu/texture/util/dynamic-atlas.cxx
     source/graphic/gpu/texture/util/rectangular-region.cxx
     source/graphic/render/texture-regions-stream-drawer.cxx
-    source/hardware/keyboard.cxx
     source/hardware/monitor.cxx
     source/opengl/buffer.cxx
     source/opengl/drawing.cxx
@@ -43,6 +42,7 @@ ADD_LIBRARY(ege-core SHARED
     source/opengl/renderbuffer.cxx
     source/opengl/shader.cxx
     source/opengl/vertex-array.cxx
+    source/opengl/viewport.cxx
     source/util/fps/analyzer.cxx
     source/util/fps/moderator.cxx
     source/util/io/image.cxx

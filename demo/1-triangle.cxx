@@ -1,12 +1,6 @@
 #include <ege/engine.hxx>
-#include <memory>
 #include <ege/math/matrix.hxx>
-#include <ege/opengl/buffer.hxx>
-#include <ege/opengl/clearing.hxx>
-#include <ege/opengl/drawing.hxx>
-#include <ege/opengl/program.hxx>
-#include <ege/opengl/shader.hxx>
-#include <ege/opengl/vertex-array.hxx>
+#include <ege/opengl/all.hxx>
 
 using namespace ege;
 
@@ -53,9 +47,9 @@ class MainScene: public game::Scene
         {
             static const Vertex vertices[3] =
                 {
-                    {0.0f, 1.0f, 0.5f, 0.5f, 1.0f},
-                    {0.866f, -0.5f, 1.0f, 0.5f, 0.5f},
-                    {-0.866f, -0.5f, 0.5f, 1.0f, 0.5f}
+                    {0.0f, 1.0f, 0.0f, 0.0f, 1.0f},
+                    {0.866f, -0.5f, 1.0f, 0.0f, 0.0f},
+                    {-0.866f, -0.5f, 0.0f, 1.0f, 0.0f}
                 };
 
             return new opengl::Buffer(sizeof(vertices), opengl::BufferUsage::STATIC_DRAW, vertices);
@@ -70,9 +64,9 @@ class MainScene: public game::Scene
     public:
         MainScene():
             program(createProgram()),
-            buffer(createBuffer())
+            buffer(createBuffer()),
+            radians(0.0f)
         {
-
             vao = std::unique_ptr<opengl::VertexArray>(new opengl::VertexArray());
             vao->vertexBuffer(0, *buffer, sizeof(Vertex));
             vao->attributeFormat(0, 2, opengl::AttributeType::FLOAT, false, offsetof(Vertex, x));
@@ -82,33 +76,48 @@ class MainScene: public game::Scene
             vao->enableAttribute(0);
             vao->enableAttribute(1);
             mvpLocation = program->getUniformLocation("mvp");
-            radians     = 0.0f;
-            opengl::setClearColor(0.3f, 0.0f, 0.6f, 1.0f);
+            program->use();
+            vao->bind();
         }
 
         void performUpdate(float delta)
         {
-            radians += 3.14f * delta / 8.0;
-            math::Matrix<4, 4> mvp = math::matrix::rotateZ(radians);
+            opengl::DefaultFramebuffer& dfbo = engine::openglContext->getDefaultFramebuffer();
+            auto size = dfbo.getSize();
+            radians += 3.14f * delta;
+            math::Matrix<4, 4> mvp = math::matrix::identity();
+            mvp *= math::matrix::perspective(45.0f, ((float) size.first) / ((float) size.second), 0.01f, 100.0f);
+            mvp *= math::matrix::translate(0.0f, 0.0f, -2.4f);
+            mvp *= math::matrix::rotateY(radians / 6.0f);
+            mvp *= math::matrix::rotateZ(radians / 2.0f);
             program->uniformMatrix4x4(mvpLocation, 1, true, &mvp[0][0]);
+            opengl::viewport(0, 0, size.first, size.second);
         }
 
         void render()
         {
-            opengl::clear(opengl::ClearTarget::COLOR);
-            program->use();
-            vao->bind();
+            opengl::clear(opengl::FBOBuffer::COLOR);
             opengl::drawArrays(opengl::DrawMode::TRIANGLES, 0, 3);
+        }
+};
+
+class Configuration: public engine::Configuration
+{
+    public:
+        virtual const std::string getApplicationName()
+        {
+            return "Triangle";
+        }
+
+        virtual std::shared_ptr<game::Scene> createInitialScene()
+        {
+            return std::shared_ptr<game::Scene>(new MainScene);
         }
 };
 
 int main()
 {
-    engine::start([](engine::Configurations& conf)
-        {
-            conf.createInitialScene = []()
-                { return std::shared_ptr<game::Scene>(new MainScene); };
-        });
-
+    static Configuration configuration;
+    engine::start(configuration);
     return 0;
 }

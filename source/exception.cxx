@@ -24,7 +24,7 @@ namespace ege
 
     void Exception::consume()
     {
-        engine::resources->logger->log(ege::log::Level::ERROR, what());
+        engine::logger->log(ege::log::Level::ERROR, what());
     }
 
     namespace exception

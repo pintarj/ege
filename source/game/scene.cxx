@@ -1,15 +1,20 @@
+#include <ege/engine.hxx>
 #include <ege/game/scene.hxx>
 
 namespace ege
 {
     namespace game
     {
-        Scene::Scene():
-            engineResources(ege::engine::resources)
+        Scene::Scene()
         {
             nextScene = nullptr;
             stopRequired = false;
             restartRequired = false;
+        }
+
+        Scene::~Scene()
+        {
+
         }
 
         void Scene::setNextScene(std::shared_ptr<Scene> scene)
@@ -20,24 +25,19 @@ namespace ege
         void Scene::requireEngineStop()
         {
             stopRequired = true;
-            engineResources->logger->log(log::Level::INFO, "engine stop required");
+            engine::logger->log(log::Level::INFO, "engine stop required");
         }
 
         void Scene::requireEngineRestart()
         {
             restartRequired = true;
             stopRequired = true;
-            engineResources->logger->log(log::Level::INFO, "engine restart required");
+            engine::logger->log(log::Level::INFO, "engine restart required");
         }
 
-        void Scene::shouldClose()
+        std::shared_ptr<Scene> Scene::getNextScene() const
         {
-            requireEngineStop();
-        }
-
-        Scene::~Scene()
-        {
-
+            return nextScene;
         }
 
         bool Scene::isStopRequired() const
@@ -48,6 +48,11 @@ namespace ege
         bool Scene::isRestartRequired() const
         {
             return restartRequired;
+        }
+
+        void Scene::shouldClose()
+        {
+            requireEngineStop();
         }
     }
 }

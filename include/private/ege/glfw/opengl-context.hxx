@@ -11,6 +11,7 @@ namespace ege
 }
 
 #include <memory>
+#include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <ege/opengl/context.hxx>
 #include <private/ege/glfw/opengl-default-fbo.hxx>

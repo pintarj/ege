@@ -1,189 +1,188 @@
 #include <ege/engine.hxx>
 #include <atomic>
 #include <chrono>
+#include <vector>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <ege/exception.hxx>
 #include <ege/version.hxx>
-#include <ege/graphic/gpu/context.hxx>
 #include <private/ege/game/ege-start-scene.hxx>
 #include <private/ege/graphic/font/library.hxx>
+#include <private/ege/glfw/monitor.hxx>
+#include <private/ege/glfw/window.hxx>
+#include <private/ege/glfw/keyboard.hxx>
 
 namespace ege
 {
-    engine::Resources* ege::engine::resources;
-
     namespace global
     {
-        static std::atomic_bool started(false);
-        static engine::Configurations configurations;
-        static hardware::Keyboard* keyboard;
-        static hardware::Monitor* monitor;
-        static util::fps::Analyzer* fpsAnalyzer;
-        static util::fps::Moderator* fpsModerator;
-        static log::Logger logger;
-        static std::shared_ptr<game::Scene> currentScene;
-        static bool restartRequired;
+        static std::atomic_bool                 started(false);
+        static bool                             restartRequired;
+        static log::Logger                      logger;
+        static std::shared_ptr<game::Scene>     currentScene;
+        static glfw::Window*                    window;
     }
 
-    static void initializeStaticMembers()
+    namespace engine
     {
-        ege::engine::resources = nullptr;
-        global::configurations.createInitialScene = []() { return std::shared_ptr<game::Scene>(); };
-        global::keyboard = nullptr;
-        global::monitor = nullptr;
-        global::fpsAnalyzer = nullptr;
-        global::fpsModerator = nullptr;
-        global::currentScene = nullptr;
-        global::restartRequired = false;
-    }
+        util::fps::Analyzer*                                    fpsAnalyzer;
+        util::fps::Moderator*                                   fpsModerator;
+        log::Logger*                                            logger = &global::logger;
+        keyboard::Keyboard*                                     keyboard;
+        const std::vector<std::unique_ptr<hardware::Monitor>>*  monitors;
+        const hardware::Monitor*                                primaryMonitor;
+        opengl::Context*                                        openglContext;
 
-    engine::Resources::Resources():
-        keyboard(global::keyboard),
-        monitor(global::monitor),
-        fpsAnalyzer(global::fpsAnalyzer),
-        fpsModerator(global::fpsModerator),
-        logger(&global::logger)
-    {
-
-    }
-
-    void engine::start(const std::function<void(engine::Configurations&)>& configure)
-    {
-        try
+        const std::string Configuration::getApplicationName()
         {
-            if (global::started.exchange(true))
-                ege::exception::throwNew("an attempt to start engine was done, but engine is already started");
-
-            while (true)
-            {
-                std::chrono::time_point<std::chrono::system_clock> start = std::chrono::system_clock::now();
-                global::logger.log(log::Level::INFO, "engine started");
-                initializeStaticMembers();
-                configure(global::configurations);
-                Engine* engine = new Engine();
-                std::chrono::duration<float> delta = std::chrono::system_clock::now() - start;
-                global::logger.log(log::Level::INFO, "engine initialized and configured (in %.3fs)", delta.count());
-                engine->start();
-                delete engine;
-                global::logger.log(log::Level::INFO, "engine stopped");
-
-                if (!global::restartRequired)
-                    break;
-
-                global::logger.log(log::Level::INFO, "engine restarting");
-            }
-
-            global::started = false;
+            return "EGE application";
         }
-        catch (ege::Exception e)
+
+        bool Configuration::skipStartScene()
         {
-            e.consume();
+            return false;
         }
-    }
 
-    Engine::Engine()
-    {
-        if (glfwInit() == GL_FALSE)
-            ege::exception::throwNew("could not initialize GLFW");
-
-        int glfwVersion[3];
-        glfwGetVersion(&glfwVersion[0], &glfwVersion[1], &glfwVersion[2]);
-        global::logger.log(log::Level::INFO, "GLFW %d.%d.%d initialized", glfwVersion[0], glfwVersion[1], glfwVersion[2]);
-
-        global::monitor = new hardware::Monitor(glfwGetPrimaryMonitor());
-        global::fpsAnalyzer = new util::fps::Analyzer();
-        global::fpsModerator = new util::fps::Moderator(*global::fpsAnalyzer, 60);
-        global::keyboard = new hardware::Keyboard();
-        ege::engine::resources = new engine::Resources();
-
-        graphic::font::library::initialize();
-
-        global::monitor->createGPUContext();
-        graphic::gpu::frameBuffer::setClearColor(0.0, 0.0, 0.0, 0.0);
-        global::monitor->getGPUContext().getDefaultFrameBuffer().bindAsDrawTarget();
-        void* glfwWindows[1] = {global::monitor->getGPUContext().glfwContext};
-        global::keyboard->listenOnWindows(glfwWindows, 1);
-
-        global::currentScene = global::configurations.createInitialScene();
-        global::currentScene = std::shared_ptr<game::Scene>(new game::EGEStartScene(global::currentScene));
-
-        if (global::currentScene == nullptr)
-            ege::exception::throwNew("no initial scenario defined");
-
-        GLenum glError = glGetError();
-
-        if (glError != GL_NO_ERROR)
-            ege::exception::throwNew("GL error (%d) during engine initialization", glError);
-
-        uint32_t egeVersion[3];
-        version::get(&egeVersion[0], &egeVersion[1], &egeVersion[2]);
-        global::logger.log(log::Level::INFO, "EGE %d.%d.%d initialized", egeVersion[0], egeVersion[1], egeVersion[2]);
-        global::fpsAnalyzer->calculateDeltaAndMark();
-        global::fpsAnalyzer->setLastDelta(1.0f / 60.0f);
-    }
-
-    Engine::~Engine()
-    {
-        delete ege::engine::resources;
-        delete global::fpsModerator;
-        delete global::fpsAnalyzer;
-        delete global::monitor;
-        delete global::keyboard;
-        graphic::font::library::destroy();
-        glfwTerminate();
-
-        GLenum glError = glGetError();
-
-        if (glError != GL_NO_ERROR)
-            ege::exception::throwNew("GL error (%d) during engine termination", glError);
-    }
-
-    void Engine::start()
-    {
-        global::logger.log(log::Level::INFO, "engine loop started");
-
-        while (true)
+        static inline void checkGLErrors(const std::string& message)
         {
-            glfwPollEvents();
-            glfwPollEvents(); // solve bug: glfw perform a key repressed after key repeating
-
-            if (glfwWindowShouldClose(static_cast< GLFWwindow* >( global::monitor->getGPUContext().glfwContext )))
-            {
-                global::currentScene->shouldClose();
-
-                if (global::currentScene->isStopRequired())
-                    goto stop_engine_label;
-            }
-
-            global::currentScene->update(global::fpsAnalyzer->getLastDelta());
-
-            if (global::currentScene->isStopRequired())
-            {
-stop_engine_label:
-                global::restartRequired = global::currentScene->isRestartRequired();
-                break;
-            }
-
-            if (global::currentScene->nextScene != nullptr)
-            {
-                global::currentScene = global::currentScene->nextScene;
-            }
-            else
-            {
-                global::currentScene->render();
-                global::monitor->getGPUContext().swapBuffers();
-                global::fpsModerator->moderate();
-            }
-
             GLenum glError = glGetError();
 
             if (glError != GL_NO_ERROR)
-                ege::exception::throwNew("GL error (%d) during engine execution", glError);
-
-            global::fpsAnalyzer->calculateDeltaAndMark();
+                ege::exception::throwNew("%s (code: %d)", message.c_str(), glError);
         }
 
-        global::logger.log(log::Level::INFO, "engine loop stopped");
+        static inline void initializeGLFW()
+        {
+            if (glfwInit() == GLFW_FALSE)
+                ege::exception::throwNew("couldn't initialize GLFW");
+
+            int glfwVersion[3];
+            glfwGetVersion(&glfwVersion[0], &glfwVersion[1], &glfwVersion[2]);
+            logger->log(log::Level::INFO, "GLFW %d.%d.%d initialized", glfwVersion[0], glfwVersion[1], glfwVersion[2]);
+        }
+
+        static inline void configureInitialScene(Configuration& configuration)
+        {
+            global::currentScene = configuration.createInitialScene();
+
+            if (global::currentScene.get() == nullptr)
+                ege::exception::throwNew("no initial scene defined");
+
+            if (!configuration.skipStartScene())
+                global::currentScene = std::shared_ptr<game::Scene>(new game::EGEStartScene(global::currentScene));
+        }
+
+        static inline void initializeAndConfigure(Configuration& configuration)
+        {
+            std::chrono::time_point<std::chrono::system_clock> start = std::chrono::system_clock::now();
+
+            {
+                global::restartRequired     = false;
+                initializeGLFW();
+                monitors                    = &glfw::Monitor::getMonitors();
+                primaryMonitor              = monitors->at(0).get();
+                fpsAnalyzer                 = new util::fps::Analyzer;
+                fpsModerator                = new util::fps::Moderator(*fpsAnalyzer);
+                global::window              = new glfw::Window(configuration.getApplicationName(), 800, 600);
+                openglContext               = &global::window->getContext();
+                keyboard                    = &global::window->getKeyboard();
+                graphic::font::library::initialize();
+                configureInitialScene(configuration);
+                checkGLErrors("OpenGL error during engine initialization");
+
+                uint32_t egeVersion[3];
+                version::get(&egeVersion[0], &egeVersion[1], &egeVersion[2]);
+                engine::logger->log(log::Level::INFO, "EGE %d.%d.%d initialized", egeVersion[0], egeVersion[1], egeVersion[2]);
+            }
+
+            std::chrono::duration<float> delta = std::chrono::system_clock::now() - start;
+            logger->log(log::Level::INFO, "engine initialized and configured (in %.3fs)", delta.count());
+        }
+
+        static inline void startLoop()
+        {
+            engine::logger->log(log::Level::INFO, "engine loop started");
+            global::window->show();
+            engine::fpsAnalyzer->calculateDeltaAndMark();
+            engine::fpsAnalyzer->setLastDelta(1.0f / 60.0f);
+
+            while (true)
+            {
+                glfwPollEvents();
+                glfwPollEvents(); // solve bug: glfw perform a key repressed after key repeating
+
+                if (global::window->shouldClose())
+                {
+                    global::currentScene->shouldClose();
+
+                    if (global::currentScene->isStopRequired())
+                        goto stop_engine_label;
+                }
+
+                global::currentScene->update(engine::fpsAnalyzer->getLastDelta());
+
+                if (global::currentScene->isStopRequired())
+                {
+            stop_engine_label:
+                    global::restartRequired = global::currentScene->isRestartRequired();
+                    break;
+                }
+
+                if (global::currentScene->getNextScene() != nullptr)
+                {
+                    global::currentScene = global::currentScene->getNextScene();
+                }
+                else
+                {
+                    global::currentScene->render();
+                    global::window->swapBuffers();
+                    engine::fpsModerator->moderate();
+                }
+
+                engine::checkGLErrors("OpenGL error during engine execution");
+                engine::fpsAnalyzer->calculateDeltaAndMark();
+            }
+
+            engine::logger->log(log::Level::INFO, "engine loop stopped");
+        }
+
+        static inline void destroy()
+        {
+            delete global::window;
+            delete fpsModerator;
+            delete fpsAnalyzer;
+            graphic::font::library::destroy();
+            glfwTerminate();
+            checkGLErrors("OpenGL error during engine termination");
+        }
+
+        void start(Configuration& configuration)
+        {
+            try
+            {
+                if (global::started.exchange(true))
+                    ege::exception::throwNew("an attempt to start engine was done, but engine is already started");
+
+                while (true)
+                {
+                    logger->log(log::Level::INFO, "engine started");
+                    initializeAndConfigure(configuration);
+                    startLoop();
+                    logger->log(log::Level::INFO, "engine stopped");
+
+                    if (!global::restartRequired)
+                        break;
+
+                    logger->log(log::Level::INFO, "engine restarting");
+                }
+
+                destroy();
+                global::started = false;
+            }
+            catch (ege::Exception e)
+            {
+                e.consume();
+            }
+        }
     }
 }

@@ -63,6 +63,7 @@ class MainScene: public flow::Scene
 
     public:
         MainScene():
+            Scene("demo.Triangle"),
             program(createProgram()),
             buffer(createBuffer()),
             radians(0.0f)

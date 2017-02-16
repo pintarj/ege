@@ -106,6 +106,8 @@ namespace ege
 
             if (!configuration.skipStartScene())
                 global::currentScene = std::shared_ptr<flow::Scene>(new flow::EGEStartScene(global::currentScene));
+            else
+                engine::logger->log(log::Level::INFO, "EGE start scene skipped");
         }
 
         static inline void initializeAndConfigure(Configuration& configuration)
@@ -165,7 +167,15 @@ namespace ege
 
                 if (global::currentScene->getNextScene() != nullptr)
                 {
-                    global::currentScene = global::currentScene->getNextScene();
+                    std::shared_ptr<flow::Scene> nextScene = global::currentScene->getNextScene();
+                    const char* currentId = global::currentScene->getIdentification().c_str();
+                    const char* nextId = nextScene->getIdentification().c_str();
+                    engine::logger->log(log::Level::INFO, "scene change required (%s -> %s)", currentId, nextId);
+                    global::currentScene = nextScene;
+
+                    // For debug purposes the currentId is "recalculated" instead of using nextId.
+                    currentId = global::currentScene->getIdentification().c_str();
+                    engine::logger->log(log::Level::INFO, "new current scene: %s ", currentId);
                 }
                 else
                 {

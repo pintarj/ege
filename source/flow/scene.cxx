@@ -5,7 +5,8 @@ namespace ege
 {
     namespace flow
     {
-        Scene::Scene()
+        Scene::Scene(const std::string identification):
+            identification(identification)
         {
             nextScene = nullptr;
             stopRequired = false;
@@ -25,14 +26,14 @@ namespace ege
         void Scene::requireEngineStop()
         {
             stopRequired = true;
-            engine::logger->log(log::Level::INFO, "engine stop required");
+            engine::logger->log(log::Level::INFO, "engine stop required (by scene %s)", identification.c_str());
         }
 
         void Scene::requireEngineRestart()
         {
             restartRequired = true;
             stopRequired = true;
-            engine::logger->log(log::Level::INFO, "engine restart required");
+            engine::logger->log(log::Level::INFO, "engine restart required (by scene %s)", identification.c_str());
         }
 
         std::shared_ptr<Scene> Scene::getNextScene() const
@@ -53,6 +54,11 @@ namespace ege
         void Scene::shouldClose()
         {
             requireEngineStop();
+        }
+
+        const std::string& Scene::getIdentification() const
+        {
+            return identification;
         }
     }
 }

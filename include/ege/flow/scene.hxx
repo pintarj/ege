@@ -30,11 +30,17 @@ namespace ege
                  * */
                 bool restartRequired;
 
+                /**
+                 * \brief The scene identification string.
+                 * */
+                const std::string identification;
+
             public:
                 /**
-                 * \brief Create a Scene.
+                 * \brief Create a Scene with a specified identification string.
+                 * \param identification The identification string.
                  * */
-                Scene();
+                Scene(const std::string identification);
 
                 virtual ~Scene();
 
@@ -92,6 +98,12 @@ namespace ege
                  * \brief Called by engine when a frame have to be rendered.
                  * */
                 virtual void render() = 0;
+
+                /**
+                 * \brief Returns the scene identification string.
+                 * \return The identification string.
+                 * */
+                const std::string& getIdentification() const;
         };
     }
 }

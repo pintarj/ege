@@ -27,7 +27,8 @@ using namespace ege;
 class MainScene: public flow::Scene
 {
     public:
-        MainScene()
+        MainScene():
+            flow::Scene("demo.HelloWorld")
         {
             opengl::setClearColor(0.0f, 0.0f, 0.5f, 1.0f);
         }

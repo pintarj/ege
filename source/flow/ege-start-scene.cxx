@@ -6,6 +6,7 @@ namespace ege
     namespace flow
     {
         EGEStartScene::EGEStartScene(std::shared_ptr<Scene> initialScene):
+            Scene("ege.StartScene"),
             initialScene(initialScene),
             elapsedTime(0)
         {

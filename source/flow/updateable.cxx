@@ -82,5 +82,10 @@ namespace ege
 
             return sum;
         }
+        
+        bool Updateable::requiresExecutionOnGraphicThread() const
+        {
+            return true;
+        }
     }
 }

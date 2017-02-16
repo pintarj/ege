@@ -36,6 +36,7 @@ namespace ege
                  * \brief Update the \c this Updateable object.
                  * \param delta The time elapsed from the last update.
                  * \sa update()
+                 * \sa requiresExecutionOnGraphicThread()
                  *
                  * This method will be automatically called by the update() method.
                  * Default implementation is an empty function.
@@ -53,6 +54,7 @@ namespace ege
                 /**
                  * \brief Tells if \c this is updated.
                  * \return \c True if it's updated.
+                 *
                  * Default implementation returns \c false.
                  * */
                 virtual bool isUpdated();
@@ -113,6 +115,20 @@ namespace ege
                  * O(n), where n is the number of dependencies in dependency tree.
                  * */
                 std::size_t getRecursiveDependenciesCount() const;
+
+                /**
+                 * \brief Tells to engine if the performUpdate() implementation requires execution on graphic thread.
+                 * \return \c True if execution on graphic thread is required. Default implementation returns \c true.
+                 *
+                 * All the graphic commands have to be executed on graphic thread. For example: all the methods
+                 * in the namespace ege::opengl have to be executed on graphic thread. \n
+                 * If you don't know if your Updateable have to be executed on a graphic thread, then leave the
+                 * implementation unmodified. \n
+                 * Engine could massively optimize the execution of the application where there are some Updateable
+                 * objects that doesn't require graphic thread, for example can execute those objects on different
+                 * numbers of threads (using all the CPU's cores).
+                 * */
+                virtual bool requiresExecutionOnGraphicThread() const;
         };
     }
 }

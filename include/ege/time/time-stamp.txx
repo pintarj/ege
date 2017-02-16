@@ -20,12 +20,18 @@ namespace ege
         }
 
         template<typename T, class P, class C>
+        bool TimeStamp<T, P, C>::hasElapsed(T elapsed) const
+        {
+            return (elapsed - getElapsed()) <= 0;
+        }
+
+        template<typename T, class P, class C>
         T TimeStamp<T, P, C>::waitUntil(T elapsed) const
         {
             T reallyElapsed = getElapsed();
             T difference = elapsed - reallyElapsed;
 
-            if (difference < 0)
+            if (difference <= 0)
                 return (T) 0;
 
             std::this_thread::sleep_for(std::chrono::duration<T, P>(difference));

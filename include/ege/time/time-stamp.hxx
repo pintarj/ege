@@ -39,6 +39,13 @@ namespace ege
                 T getElapsed() const;
 
                 /**
+                 * \brief Tells if a specified amount of time has elapsed since the timestamp.
+                 * \param elapsed The specified amount of time.
+                 * \return \c True is has elapsed, \c false otherwise.
+                 * */
+                bool hasElapsed(T elapsed) const;
+
+                /**
                  * \brief Waits until the time elapsed since the timestamp is equal (or greater) from
                  *      the specified one.
                  * \param elapsed The specified time that have to elapse.

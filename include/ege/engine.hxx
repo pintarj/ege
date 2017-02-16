@@ -5,8 +5,8 @@
 #include <memory>
 #include <vector>
 #include <ege/log.hxx>
-#include <ege/game/scene.hxx>
 #include <ege/keyboard.hxx>
+#include <ege/flow/scene.hxx>
 #include <ege/hardware/monitor.hxx>
 #include <ege/opengl/context.hxx>
 #include <ege/util/fps/analyzer.hxx>
@@ -53,7 +53,7 @@ namespace ege
                  * \brief Creates and returns the initial scene.
                  * \return The initial scene.
                  * */
-                virtual std::shared_ptr<game::Scene> createInitialScene() = 0;
+                virtual std::shared_ptr<flow::Scene> createInitialScene() = 0;
 
                 /**
                  * \brief Returns the application name.

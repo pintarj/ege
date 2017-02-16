@@ -6,7 +6,7 @@
 #include <GLFW/glfw3.h>
 #include <ege/exception.hxx>
 #include <ege/version.hxx>
-#include <private/ege/game/ege-start-scene.hxx>
+#include <private/ege/flow/ege-start-scene.hxx>
 #include <private/ege/glfw/monitor.hxx>
 #include <private/ege/glfw/window.hxx>
 #include <private/ege/glfw/keyboard.hxx>
@@ -18,7 +18,7 @@ namespace ege
         static std::atomic_bool                 started(false);
         static bool                             restartRequired;
         static log::Logger                      logger;
-        static std::shared_ptr<game::Scene>     currentScene;
+        static std::shared_ptr<flow::Scene>     currentScene;
         static glfw::Window*                    window;
     }
 
@@ -105,7 +105,7 @@ namespace ege
                 ege::exception::throwNew("no initial scene defined");
 
             if (!configuration.skipStartScene())
-                global::currentScene = std::shared_ptr<game::Scene>(new game::EGEStartScene(global::currentScene));
+                global::currentScene = std::shared_ptr<flow::Scene>(new flow::EGEStartScene(global::currentScene));
         }
 
         static inline void initializeAndConfigure(Configuration& configuration)

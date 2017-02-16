@@ -8,9 +8,9 @@ ADD_LIBRARY(ege-core SHARED
     source/exception.cxx
     source/log.cxx
     source/version.cxx
-    source/game/ege-start-scene.cxx
-    source/game/scene.cxx
-    source/game/updateable.cxx
+    source/flow/ege-start-scene.cxx
+    source/flow/scene.cxx
+    source/flow/updateable.cxx
     source/glfw/keyboard.cxx
     source/glfw/monitor.cxx
     source/glfw/opengl-context.cxx

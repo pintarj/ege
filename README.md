@@ -24,7 +24,7 @@ That's a simple blue-screen application. Once running, press <kbd>alt</kbd>+<kbd
 
 using namespace ege;
 
-class MainScene: public game::Scene
+class MainScene: public flow::Scene
 {
     public:
         MainScene()
@@ -51,9 +51,9 @@ class Configuration: public engine::Configuration
             return "HelloWorld";
         }
 
-        virtual std::shared_ptr<game::Scene> createInitialScene()
+        virtual std::shared_ptr<flow::Scene> createInitialScene()
         {
-            return std::shared_ptr<game::Scene>(new MainScene);
+            return std::shared_ptr<flow::Scene>(new MainScene);
         }
 };
 

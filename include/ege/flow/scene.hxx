@@ -1,13 +1,13 @@
 
-#ifndef EGE_GAME_SCENE_HXX
-#define EGE_GAME_SCENE_HXX
+#ifndef EGE_FLOW_SCENE_HXX
+#define EGE_FLOW_SCENE_HXX
 
 #include <memory>
-#include <ege/game/updateable.hxx>
+#include <ege/flow/updateable.hxx>
 
 namespace ege
 {
-    namespace game
+    namespace flow
     {
         /**
          * \brief A class that describes a game scenario.

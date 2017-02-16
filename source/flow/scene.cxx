@@ -1,9 +1,9 @@
+#include <ege/flow/scene.hxx>
 #include <ege/engine.hxx>
-#include <ege/game/scene.hxx>
 
 namespace ege
 {
-    namespace game
+    namespace flow
     {
         Scene::Scene()
         {

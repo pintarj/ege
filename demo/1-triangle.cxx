@@ -4,7 +4,7 @@
 
 using namespace ege;
 
-class MainScene: public game::Scene
+class MainScene: public flow::Scene
 {
     private:
         static opengl::Program* createProgram()
@@ -109,9 +109,9 @@ class Configuration: public engine::Configuration
             return "Triangle";
         }
 
-        virtual std::shared_ptr<game::Scene> createInitialScene()
+        virtual std::shared_ptr<flow::Scene> createInitialScene()
         {
-            return std::shared_ptr<game::Scene>(new MainScene);
+            return std::shared_ptr<flow::Scene>(new MainScene);
         }
 };
 

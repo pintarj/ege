@@ -1,9 +1,9 @@
-#include <private/ege/game/ege-start-scene.hxx>
+#include <private/ege/flow/ege-start-scene.hxx>
 #include <ege/opengl/framebuffer.hxx>
 
 namespace ege
 {
-    namespace game
+    namespace flow
     {
         EGEStartScene::EGEStartScene(std::shared_ptr<Scene> initialScene):
             initialScene(initialScene),

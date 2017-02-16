@@ -6,6 +6,7 @@
 #include <GLFW/glfw3.h>
 #include <ege/exception.hxx>
 #include <ege/version.hxx>
+#include <ege/time/time-stamp.hxx>
 #include <private/ege/flow/ege-start-scene.hxx>
 #include <private/ege/glfw/monitor.hxx>
 #include <private/ege/glfw/window.hxx>
@@ -209,10 +210,12 @@ namespace ege
 
                 while (true)
                 {
+                    time::TimeStamp<float> stamp;
                     logger->log(log::Level::INFO, "engine started");
                     initializeAndConfigure(configuration);
                     startLoop();
-                    logger->log(log::Level::INFO, "engine stopped");
+                    destroy();
+                    logger->log(log::Level::INFO, "engine stopped (uptime: %.3fs)", stamp.getElapsed());
 
                     if (!global::restartRequired)
                         break;
@@ -220,12 +223,12 @@ namespace ege
                     logger->log(log::Level::INFO, "engine restarting");
                 }
 
-                destroy();
                 global::started = false;
             }
             catch (ege::Exception e)
             {
                 e.consume();
+                logger->log(log::Level::ERROR, "engine has ended in unexpected way (unhandled exception)");
             }
         }
     }

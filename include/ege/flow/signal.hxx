@@ -4,6 +4,7 @@
 
 #include <condition_variable>
 #include <functional>
+#include <memory>
 #include <mutex>
 
 namespace ege
@@ -11,11 +12,62 @@ namespace ege
     namespace flow
     {
         /**
-         * \brief Meant for wake up waiting threads (signaling them).
+         * \brief Class that allow notification of threads waiting to be notified.
+         * */
+        class SignalNotifier
+        {
+            public:
+                virtual ~SignalNotifier() {}
+
+                /**
+                 * \brief Wakes up a single thread that is waiting on \c this signal.
+                 * \sa wait()
+                 * */
+                virtual void notifyOne() = 0;
+
+                /**
+                 * \brief Wakes up all the threads that are waiting on \c this signal.
+                 * \sa wait()
+                 * */
+                virtual void notifyAll() = 0;
+        };
+
+        /**
+         * \brief Class that allow executing thread waits to be notified by other thread.
+         * */
+        class SignalWaiter
+        {
+            public:
+                virtual ~SignalWaiter() {}
+
+                /**
+                 * \brief Current thread waits to be signaled (notified).
+                 * \sa SignalNotifier::notifyOne()
+                 * \sa SignalNotifier::notifyAll()
+                 *
+                 * Thread can be signaled by some other thread.
+                 * */
+                virtual void wait() = 0;
+
+                /**
+                 * \brief Current thread waits, for an amount of time, to be signaled (notified).
+                 * \param milliseconds Milliseconds to wait.
+                 * \param nanoseconds Nanoseconds to wait.
+                 * \sa SignalNotifier::notifyOne()
+                 * \sa SignalNotifier::notifyAll()
+                 *
+                 * The waiting time is the sum of milliseconds and nanoseconds. \n
+                 * Thread can be signaled by some other thread.
+                 * */
+                virtual void wait(long milliseconds, int nanoseconds = 0) = 0;
+        };
+
+        /**
+         * \brief Meant for signaling threads between them.
          *
          * Certain implementations may produce spurious wake-up calls (signal) without any call of
-         * Signal::notifyOne() or Signal::notifyAll(). So, a predicate should be specified, to check
-         * those type of events.
+         * SignalNotifier::notifyOne() or SignalNotifier::notifyAll(). So, a predicate should be specified,
+         * to check those type of events.
          * */
         class Signal
         {
@@ -31,16 +83,17 @@ namespace ege
                 std::mutex mutex;
 
                 /**
-                 * \brief Used to check spurious wake-up calls (if specified).
+                 * \brief The object that notifies signals.
                  * */
-                const std::function<bool()> predicate;
+                std::unique_ptr<SignalNotifier> notifier;
 
                 /**
-                 * \brief Tells if a predicate has been specified in constructor.
+                 * \brief The object that waits for signal notifications.
                  * */
-                const bool predicateSpecified;
+                std::unique_ptr<SignalWaiter> waiter;
 
             public:
+
                 /**
                  * \brief Create a Signal object without a predicate.
                  * */
@@ -53,37 +106,16 @@ namespace ege
                 Signal(const std::function<bool()>& predicate);
 
                 /**
-                 * \brief Current thread waits to be signaled (notified).
-                 * \sa notifyOne()
-                 * \sa notifyAll()
-                 *
-                 * Thread can be signaled by some other thread.
+                 * \brief Gets the signal's notifier.
+                 * \return The signal notifier.
                  * */
-                void wait();
+                SignalNotifier& getNotifier() const;
 
                 /**
-                 * \brief Current thread waits, for an amount of time, to be signaled (notified).
-                 * \param milliseconds Milliseconds to wait.
-                 * \param nanoseconds Nanoseconds to wait.
-                 * \sa notifyOne()
-                 * \sa notifyAll()
-                 *
-                 * The waiting time is the sum of milliseconds and nanoseconds. \n
-                 * Thread can be signaled by some other thread.
+                 * \brief Gets the signal's waiter.
+                 * \return The signal waiter.
                  * */
-                void wait(long milliseconds, int nanoseconds = 0);
-
-                /**
-                 * \brief Wakes up a single thread that is waiting on \c this signal.
-                 * \sa wait()
-                 * */
-                void notifyOne();
-
-                /**
-                 * \brief Wakes up all the threads that are waiting on \c this signal.
-                 * \sa wait()
-                 * */
-                void notifyAll();
+                SignalWaiter& getWaiter() const;
         };
     }
 }

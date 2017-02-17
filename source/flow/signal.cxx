@@ -5,51 +5,133 @@ namespace ege
 {
     namespace flow
     {
-        Signal::Signal():
-            predicate([]() -> bool {return true;}),
-            predicateSpecified(false)
+        class SignalNotifierImplementation: public SignalNotifier
+        {
+            private:
+                std::condition_variable& conditionVariable;
+                std::mutex& mutex;
+
+            public:
+                SignalNotifierImplementation(std::condition_variable& conditionVariable, std::mutex& mutex);
+                virtual ~SignalNotifierImplementation() {}
+                virtual void notifyOne();
+                virtual void notifyAll();
+        };
+
+        class SignalWaiterImplementation: public SignalWaiter
+        {
+            private:
+                std::condition_variable& conditionVariable;
+                std::mutex& mutex;
+
+            public:
+                SignalWaiterImplementation(std::condition_variable& conditionVariable, std::mutex& mutex);
+                virtual ~SignalWaiterImplementation() {}
+                virtual void wait();
+                virtual void wait(long milliseconds, int nanoseconds);
+        };
+
+        class SignalWaiterPredicateImplementation: public SignalWaiter
+        {
+            private:
+                std::condition_variable& conditionVariable;
+                std::mutex& mutex;
+                const std::function<bool()> predicate;
+
+            public:
+                SignalWaiterPredicateImplementation(std::condition_variable& conditionVariable, std::mutex& mutex,
+                    const std::function<bool()>& predicate);
+
+                virtual ~SignalWaiterPredicateImplementation() {}
+                virtual void wait();
+                virtual void wait(long milliseconds, int nanoseconds);
+        };
+
+        SignalNotifierImplementation::SignalNotifierImplementation(std::condition_variable& conditionVariable,
+                std::mutex& mutex):
+            conditionVariable(conditionVariable),
+            mutex(mutex)
         {
 
         }
 
-        Signal::Signal(const std::function<bool()>& predicate):
-            predicate(predicate),
-            predicateSpecified(true)
-        {
-
-        }
-
-        void Signal::wait()
-        {
-            std::unique_lock<std::mutex> lock(mutex);
-
-            if (predicateSpecified)
-                conditionVariable.wait(lock, predicate);
-            else
-                conditionVariable.wait(lock);
-        }
-
-        void Signal::wait(long milliseconds, int nanoseconds)
-        {
-            std::unique_lock<std::mutex> lock(mutex);
-            auto duration = std::chrono::milliseconds(milliseconds) + std::chrono::nanoseconds(nanoseconds);
-
-            if (predicateSpecified)
-                conditionVariable.wait_for(lock, duration, predicate);
-            else
-                conditionVariable.wait_for(lock, duration);
-        }
-
-        void Signal::notifyOne()
+        void SignalNotifierImplementation::notifyOne()
         {
             std::lock_guard<std::mutex> lock(mutex);
             conditionVariable.notify_one();
         }
 
-        void Signal::notifyAll()
+        void SignalNotifierImplementation::notifyAll()
         {
             std::lock_guard<std::mutex> lock(mutex);
             conditionVariable.notify_all();
+        }
+
+        SignalWaiterImplementation::SignalWaiterImplementation(std::condition_variable& conditionVariable,
+                std::mutex& mutex):
+            conditionVariable(conditionVariable),
+            mutex(mutex)
+        {
+
+        }
+
+        void SignalWaiterImplementation::wait()
+        {
+            std::unique_lock<std::mutex> lock(mutex);
+            conditionVariable.wait(lock);
+        }
+
+        void SignalWaiterImplementation::wait(long milliseconds, int nanoseconds)
+        {
+            std::unique_lock<std::mutex> lock(mutex);
+            auto duration = std::chrono::milliseconds(milliseconds) + std::chrono::nanoseconds(nanoseconds);
+            conditionVariable.wait_for(lock, duration);
+        }
+
+        SignalWaiterPredicateImplementation::SignalWaiterPredicateImplementation(
+                std::condition_variable& conditionVariable, std::mutex& mutex, const std::function<bool()>& predicate):
+            conditionVariable(conditionVariable),
+            mutex(mutex),
+            predicate(predicate)
+        {
+
+        }
+
+        void SignalWaiterPredicateImplementation::wait()
+        {
+            std::unique_lock<std::mutex> lock(mutex);
+            conditionVariable.wait(lock, predicate);
+        }
+
+        void SignalWaiterPredicateImplementation::wait(long milliseconds, int nanoseconds)
+        {
+            std::unique_lock<std::mutex> lock(mutex);
+            auto duration = std::chrono::milliseconds(milliseconds) + std::chrono::nanoseconds(nanoseconds);
+            conditionVariable.wait_for(lock, duration, predicate);
+        }
+
+        Signal::Signal():
+            notifier(new SignalNotifierImplementation(conditionVariable, mutex)),
+            waiter(new SignalWaiterImplementation(conditionVariable, mutex))
+        {
+
+        }
+
+        Signal::Signal(const std::function<bool()>& predicate):
+            notifier(new SignalNotifierImplementation(conditionVariable, mutex)),
+            waiter(new SignalWaiterPredicateImplementation(conditionVariable, mutex, predicate))
+        {
+
+        }
+
+        SignalNotifier& Signal::getNotifier() const
+        {
+            return *notifier;
+        }
+
+        SignalWaiter& Signal::getWaiter() const
+        {
+            return *waiter;
         }
     }
 }

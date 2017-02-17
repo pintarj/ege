@@ -2,6 +2,8 @@
 #ifndef EGE_FLOW_EXECUTABLE_HXX
 #define EGE_FLOW_EXECUTABLE_HXX
 
+#include <functional>
+
 namespace ege
 {
     namespace flow
@@ -61,6 +63,34 @@ namespace ege
                  * \return The CPU usage.
                  * */
                 ExecutableCPUUsage getCPUUsage() const;
+        };
+
+        /**
+         * \brief Represent a std::function<void()> wrapped in an Executable.
+         * */
+        class FunctionWrapperExecutable: public Executable
+        {
+            private:
+                /**
+                 * \brief The wrapped function.
+                 * */
+                std::function<void()> function;
+
+            public:
+                /**
+                 * \brief Create a function wrapper Executable object.
+                 * \param function The function to wrap.
+                 * \param CPUUsage The CPU usage of the executable. Default is ExecutableCPUUsage::DEFAULT.
+                 * */
+                FunctionWrapperExecutable(const std::function<void()>& function,
+                    ExecutableCPUUsage CPUUsage = ExecutableCPUUsage::DEFAULT);
+
+                virtual ~FunctionWrapperExecutable() {}
+
+                /**
+                 * \brief Execute the wrapped function.
+                 * */
+                virtual void execute();
         };
     }
 }

@@ -44,23 +44,28 @@ namespace ege
             int micros = (int) (now.time_since_epoch() / std::chrono::microseconds(1) % 1000000);
             char time[16];
             sprintf(time, "%02d:%02d:%02d.%06d", hours, minutes, seconds, micros);
-            *stream << "[" << time << "] [" << to_string(level) << "] ";
             static const std::string indentation(26, ' ');
             char* ptr = result;
 
-            while (true)
             {
-                char* match = std::strchr(ptr, '\n');
+                std::unique_lock<std::mutex> lock(mutex);
+                *stream << "[" << time << "] [" << to_string(level) << "] ";
 
-                if (match == nullptr)
-                    break;
+                while (true)
+                {
+                    char* match = std::strchr(ptr, '\n');
 
-                *match = '\0';
-                *stream << ptr << std::endl << indentation;
-                ptr = match + 1;
+                    if (match == nullptr)
+                        break;
+
+                    *match = '\0';
+                    *stream << ptr << std::endl << indentation;
+                    ptr = match + 1;
+                }
+
+                *stream << ptr << std::endl;
             }
 
-            *stream << ptr << std::endl;
             std::free(result);
         }
 

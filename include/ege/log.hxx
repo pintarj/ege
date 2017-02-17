@@ -7,6 +7,7 @@
  * \brief Contains the classes used to perform logging.
  * */
 
+#include <mutex>
 #include <ostream>
 #include <string>
 
@@ -54,6 +55,11 @@ namespace ege
         {
             private:
                 std::ostream* streams[5];
+
+                /**
+                 * \brief Used to synchronize multiple logs.
+                 * */
+                std::mutex mutex;
 
             public:
 

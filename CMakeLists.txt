@@ -10,6 +10,7 @@ ADD_LIBRARY(ege-core SHARED
     source/version.cxx
     source/flow/ege-start-scene.cxx
     source/flow/executable.cxx
+    source/flow/executor.cxx
     source/flow/scene.cxx
     source/flow/updateable.cxx
     source/glfw/keyboard.cxx

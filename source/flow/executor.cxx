@@ -8,5 +8,15 @@ namespace ege
         {
             executable->execute();
         }
+
+        void PriorityExecutor::execute(std::shared_ptr<Executable> executable, Priority priority)
+        {
+            executable->execute();
+        }
+
+        void PriorityExecutor::execute(std::shared_ptr<Executable> executable)
+        {
+            execute(executable, Priority::DEFAULT);
+        }
     }
 }

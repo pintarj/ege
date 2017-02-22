@@ -12,11 +12,11 @@ namespace ege
         {
             private:
                 std::shared_ptr<Executable> executable;
-                ExecutionPriority priority;
+                Priority priority;
                 long timeStamp;
 
             public:
-                ExecutionQueueEntry(const std::shared_ptr<Executable>& executable, ExecutionPriority priority):
+                ExecutionQueueEntry(const std::shared_ptr<Executable>& executable, Priority priority):
                     executable(executable),
                     priority(priority),
                     timeStamp(std::chrono::steady_clock::now().time_since_epoch().count())
@@ -53,7 +53,7 @@ namespace ege
             delete THIS_QUEUE;
         }
 
-        void ExecutionQueue::push(std::shared_ptr<Executable> executable, ExecutionPriority priority)
+        void ExecutionQueue::push(std::shared_ptr<Executable> executable, Priority priority)
         {
             std::unique_lock<std::mutex> lock(mutex);
             THIS_QUEUE->push(ExecutionQueueEntry(executable, priority));

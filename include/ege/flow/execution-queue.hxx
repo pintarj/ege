@@ -5,26 +5,12 @@
 #include <memory>
 #include <mutex>
 #include <ege/flow/executable.hxx>
+#include <ege/flow/priority.hxx>
 
 namespace ege
 {
     namespace flow
     {
-        /**
-         * \brief Enumerate execution priorities.
-         *
-         * Default is MEDIUM.
-         * */
-        enum class ExecutionPriority: unsigned int
-        {
-            EXTREME = 4,
-            HIGH    = 3,
-            MEDIUM  = 2,
-            LOW     = 1,
-            ZERO    = 0,
-            DEFAULT = MEDIUM
-        };
-
         /**
          * \brief Represent an execution queue of Executable objects.
          *
@@ -60,7 +46,7 @@ namespace ege
                  * \param executable The executable object to push.
                  * \param priority The priority of object execution. Default is ExecutionPriority::DEFAULT.
                  * */
-                void push(std::shared_ptr<Executable> executable, ExecutionPriority priority = ExecutionPriority::DEFAULT);
+                void push(std::shared_ptr<Executable> executable, Priority priority = Priority::DEFAULT);
 
                 /**
                  * \brief Pop the Executable object at the top of the queue.

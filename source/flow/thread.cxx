@@ -11,9 +11,23 @@ namespace ege
         static std::unordered_map<std::thread::id, Thread*> threads;
         static std::mutex mutex;
 
+        void Thread::execute()
+        {
+
+        }
+
         Thread::Thread(std::shared_ptr<Executable> executable):
-            thread(),
             executable(executable),
+            toExecute(*executable),
+            started(false),
+            joined(false)
+        {
+
+        }
+
+        Thread::Thread():
+            executable(nullptr),
+            toExecute(*this),
             started(false),
             joined(false)
         {
@@ -45,7 +59,7 @@ namespace ege
                         threads[id] = this;
                     }
 
-                    this->executable->execute();
+                    this->toExecute.execute();
 
                     {
                         std::unique_lock<std::mutex> lock(mutex);
@@ -81,7 +95,7 @@ namespace ege
             return joined;
         }
 
-        unsigned getRunningThreadCount() noexcept
+        unsigned getExecutingThreadCount() noexcept
         {
             std::unique_lock<std::mutex> lock(mutex);
             return (unsigned) threads.size();

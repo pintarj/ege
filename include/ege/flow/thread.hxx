@@ -15,7 +15,7 @@ namespace ege
          * \sa start()
          * \sa join()
          * */
-        class Thread
+        class Thread: protected Executable
         {
             private:
                 /**
@@ -24,9 +24,14 @@ namespace ege
                 std::unique_ptr<std::thread> thread;
 
                 /**
-                 * \brief The executable to execute on the thread.
+                 * \brief Stores the executable specified in constructor.
                  * */
                 std::shared_ptr<Executable> executable;
+
+                /**
+                 * \brief The executable to execute on the thread.
+                 */
+                Executable& toExecute;
 
                 /**
                  * \brief Tells if the thread has been started.
@@ -38,7 +43,24 @@ namespace ege
                  * */
                 std::atomic_bool joined;
 
+            protected:
+                /**
+                 * \brief If no executable is specified in constructor, this method will be executed on thread.
+                 *
+                 * Default implementation is an empty function.
+                 * */
+                virtual void execute();
+
             public:
+                /**
+                 * \brief Create a thread.
+                 *
+                 * The thread will execute the protected method Thread::execute().
+                 * Creating the Thread wouldn't start executing the Executable object.
+                 * Method Thread::start() has to be invoked.
+                 * */
+                Thread();
+
                 /**
                  * \brief Create a thread with the specified Executable to execute.
                  *
@@ -83,9 +105,9 @@ namespace ege
 
         /**
          * \brief Return the number of running native threads created by class ege::flow::Thread objects.
-         * \return The number of running native threads.
+         * \return The number of executing native threads.
          * */
-        unsigned getRunningThreadCount() noexcept;
+        unsigned getExecutingThreadCount() noexcept;
     }
 }
 

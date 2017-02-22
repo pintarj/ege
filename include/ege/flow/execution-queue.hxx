@@ -16,9 +16,7 @@ namespace ege
          *
          * Executable objects can be pushed in the queue and popped from the queue. Executables are executed
          * by priority: higher priority is firstly executed. Executables of equal priority are executed in
-         * order they are pushed in the queue. \n
-         * \n
-         * Implementation of this class is thread-safe.
+         * order they are pushed in the queue.
          * */
         class ExecutionQueue: public Executable
         {
@@ -27,11 +25,6 @@ namespace ege
                  * \brief The priority queue where executables are stored.
                  * */
                 void* queue;
-
-                /**
-                 * \brief Mutex used to synchronize access to the queue.
-                 * */
-                std::mutex mutex;
 
             public:
                 /**

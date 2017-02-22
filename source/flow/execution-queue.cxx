@@ -55,13 +55,11 @@ namespace ege
 
         void ExecutionQueue::push(std::shared_ptr<Executable> executable, Priority priority)
         {
-            std::unique_lock<std::mutex> lock(mutex);
             THIS_QUEUE->push(ExecutionQueueEntry(executable, priority));
         }
 
         std::shared_ptr<Executable> ExecutionQueue::pop()
         {
-            std::unique_lock<std::mutex> lock(mutex);
             std::shared_ptr<Executable> executable = THIS_QUEUE->top().getExecutable();
             THIS_QUEUE->pop();
             return executable;
@@ -74,7 +72,6 @@ namespace ege
 
         bool ExecutionQueue::isEmpty()
         {
-            std::unique_lock<std::mutex> lock(mutex);
             return THIS_QUEUE->empty();
         }
     }

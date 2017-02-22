@@ -12,6 +12,7 @@ ADD_LIBRARY(ege-core SHARED
     source/flow/executable.cxx
     source/flow/execution-queue.cxx
     source/flow/executor.cxx
+    source/flow/executor-thread.cxx
     source/flow/scene.cxx
     source/flow/signal.cxx
     source/flow/thread.cxx

@@ -74,5 +74,38 @@ namespace ege
         {
             return THIS_QUEUE->empty();
         }
+
+        SyncExecutionQueue::SyncExecutionQueue():
+            pushSignal(mutex, [this]() -> bool
+                {
+                    return !ExecutionQueue::isEmpty();
+                })
+        {
+
+        }
+
+        void SyncExecutionQueue::push(std::shared_ptr<Executable> executable, Priority priority)
+        {
+            std::lock_guard<std::mutex> lock(mutex);
+            ExecutionQueue::push(executable, priority);
+            pushSignal.getNotifier().notifyAll();
+        }
+
+        std::shared_ptr<Executable> SyncExecutionQueue::pop()
+        {
+            std::lock_guard<std::mutex> lock(mutex);
+            return ExecutionQueue::pop();
+        }
+
+        bool SyncExecutionQueue::isEmpty()
+        {
+            std::lock_guard<std::mutex> lock(mutex);
+            return ExecutionQueue::isEmpty();
+        }
+
+        SignalWaiter& SyncExecutionQueue::getNotEmptySignalWaiter() const
+        {
+            return pushSignal.getWaiter();
+        }
     }
 }

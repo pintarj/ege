@@ -6,6 +6,7 @@
 #include <mutex>
 #include <ege/flow/executable.hxx>
 #include <ege/flow/priority.hxx>
+#include <ege/flow/signal.hxx>
 
 namespace ege
 {
@@ -39,16 +40,21 @@ namespace ege
                  * \param executable The executable object to push.
                  * \param priority The priority of object execution. Default is ExecutionPriority::DEFAULT.
                  * */
-                void push(std::shared_ptr<Executable> executable, Priority priority = Priority::DEFAULT);
+                virtual void push(std::shared_ptr<Executable> executable, Priority priority = Priority::DEFAULT);
 
                 /**
                  * \brief Pop the Executable object at the top of the queue.
                  * \return The popped Executable.
                  * */
-                std::shared_ptr<Executable> pop();
+                virtual std::shared_ptr<Executable> pop();
 
                 /**
                  * \brief Pop and execute the Executable at the top of the queue.
+                 *
+                 * Function implementation: \n
+                 * \code
+                 * pop()->execute();
+                 * \endcode
                  * */
                 virtual void execute();
 
@@ -56,7 +62,72 @@ namespace ege
                  * \brief Tells if queue is empty.
                  * \return \c True if queue is empty, false otherwise.
                  * */
-                bool isEmpty();
+                virtual bool isEmpty();
+        };
+
+        /**
+         * \brief Represent a synchronized execution queue of Executable objects.
+         *
+         * Executable objects can be pushed in the queue and popped from the queue. Executables are executed
+         * by priority: higher priority is firstly executed. Executables of equal priority are executed in
+         * order they are pushed in the queue. \n
+         * \n
+         * Methods of this class are thread-safe. \n
+         * \n
+         * Each queue has an associated signal, that will be notified when an executable is added to the queue.
+         * */
+        class SyncExecutionQueue: public ExecutionQueue
+        {
+            private:
+                /**
+                 * \brief Signal used to communicate to other threads that the queue is not empty.
+                 * */
+                Signal pushSignal;
+
+            public:
+                /**
+                 * \brief Mutex used by methods of this class to synchronize access to the queue.
+                 * */
+                std::mutex mutex;
+
+                /**
+                 * \brief Create an empty execution queue.
+                 * */
+                SyncExecutionQueue();
+
+                virtual ~SyncExecutionQueue() {}
+
+                /**
+                 * \brief Push an Executable object to the queue.
+                 * \param executable The executable object to push.
+                 * \param priority The priority of object execution. Default is ExecutionPriority::DEFAULT.
+                 *
+                 * This method will notify all waiting threads using associated signal. \n
+                 * The method is synchronized using SyncExecutionQueue::mutex.
+                 * */
+                virtual void push(std::shared_ptr<Executable> executable, Priority priority = Priority::DEFAULT) override;
+
+                /**
+                 * \brief Pop the Executable object at the top of the queue.
+                 * \return The popped Executable.
+                 *
+                 * The method is synchronized using SyncExecutionQueue::mutex.
+                 * */
+                virtual std::shared_ptr<Executable> pop() override;
+
+                /**
+                 * \brief Tells if queue is empty.
+                 * \return \c True if queue is empty, false otherwise.
+                 *
+                 * The method is synchronized using SyncExecutionQueue::mutex.
+                 * */
+                virtual bool isEmpty() override;
+
+                /**
+                 * \brief Return the signal waiter, that will be notified when an executable is added to the queue.
+                 * \return The signal queue.
+                 * */
+                SignalWaiter& getNotEmptySignalWaiter() const;
         };
     }
 }

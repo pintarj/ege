@@ -9,6 +9,7 @@ ADD_LIBRARY(ege-core SHARED
     source/log.cxx
     source/version.cxx
     source/flow/ege-start-scene.cxx
+    source/flow/enqueue-executor.cxx
     source/flow/executable.cxx
     source/flow/execution-queue.cxx
     source/flow/executor.cxx

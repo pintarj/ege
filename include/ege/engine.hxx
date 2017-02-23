@@ -6,6 +6,7 @@
 #include <vector>
 #include <ege/log.hxx>
 #include <ege/keyboard.hxx>
+#include <ege/flow/executor.hxx>
 #include <ege/flow/scene.hxx>
 #include <ege/hardware/monitor.hxx>
 #include <ege/opengl/context.hxx>
@@ -105,6 +106,7 @@ namespace ege
         extern const std::vector<std::unique_ptr<hardware::Monitor>>* monitors;
         extern const hardware::Monitor* primaryMonitor;
         extern keyboard::Keyboard* keyboard;
+        extern flow::Executor* graphicExecutor;
 
         /**
          * \brief Starts an engine using a specific configuration.

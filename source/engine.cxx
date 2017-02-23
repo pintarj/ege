@@ -6,6 +6,8 @@
 #include <GLFW/glfw3.h>
 #include <ege/exception.hxx>
 #include <ege/version.hxx>
+#include <ege/flow/enqueue-executor.hxx>
+#include <ege/flow/execution-queue.hxx>
 #include <ege/time/time-stamp.hxx>
 #include <private/ege/flow/ege-start-scene.hxx>
 #include <private/ege/glfw/monitor.hxx>
@@ -21,6 +23,7 @@ namespace ege
         static log::Logger                      logger;
         static std::shared_ptr<flow::Scene>     currentScene;
         static glfw::Window*                    window;
+        static flow::SyncExecutionQueue         graphicExecutionQueue;
     }
 
     namespace engine
@@ -32,6 +35,7 @@ namespace ege
         const std::vector<std::unique_ptr<hardware::Monitor>>*  monitors;
         const hardware::Monitor*                                primaryMonitor;
         opengl::Context*                                        openglContext;
+        flow::Executor*                                         graphicExecutor;
 
         Configuration::WindowCreation::WindowCreation()
         {
@@ -125,6 +129,7 @@ namespace ege
                 initializeWindow(configuration);
                 openglContext               = &global::window->getContext();
                 keyboard                    = &global::window->getKeyboard();
+                graphicExecutor             = new flow::EnqueueExecutor(global::graphicExecutionQueue);
                 configureInitialScene(configuration);
                 checkGLErrors("OpenGL error during engine initialization");
 
@@ -182,6 +187,7 @@ namespace ege
                 {
                     global::currentScene->render();
                     global::window->swapBuffers();
+                    while (global::graphicExecutionQueue.executeOne());
                     engine::fpsModerator->moderate();
                 }
 
@@ -194,6 +200,7 @@ namespace ege
 
         static inline void destroy()
         {
+            delete graphicExecutor;
             delete global::window;
             delete fpsModerator;
             delete fpsAnalyzer;

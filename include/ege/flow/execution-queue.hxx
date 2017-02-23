@@ -19,7 +19,7 @@ namespace ege
          * by priority: higher priority is firstly executed. Executables of equal priority are executed in
          * order they are pushed in the queue.
          * */
-        class ExecutionQueue: public Executable
+        class ExecutionQueue
         {
             private:
                 /**
@@ -49,20 +49,25 @@ namespace ege
                 virtual std::shared_ptr<Executable> pop();
 
                 /**
-                 * \brief Pop and execute the Executable at the top of the queue.
-                 *
-                 * Function implementation: \n
-                 * \code
-                 * pop()->execute();
-                 * \endcode
-                 * */
-                virtual void execute();
-
-                /**
                  * \brief Tells if queue is empty.
                  * \return \c True if queue is empty, false otherwise.
                  * */
                 virtual bool isEmpty();
+
+                /**
+                 * \brief Execute one Executable object from the queue (if it's not empty).
+                 * \return \c True if the queue was not empty and an Executable was executed, \c false otherwise.
+                 *
+                 * Implementation: \n
+                 * \code
+                 * if (isEmpty())
+                 *     return false;
+                 *
+                 * pop()->execute();
+                 * return true;
+                 * \endcode
+                 * */
+                virtual bool executeOne();
         };
 
         /**
@@ -128,6 +133,22 @@ namespace ege
                  * \return The signal queue.
                  * */
                 SignalWaiter& getNotEmptySignalWaiter() const;
+
+                /**
+                 * \brief Execute one Executable object from the queue (if it's not empty).
+                 * \return \c True if the queue was not empty and an Executable was executed, \c false otherwise.
+                 *
+                 * The method is synchronized using SyncExecutionQueue::mutex, (the execution is not synchronized). \n
+                 * Logic implementation (note that in reality the access is synchronized): \n
+                 * \code
+                 * if (isEmpty())
+                 *     return false;
+                 *
+                 * pop()->execute();
+                 * return true;
+                 * \endcode
+                 * */
+                virtual bool executeOne() override;
         };
     }
 }

@@ -65,9 +65,13 @@ namespace ege
             return executable;
         }
 
-        void ExecutionQueue::execute()
+        bool ExecutionQueue::executeOne()
         {
+            if (isEmpty())
+                return false;
+
             pop()->execute();
+            return true;
         }
 
         bool ExecutionQueue::isEmpty()
@@ -106,6 +110,23 @@ namespace ege
         SignalWaiter& SyncExecutionQueue::getNotEmptySignalWaiter() const
         {
             return pushSignal.getWaiter();
+        }
+
+        bool SyncExecutionQueue::executeOne()
+        {
+            std::shared_ptr<Executable> executable;
+
+            {
+                std::lock_guard<std::mutex> lock(mutex);
+
+                if (ExecutionQueue::isEmpty())
+                    return false;
+
+                executable = ExecutionQueue::pop();
+            }
+
+            executable->execute();
+            return true;
         }
     }
 }

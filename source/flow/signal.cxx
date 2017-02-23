@@ -110,16 +110,18 @@ namespace ege
             conditionVariable.wait_for(lock, duration, predicate);
         }
 
-        Signal::Signal():
+        Signal::Signal(std::mutex& mutex):
             notifier(new SignalNotifierImplementation(conditionVariable, mutex)),
-            waiter(new SignalWaiterImplementation(conditionVariable, mutex))
+            waiter(new SignalWaiterImplementation(conditionVariable, mutex)),
+            mutex(mutex)
         {
 
         }
 
-        Signal::Signal(const std::function<bool()>& predicate):
+        Signal::Signal(std::mutex& mutex, const std::function<bool()>& predicate):
             notifier(new SignalNotifierImplementation(conditionVariable, mutex)),
-            waiter(new SignalWaiterPredicateImplementation(conditionVariable, mutex, predicate))
+            waiter(new SignalWaiterPredicateImplementation(conditionVariable, mutex, predicate)),
+            mutex(mutex)
         {
 
         }

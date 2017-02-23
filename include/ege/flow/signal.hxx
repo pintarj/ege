@@ -67,7 +67,12 @@ namespace ege
          *
          * Certain implementations may produce spurious wake-up calls (signal) without any call of
          * SignalNotifier::notifyOne() or SignalNotifier::notifyAll(). So, a predicate should be specified,
-         * to check those type of events.
+         * to check those type of events. \n
+         * When a predicate is specified the wait methods will act as follow.
+         * \code
+         * while (!predicate())
+         *     wait(lock);
+         * \endcode
          * */
         class Signal
         {
@@ -80,7 +85,7 @@ namespace ege
                 /**
                  * \brief Used to synchronize access to conditional variable.
                  * */
-                std::mutex mutex;
+                std::mutex& mutex;
 
                 /**
                  * \brief The object that notifies signals.
@@ -95,15 +100,17 @@ namespace ege
             public:
 
                 /**
-                 * \brief Create a Signal object without a predicate.
-                 * */
-                Signal();
-
-                /**
                  * \brief Create a Signal object that will use a specific predicate to check spurious wake ups.
                  * \param predicate Used to check spurious wake-up calls.
+                 * \param mutex The mutex used to synchronize signals.
                  * */
-                Signal(const std::function<bool()>& predicate);
+                Signal(std::mutex& mutex, const std::function<bool()>& predicate);
+
+                /**
+                 * \brief Create a Signal object without a predicate, that is synchronized using specified mutex.
+                 * \param mutex The mutex used to synchronize signals.
+                 * */
+                Signal(std::mutex& mutex);
 
                 /**
                  * \brief Gets the signal's notifier.

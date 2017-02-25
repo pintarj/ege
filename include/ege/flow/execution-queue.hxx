@@ -38,7 +38,7 @@ namespace ege
                 /**
                  * \brief Push an Executable object to the queue.
                  * \param executable The executable object to push.
-                 * \param priority The priority of object execution. Default is ExecutionPriority::DEFAULT.
+                 * \param priority The priority of object execution. Default is Priority::DEFAULT.
                  * */
                 virtual void push(std::shared_ptr<Executable> executable, Priority priority = Priority::DEFAULT);
 
@@ -105,10 +105,20 @@ namespace ege
                 /**
                  * \brief Push an Executable object to the queue.
                  * \param executable The executable object to push.
-                 * \param priority The priority of object execution. Default is ExecutionPriority::DEFAULT.
+                 * \param priority The priority of object execution.
+                 * \param notifyAll If \c true, all the waiting threads will be notified (Signal::notifyAll()),
+                 *     otherwise only one (Signal::notifyOne()).
                  *
                  * This method will notify all waiting threads using associated signal. \n
                  * The method is synchronized using SyncExecutionQueue::mutex.
+                 * */
+                virtual void push(std::shared_ptr<Executable> executable, Priority priority, bool notifyAll);
+
+                /**
+                 * \brief Call method push(std::shared_ptr<Executable>, Priority, bool) forwarding executable
+                 *     and priority and passing true as \c notifyAll.
+                 * \param executable The executable object to forward.
+                 * \param priority The priority to forward. Default is Priority::DEFAULT.
                  * */
                 virtual void push(std::shared_ptr<Executable> executable, Priority priority = Priority::DEFAULT) override;
 

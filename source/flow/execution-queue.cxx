@@ -88,11 +88,20 @@ namespace ege
 
         }
 
-        void SyncExecutionQueue::push(std::shared_ptr<Executable> executable, Priority priority)
+        void SyncExecutionQueue::push(std::shared_ptr<Executable> executable, Priority priority, bool notifyAll)
         {
             std::lock_guard<std::mutex> lock(mutex);
             ExecutionQueue::push(executable, priority);
-            pushSignal.getNotifier().notifyAll();
+
+            if (notifyAll)
+                pushSignal.getNotifier().notifyAll();
+            else
+                pushSignal.getNotifier().notifyOne();
+        }
+
+        void SyncExecutionQueue::push(std::shared_ptr<Executable> executable, Priority priority)
+        {
+            push(executable, priority, true);
         }
 
         std::shared_ptr<Executable> SyncExecutionQueue::pop()

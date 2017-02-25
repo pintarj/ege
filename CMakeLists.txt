@@ -4,10 +4,13 @@ PROJECT(ege CXX)
 INCLUDE_DIRECTORIES(include)
 
 ADD_LIBRARY(ege-core SHARED
-    source/engine.cxx
     source/exception.cxx
     source/log.cxx
     source/version.cxx
+    source/engine/configuration.cxx
+    source/engine/control-thread.cxx
+    source/engine/flow.cxx
+    source/engine/resources.cxx
     source/flow/ege-start-scene.cxx
     source/flow/enqueue-executor.cxx
     source/flow/executable.cxx
@@ -26,6 +29,7 @@ ADD_LIBRARY(ege-core SHARED
     source/hardware/monitor.cxx
     source/opengl/buffer.cxx
     source/opengl/drawing.cxx
+    source/opengl/error.cxx
     source/opengl/framebuffer.cxx
     source/opengl/program.cxx
     source/opengl/renderbuffer.cxx

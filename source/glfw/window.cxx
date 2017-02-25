@@ -1,6 +1,6 @@
 #include <private/ege/glfw/window.hxx>
-#include <ege/engine.hxx>
 #include <ege/exception.hxx>
+#include <ege/engine/resources.hxx>
 #include <private/ege/glfw/monitor.hxx>
 
 namespace ege
@@ -28,7 +28,7 @@ namespace ege
             if (error != GLEW_OK)
                 ege::exception::throwNew("could not initialize GLEW: %s", glewGetErrorString(error));
 
-            engine::logger->log(log::Level::INFO, "GLEW %s initialized", glewGetString(GLEW_VERSION));
+            engine::getLogger().log(log::Level::INFO, "GLEW %s initialized", glewGetString(GLEW_VERSION));
         }
 
         Window::Window(GLFWwindow* const glfwWindowHandle):
@@ -43,7 +43,7 @@ namespace ege
             context->makeCurrentOnThisThread();
             glfwSwapInterval(1);
             initializeGLEW();
-            engine::logger->log(log::Level::INFO, "OpenGL %d.%d context created", targetContextMajor, targetContextMinor);
+            engine::getLogger().log(log::Level::INFO, "OpenGL %d.%d context created", targetContextMajor, targetContextMinor);
         }
 
         Window::Window(const std::string& title, const hardware::VideoMode& videoMode):

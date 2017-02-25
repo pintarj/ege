@@ -1,0 +1,44 @@
+
+#ifndef EGE_ENGINE_CONTROLTHREAD_HXX
+#define EGE_ENGINE_CONTROLTHREAD_HXX
+
+#include <ege/flow/executable.hxx>
+#include <ege/flow/scene.hxx>
+#include <ege/flow/thread.hxx>
+
+namespace ege
+{
+    namespace engine
+    {
+        /**
+         * \brief The thread that control the engine's execution.
+         *
+         * It requests frame rendering.
+         * */
+        class ControlThread: public flow::Thread
+        {
+            private:
+                /**
+                 * \brief Stores the current flow::Scene.
+                 * */
+                std::shared_ptr<flow::Scene> currentScene;
+
+            protected:
+                /**
+                 * \brief The control thread's execution body.
+                 * */
+                virtual void execute() override;
+
+            public:
+                /**
+                 * \brief Create the control thread specifying the initial scene.
+                 * \param initialScene The initial scene.
+                 * */
+                ControlThread(std::shared_ptr<flow::Scene> initialScene);
+
+                virtual ~ControlThread();
+        };
+    }
+}
+
+#endif

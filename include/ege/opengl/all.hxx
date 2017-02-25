@@ -5,6 +5,7 @@
 #include <ege/opengl/buffer.hxx>
 #include <ege/opengl/context.hxx>
 #include <ege/opengl/drawing.hxx>
+#include <ege/opengl/error.hxx>
 #include <ege/opengl/framebuffer.hxx>
 #include <ege/opengl/object.hxx>
 #include <ege/opengl/program.hxx>

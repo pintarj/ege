@@ -1,8 +1,8 @@
 #include <ege/flow/thread.hxx>
 #include <mutex>
 #include <unordered_map>
-#include <ege/engine.hxx>
 #include <ege/exception.hxx>
+#include <ege/engine/resources.hxx>
 
 namespace ege
 {
@@ -38,7 +38,7 @@ namespace ege
         {
             if (started && !isJoined())
             {
-                engine::logger->log(log::Level::WARNING, "thread was started but not manually joined\n"
+                engine::getLogger().log(log::Level::WARNING, "thread was started but not manually joined\n"
                     "(joining now at thread destruction)");
 
                 join();
@@ -72,13 +72,13 @@ namespace ege
         {
             if (!started)
             {
-                engine::logger->log(log::Level::WARNING, "joining thread that was never started");
+                engine::getLogger().log(log::Level::WARNING, "joining thread that was never started");
                 return;
             }
 
             if (joined.exchange(true))
             {
-                engine::logger->log(log::Level::WARNING, "joining thread that was already joined");
+                engine::getLogger().log(log::Level::WARNING, "joining thread that was already joined");
                 return;
             }
 

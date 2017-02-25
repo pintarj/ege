@@ -2,7 +2,7 @@
 #include <cstdarg>
 #include <cstdio>
 #include <cstdlib>
-#include <ege/engine.hxx>
+#include <ege/engine/resources.hxx>
 
 namespace ege
 {
@@ -24,7 +24,7 @@ namespace ege
 
     void Exception::consume()
     {
-        engine::logger->log(ege::log::Level::ERROR, what());
+        engine::getLogger().log(ege::log::Level::ERROR, what());
     }
 
     namespace exception

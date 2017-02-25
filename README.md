@@ -19,7 +19,7 @@ Currently (at version 0.1.2) it can't do much:
 That's a simple blue-screen application. Once running, press <kbd>alt</kbd>+<kbd>F4</kbd> to exit.
 
 ``` c++
-#include <ege/engine.hxx>
+#include <ege/engine/flow.hxx>
 #include <ege/opengl/framebuffer.hxx>
 
 using namespace ege;

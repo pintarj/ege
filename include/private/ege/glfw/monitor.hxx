@@ -4,6 +4,7 @@
 
 #include <memory>
 #include <vector>
+#include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <ege/hardware/monitor.hxx>
 

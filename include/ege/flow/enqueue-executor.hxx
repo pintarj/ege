@@ -14,7 +14,7 @@ namespace ege
          *
          * This class is meant to postpone execution of executables.
          * */
-        class EnqueueExecutor: public Executor
+        class EnqueueExecutor: public PriorityExecutor
         {
             private:
                 /**

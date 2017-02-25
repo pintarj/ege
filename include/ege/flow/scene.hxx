@@ -21,16 +21,6 @@ namespace ege
                 std::shared_ptr<Scene> nextScene;
 
                 /**
-                 * \brief Tells if an engine stop it was required.
-                 * */
-                bool stopRequired;
-
-                /**
-                 * \brief Tells if an engine restart it was required.
-                 * */
-                bool restartRequired;
-
-                /**
                  * \brief The scene identification string.
                  * */
                 const std::string identification;

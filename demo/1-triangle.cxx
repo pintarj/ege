@@ -1,4 +1,5 @@
-#include <ege/engine.hxx>
+#include <ege/engine/flow.hxx>
+#include <ege/engine/resources.hxx>
 #include <ege/math/matrix.hxx>
 #include <ege/opengl/all.hxx>
 
@@ -83,7 +84,7 @@ class MainScene: public flow::Scene
 
         void performUpdate(float delta)
         {
-            opengl::DefaultFramebuffer& dfbo = engine::openglContext->getDefaultFramebuffer();
+            opengl::DefaultFramebuffer& dfbo = engine::getOpenglContext().getDefaultFramebuffer();
             auto size = dfbo.getSize();
             radians += 3.14f * delta;
             math::Matrix<4, 4> mvp = math::matrix::identity();

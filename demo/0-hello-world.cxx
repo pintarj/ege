@@ -1,4 +1,4 @@
-#include <ege/engine.hxx>
+#include <ege/engine/flow.hxx>
 #include <ege/opengl/framebuffer.hxx>
 
 using namespace ege;

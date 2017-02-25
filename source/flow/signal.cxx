@@ -57,13 +57,11 @@ namespace ege
 
         void SignalNotifierImplementation::notifyOne()
         {
-            std::lock_guard<std::mutex> lock(mutex);
             conditionVariable.notify_one();
         }
 
         void SignalNotifierImplementation::notifyAll()
         {
-            std::lock_guard<std::mutex> lock(mutex);
             conditionVariable.notify_all();
         }
 

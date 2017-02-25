@@ -1,17 +1,11 @@
 
-#ifndef EGE_ENGINE_HXX
-#define EGE_ENGINE_HXX
+#ifndef EGE_ENGINE_CONFIGURATION_HXX
+#define EGE_ENGINE_CONFIGURATION_HXX
 
 #include <memory>
-#include <vector>
-#include <ege/log.hxx>
-#include <ege/keyboard.hxx>
-#include <ege/flow/executor.hxx>
+#include <string>
 #include <ege/flow/scene.hxx>
 #include <ege/hardware/monitor.hxx>
-#include <ege/opengl/context.hxx>
-#include <ege/util/fps/analyzer.hxx>
-#include <ege/util/fps/moderator.hxx>
 
 namespace ege
 {
@@ -98,21 +92,6 @@ namespace ege
                  * */
                 virtual WindowCreation getPreferredWindowCreationParams();
         };
-
-        extern util::fps::Analyzer* fpsAnalyzer;
-        extern util::fps::Moderator* fpsModerator;
-        extern log::Logger* logger;
-        extern opengl::Context* openglContext;
-        extern const std::vector<std::unique_ptr<hardware::Monitor>>* monitors;
-        extern const hardware::Monitor* primaryMonitor;
-        extern keyboard::Keyboard* keyboard;
-        extern flow::Executor* graphicExecutor;
-
-        /**
-         * \brief Starts an engine using a specific configuration.
-         * \param configuration The engine configuration.
-         * */
-        void start(Configuration& configuration);
     }
 }
 

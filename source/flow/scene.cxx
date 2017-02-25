@@ -1,5 +1,6 @@
 #include <ege/flow/scene.hxx>
-#include <ege/engine.hxx>
+#include <ege/engine/flow.hxx>
+#include <ege/engine/resources.hxx>
 
 namespace ege
 {
@@ -9,8 +10,6 @@ namespace ege
             identification(identification)
         {
             nextScene = nullptr;
-            stopRequired = false;
-            restartRequired = false;
         }
 
         Scene::~Scene()
@@ -25,30 +24,17 @@ namespace ege
 
         void Scene::requireEngineStop()
         {
-            stopRequired = true;
-            engine::logger->log(log::Level::INFO, "engine stop required (by scene %s)", identification.c_str());
+            engine::requireStop();
         }
 
         void Scene::requireEngineRestart()
         {
-            restartRequired = true;
-            stopRequired = true;
-            engine::logger->log(log::Level::INFO, "engine restart required (by scene %s)", identification.c_str());
+            engine::requireRestart();
         }
 
         std::shared_ptr<Scene> Scene::getNextScene() const
         {
             return nextScene;
-        }
-
-        bool Scene::isStopRequired() const
-        {
-            return stopRequired;
-        }
-
-        bool Scene::isRestartRequired() const
-        {
-            return restartRequired;
         }
 
         void Scene::shouldClose()

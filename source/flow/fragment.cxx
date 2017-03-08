@@ -94,6 +94,11 @@ namespace ege
                 });
         }
 
+        void Fragment::performUpdate(const Frame& frame)
+        {
+
+        }
+
         Fragment::Fragment():
             graph(new MegaFragmentsGraph(this)),
             lastUpdatedFor(0),
@@ -120,6 +125,32 @@ namespace ege
         FragmentsGraph& Fragment::getGraph() const noexcept
         {
             return *graph;
+        }
+
+        bool Fragment::isUpdated()
+        {
+            return false;
+        }
+
+        void Fragment::update(const Frame& frame)
+        {
+            if (lastUpdatedFor == frame.id)
+                return;
+
+            if (!isUpdated())
+            {
+                for (auto& dependency : dependencies)
+                    dependency->update(frame);
+
+                performUpdate(frame);
+            }
+
+            lastUpdatedFor = frame.id;
+        }
+
+        bool Fragment::requiresUpdateExecutionOnGraphicThread() const
+        {
+            return true;
         }
     }
 }

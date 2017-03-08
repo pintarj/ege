@@ -10,6 +10,7 @@ ADD_LIBRARY(ege-core SHARED
     source/engine/configuration.cxx
     source/engine/control-thread.cxx
     source/engine/flow.cxx
+    source/engine/ini-fini.cxx
     source/engine/resources.cxx
     source/flow/ege-start-scene.cxx
     source/flow/enqueue-executor.cxx

@@ -6,6 +6,7 @@
 #include <ege/exception.hxx>
 #include <ege/engine/resources.hxx>
 #include <ege/time/time-stamp.hxx>
+#include <private/ege/engine/ini-fini.hxx>
 #include <private/ege/engine/resources.hxx>
 #include <private/ege/opengl/error.hxx>
 
@@ -18,12 +19,22 @@ namespace ege
         static bool stopRequired;
         static bool restartRequired;
 
-        static inline void initializeStatics()
+        class IF: IniFini
         {
-            currentScene    = std::shared_ptr<flow::Scene>(nullptr);
-            stopRequired    = false;
-            restartRequired = false;
+            public:
+                virtual void initialize() override
+                {
+                    currentScene    = std::shared_ptr<flow::Scene>(nullptr);
+                    stopRequired    = false;
+                    restartRequired = false;
+                }
+
+                virtual void terminate() override
+                {
+                    currentScene = std::shared_ptr<flow::Scene>(nullptr);
+                }
         }
+        static flowIniFini;
 
         static inline void startLoop()
         {
@@ -59,10 +70,11 @@ namespace ege
                 {
                     time::TimeStamp<float> stamp;
                     logger.log(log::Level::INFO, "engine started");
-                    initializeStatics();
+                    iniFini::initialize();
                     initializeAndConfigure(configuration);
                     startLoop();
                     destroy();
+                    iniFini::terminate();
                     logger.log(log::Level::INFO, "engine stopped (uptime: %.3fs)", stamp.getElapsed());
 
                     if (!restartRequired)

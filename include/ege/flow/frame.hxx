@@ -13,6 +13,12 @@ namespace ege
          * */
         class Frame
         {
+            private:
+                /**
+                 * \brief Tells if this frame is forward updating.
+                 * */
+                bool forwardUpdating;
+
             public:
 
                 /**
@@ -68,6 +74,12 @@ namespace ege
                 Frame(const TimePoint& timePoint, const TimePoint& prevTimePoint);
 
                 virtual ~Frame() {}
+
+                /**
+                 * \brief Wait until the future is reached (until the update time of this frame it's
+                 *     at least the real time).
+                 * */
+                void waitFuture();
         };
     }
 }

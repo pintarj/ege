@@ -26,7 +26,6 @@ ADD_LIBRARY(ege-core SHARED
     source/flow/scene.cxx
     source/flow/signal.cxx
     source/flow/thread.cxx
-    source/flow/updateable.cxx
     source/glfw/keyboard.cxx
     source/glfw/monitor.cxx
     source/glfw/opengl-context.cxx

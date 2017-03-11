@@ -4,6 +4,8 @@
 
 #include <memory>
 #include <set>
+#include <ege/flow/executable.hxx>
+#include <ege/flow/fragment.hxx>
 #include <ege/flow/frame.hxx>
 
 namespace ege
@@ -22,9 +24,31 @@ namespace ege
                 std::set<std::shared_ptr<Fragment>> dependencies;
 
                 /**
+                 * \brief Stores the Fragment object that are dependent by \c this object.
+                 * */
+                std::set<Fragment*> dependencyOf;
+
+                /**
                  * \brief Stores the id of the last frame at which \c this was updated.
                  * */
                 Frame::Id lastUpdatedFor;
+
+                /**
+                 * \brief Stores the number of outdated dependencies.
+                 *
+                 * When this counter reach zero: it can be executed.
+                 * */
+                unsigned outDatedDependenciesCounter;
+
+                /**
+                 * \brief Decreases outDatedDependenciesCounter and eventually executes executable.
+                 * */
+                void onDependencyUpdate(const Frame& frame);
+
+                /**
+                 * \brief Call onDependencyUpdate() method of objects stored in dependencyOf.
+                 * */
+                void decreaseDependencyOfCounters(const Frame& frame);
 
             protected:
                 /**
@@ -82,33 +106,28 @@ namespace ege
                  * \return \c True if it's updated, \c false otherwise.
                  * \sa update()
                  *
-                 * Default implementation returns \c false.
+                 * Default implementation returns \c false. \n
+                 * Note on graphic content: this method is executing on control thread: this mean, that execution
+                 * of graphic function is not available. \n
+                 * Note on performance: this method is used to NOT update what'is already updated. It'll be used
+                 * by control thread to determinate what to execute on frame update, so implementation should be
+                 * possibly short.
                  * */
                 virtual bool isUpdated();
 
                 /**
                  * \brief Update \c this fragment.
                  * \param frame The frame that is updating.
-                 * \sa update()
+                 * \sa performUpdate()
+                 * \sa requiresUpdateExecutionOnGraphicThread()
                  *
                  * The implementation will firstly check if \c this was already updated for the last frame, then if it
-                 * was not: method will check if need to be updated via isUpdated() method.
-                 * If it's not: all dependencies will be recursively updated and the performUpdate() method invoked. \n
-                 * Implementation code:
-                 * \code
-                 * if (lastUpdatedFor == frame.id)
-                 *     return;
-                 *
-                 * if (!isUpdated())
-                 * {
-                 *     for (auto& dependency : dependencies)
-                 *         dependency->update(frame);
-                 *
-                 *     performUpdate(frame);
-                 * }
-                 *
-                 * lastUpdatedFor = frame.id;
-                 * \endcode
+                 * was not: method will check if need to be updated via isUpdated() method. If it's not: all
+                 * dependencies will be recursively updated and the performUpdate() method invoked. \n
+                 * Parallel execution optimization: implementation would not simply call recursively dependencies's
+                 * update() method: there is a system, that allows parallel execution of fragment update starting from
+                 * leafs and moving downward to fragment's origin (this is done by control thread). :) \n
+                 * Do not call this method: it's meant for engine purposes.
                  * */
                 void update(const Frame& frame);
 
@@ -125,6 +144,12 @@ namespace ege
                  * numbers of threads (using all the CPU's cores).
                  * */
                 virtual bool requiresUpdateExecutionOnGraphicThread() const;
+
+                /**
+                 * \brief Tells if \c this Fragment is a leaf (has no dependencies).
+                 * \return \c True if it's a leaf, \c false otherwise.
+                 * */
+                bool isLeaf() const;
         };
     }
 }

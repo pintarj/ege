@@ -30,16 +30,12 @@ class MainScene: public flow::Scene
         MainScene():
             flow::Scene("demo.HelloWorld")
         {
+            
+        }
+
+        void performUpdate(const flow::Frame& frame) override
+        {
             opengl::setClearColor(0.0f, 0.0f, 0.5f, 1.0f);
-        }
-
-        void performUpdate(float delta)
-        {
-
-        }
-
-        void render()
-        {
             opengl::clear(opengl::FBOBuffer::COLOR);
         }
 };

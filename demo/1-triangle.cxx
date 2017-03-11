@@ -82,11 +82,11 @@ class MainScene: public flow::Scene
             vao->bind();
         }
 
-        void performUpdate(float delta)
+        void performUpdate(const flow::Frame& frame) override
         {
             opengl::DefaultFramebuffer& dfbo = engine::getOpenglContext().getDefaultFramebuffer();
             auto size = dfbo.getSize();
-            radians += 3.14f * delta;
+            radians += 3.14f * frame.delta;
             math::Matrix<4, 4> mvp = math::matrix::identity();
             mvp *= math::matrix::perspective(45.0f, ((float) size.first) / ((float) size.second), 0.01f, 100.0f);
             mvp *= math::matrix::translate(0.0f, 0.0f, -2.4f);
@@ -94,10 +94,6 @@ class MainScene: public flow::Scene
             mvp *= math::matrix::rotateZ(radians / 2.0f);
             program->uniformMatrix4x4(mvpLocation, 1, true, &mvp[0][0]);
             opengl::viewport(0, 0, size.first, size.second);
-        }
-
-        void render()
-        {
             opengl::clear(opengl::FBOBuffer::COLOR);
             opengl::drawArrays(opengl::DrawMode::TRIANGLES, 0, 3);
         }

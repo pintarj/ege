@@ -2,7 +2,11 @@
 #ifndef EGE_ENGINE_CONTROLTHREAD_HXX
 #define EGE_ENGINE_CONTROLTHREAD_HXX
 
+#include <chrono>
+#include <memory>
+#include <queue>
 #include <ege/flow/executable.hxx>
+#include <ege/flow/frame.hxx>
 #include <ege/flow/scene.hxx>
 #include <ege/flow/thread.hxx>
 
@@ -23,6 +27,22 @@ namespace ege
                  * */
                 std::shared_ptr<flow::Scene> currentScene;
 
+                /**
+                 * \brief Stores the time point of the last time update.
+                 * */
+                flow::Frame::TimePoint lastFrameUpdate;
+
+                /**
+                 * \brief Contains the frame that is currently rendering/updating.
+                 * */
+                std::unique_ptr<flow::Frame> currentFrame;
+
+                /**
+                 * \brief Requires next frame rendering that is updating a specified time.
+                 * \param updateTime The time that the frame will represent (can also be future time).
+                 * */
+                void requireNextFrameRendering(flow::Frame::TimePoint updateTime = std::chrono::steady_clock::now());
+
             protected:
                 /**
                  * \brief The control thread's execution body.
@@ -37,6 +57,12 @@ namespace ege
                 ControlThread(std::shared_ptr<flow::Scene> initialScene);
 
                 virtual ~ControlThread();
+
+                /**
+                 * \brief Returns reference to current scene.
+                 * \return Current scene.
+                 * */
+                flow::Scene& getCurrentScene() const noexcept;
         };
     }
 }

@@ -18,17 +18,13 @@ namespace ege
 
         }
 
-        void EGEStartScene::performUpdate(float delta)
+        void EGEStartScene::performUpdate(const Frame& frame)
         {
-            elapsedTime += delta;
+            elapsedTime += frame.delta;
 
             if (elapsedTime > 0.0f)
                 setNextScene(initialScene);
 
-        }
-
-        void EGEStartScene::render()
-        {
             opengl::setClearColor(0.0f, 0.0f, 0.0f);
             opengl::clear(opengl::FBOBuffer::COLOR);
         }

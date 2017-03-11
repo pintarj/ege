@@ -3,7 +3,7 @@
 #define EGE_FLOW_SCENE_HXX
 
 #include <memory>
-#include <ege/flow/updateable.hxx>
+#include <ege/flow/fragment.hxx>
 
 namespace ege
 {
@@ -12,7 +12,7 @@ namespace ege
         /**
          * \brief A class that describes a game scenario.
          * */
-        class Scene: public Updateable
+        class Scene: public Fragment
         {
             private:
                 /**
@@ -65,29 +65,12 @@ namespace ege
                 std::shared_ptr<Scene> getNextScene() const;
 
                 /**
-                 * \brief Tells if engine stop is required.
-                 * \return \c True is engine stop is required.
-                 * */
-                bool isStopRequired() const;
-
-                /**
-                 * \brief Tells if engine restart is required.
-                 * \return \c True is engine restart is required.
-                 * */
-                bool isRestartRequired() const;
-
-                /**
                  * \brief Called by engine when it should be closed.
                  *
                  * An example when engine will call this method is the press of \c alt+F4.
                  * The default implementation requires an engine stop with Scene::requireEngineStop().
                  * */
                 virtual void shouldClose();
-
-                /**
-                 * \brief Called by engine when a frame have to be rendered.
-                 * */
-                virtual void render() = 0;
 
                 /**
                  * \brief Returns the scene identification string.

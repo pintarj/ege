@@ -31,8 +31,9 @@ namespace ege
             protected:
                 /**
                  * \brief Update the scene.
+                 * \param frame The updating frame.
                  * */
-                void performUpdate(float delta);
+                void performUpdate(const Frame& frame) override;
 
             public:
                 /**
@@ -42,11 +43,6 @@ namespace ege
                 EGEStartScene(std::shared_ptr<Scene> initialScene);
 
                 virtual ~EGEStartScene();
-
-                /**
-                 * \brief Render the start scene.
-                 * */
-                void render();
         };
     }
 }

@@ -21,6 +21,13 @@ namespace ege
 
         }
 
+        void ControlThread::requireNextFrameRendering(flow::Frame::TimePoint updateTime)
+        {
+            currentFrame = std::unique_ptr<flow::Frame>(new flow::Frame(updateTime, lastFrameUpdate));
+            lastFrameUpdate = updateTime;
+            getOriginFragment().update(*currentFrame);
+        }
+
         void ControlThread::execute()
         {
             while (true)
@@ -31,44 +38,29 @@ namespace ege
                 if (engine::isStopRequired())
                     break;
 
-                engine::getGraphicExecutor().execute([&]()
-                    {
-                        glfwPollEvents();
-                        glfwPollEvents(); // solve bug: glfw perform a key repressed after key repeating
+                std::shared_ptr<flow::Scene> nextScene = currentScene->getNextScene();
 
-                        if (engine::getGLFWWindow().shouldClose())
-                            currentScene->shouldClose();
+                if (nextScene.get() != nullptr)
+                {
+                    engine::getLogger().log(log::Level::INFO, "scene change required (%s -> %s)",
+                        currentScene->getIdentification().c_str(),
+                        nextScene->getIdentification().c_str());
 
-                        if (engine::isStopRequired())
-                            return;
+                    currentScene = nextScene;
+                    getOriginFragment().setCurrentSceneFragment(currentScene);
 
-                        currentScene->update(delta);
+                    engine::getLogger().log(log::Level::INFO, "new current scene: %s ",
+                        currentScene->getIdentification().c_str());
+                }
 
-                        if (engine::isStopRequired())
-                            return;
-
-                        std::shared_ptr<flow::Scene> nextScene = currentScene->getNextScene();
-
-                        if (nextScene.get() != nullptr)
-                        {
-                            engine::getLogger().log(log::Level::INFO, "scene change required (%s -> %s)",
-                                currentScene->getIdentification().c_str(),
-                                nextScene->getIdentification().c_str());
-
-                            currentScene = nextScene;
-
-                            engine::getLogger().log(log::Level::INFO, "new current scene: %s ",
-                                currentScene->getIdentification().c_str());
-                        }
-                        else
-                        {
-                            currentScene->render();
-                            engine::getGLFWWindow().swapBuffers();
-                        }
-                    });
-
+                requireNextFrameRendering();
                 stamp.waitUntil(delta);
             }
+        }
+
+        flow::Scene& ControlThread::getCurrentScene() const noexcept
+        {
+            return *currentScene;
         }
     }
 }

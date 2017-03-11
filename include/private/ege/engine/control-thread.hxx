@@ -38,6 +38,11 @@ namespace ege
                 std::unique_ptr<flow::Frame> currentFrame;
 
                 /**
+                 * \brief Check if next scene is available, and eventually make it current.
+                 * */
+                void checkNextScene();
+
+                /**
                  * \brief Requires next frame rendering that is updating a specified time.
                  * \param updateTime The time that the frame will represent (can also be future time).
                  * */

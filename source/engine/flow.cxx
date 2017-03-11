@@ -45,7 +45,7 @@ namespace ege
             // The loop that is executing Executable objects from graphic queue.
             while (true)
             {
-                while (!stopRequired && queue.executeOne());
+                while (queue.executeOne());
 
                 if (stopRequired)
                     break;

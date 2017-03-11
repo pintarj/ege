@@ -141,7 +141,7 @@ namespace ege
                  * leafs and moving downward to fragment's origin (this is done by control thread). :) \n
                  * Do not call this method: it's meant for engine purposes.
                  * */
-                void update(const Frame& frame);
+                virtual void update(const Frame& frame);
 
                 /**
                  * \brief Tells to engine if the performUpdate() implementation requires execution on graphic thread.

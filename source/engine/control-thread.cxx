@@ -21,6 +21,24 @@ namespace ege
 
         }
 
+        void ControlThread::checkNextScene()
+        {
+            std::shared_ptr<flow::Scene> nextScene = currentScene->getNextScene();
+
+            if (nextScene.get() != nullptr)
+            {
+                engine::getLogger().log(log::Level::INFO, "scene change required (%s -> %s)",
+                    currentScene->getIdentification().c_str(),
+                    nextScene->getIdentification().c_str());
+
+                currentScene = nextScene;
+                getOriginFragment().setCurrentSceneFragment(currentScene);
+
+                engine::getLogger().log(log::Level::INFO, "new current scene: %s ",
+                    currentScene->getIdentification().c_str());
+            }
+        }
+
         void ControlThread::requireNextFrameRendering(flow::Frame::TimePoint updateTime)
         {
             currentFrame = std::unique_ptr<flow::Frame>(new flow::Frame(updateTime, lastFrameUpdate));
@@ -32,29 +50,12 @@ namespace ege
         {
             while (true)
             {
-                const float delta = 1.0f / 60.0f;
-                time::TimeStamp<float> stamp;
-
                 if (engine::isStopRequired())
                     break;
 
-                std::shared_ptr<flow::Scene> nextScene = currentScene->getNextScene();
-
-                if (nextScene.get() != nullptr)
-                {
-                    engine::getLogger().log(log::Level::INFO, "scene change required (%s -> %s)",
-                        currentScene->getIdentification().c_str(),
-                        nextScene->getIdentification().c_str());
-
-                    currentScene = nextScene;
-                    getOriginFragment().setCurrentSceneFragment(currentScene);
-
-                    engine::getLogger().log(log::Level::INFO, "new current scene: %s ",
-                        currentScene->getIdentification().c_str());
-                }
-
+                checkNextScene();
                 requireNextFrameRendering();
-                stamp.waitUntil(delta);
+                getOriginFragment().getUpdatedWaiter().wait();
             }
         }
 

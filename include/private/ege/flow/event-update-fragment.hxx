@@ -9,7 +9,10 @@ namespace ege
 {
     namespace flow
     {
-        class EventUpdate: public Fragment
+        /**
+         * \brief Update the events.
+         * */
+        class EventUpdateFragment: public Fragment
         {
             private:
                 /**
@@ -29,9 +32,9 @@ namespace ege
                  * \brief Create an event update fragment, that fetch current scene from specified control thread.
                  * \param controlThread The specified control thread.
                  * */
-                EventUpdate(engine::ControlThread& controlThread);
+                EventUpdateFragment(engine::ControlThread& controlThread);
 
-                virtual ~EventUpdate() {}
+                virtual ~EventUpdateFragment() {}
         };
     }
 }

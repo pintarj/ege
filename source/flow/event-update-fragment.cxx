@@ -7,13 +7,13 @@ namespace ege
 {
     namespace flow
     {
-        EventUpdate::EventUpdate(engine::ControlThread& controlThread):
+        EventUpdateFragment::EventUpdateFragment(engine::ControlThread& controlThread):
             controlThread(controlThread)
         {
 
         }
 
-        void EventUpdate::performUpdate(const Frame& frame)
+        void EventUpdateFragment::performUpdate(const Frame& frame)
         {
             glfwPollEvents();
             glfwPollEvents(); // solve bug: glfw perform a key repressed after key repeating

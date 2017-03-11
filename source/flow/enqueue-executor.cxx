@@ -4,7 +4,7 @@ namespace ege
 {
     namespace flow
     {
-        EnqueueExecutor::EnqueueExecutor(ExecutionQueue& queue):
+        EnqueueExecutor::EnqueueExecutor(std::shared_ptr<ExecutionQueue> queue):
             queue(queue)
         {
 
@@ -12,7 +12,7 @@ namespace ege
 
         void EnqueueExecutor::execute(std::shared_ptr<Executable> executable, Priority priority)
         {
-            queue.push(executable, priority);
+            queue->push(executable, priority);
         }
     }
 }

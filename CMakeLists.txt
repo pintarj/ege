@@ -41,8 +41,6 @@ ADD_LIBRARY(ege-core SHARED
     source/opengl/shader.cxx
     source/opengl/vertex-array.cxx
     source/opengl/viewport.cxx
-    source/util/fps/analyzer.cxx
-    source/util/fps/moderator.cxx
     )
 SET_PROPERTY(TARGET ege-core PROPERTY CXX_STANDARD 14)
 TARGET_LINK_LIBRARIES(ege-core GLEW glfw png freetype pthread)

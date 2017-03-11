@@ -5,11 +5,11 @@
 #include <memory>
 #include <vector>
 #include <ege/log.hxx>
-#include <ege/keyboard.hxx>
 #include <ege/flow/executor.hxx>
 #include <ege/flow/fragment.hxx>
 #include <ege/flow/parallel-nucleus.hxx>
 #include <ege/hardware/monitor.hxx>
+#include <ege/keyboard/keyboard.hxx>
 #include <ege/opengl/context.hxx>
 
 namespace ege

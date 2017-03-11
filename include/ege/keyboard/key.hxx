@@ -1,6 +1,6 @@
 
-#ifndef EGE_KEYBOARD_HXX
-#define EGE_KEYBOARD_HXX
+#ifndef EGE_KEYBOARD_KEY_HXX
+#define EGE_KEYBOARD_KEY_HXX
 
 namespace ege
 {
@@ -132,118 +132,7 @@ namespace ege
             RIGHT_SUPER     = 347,
             MENU            = 348
         };
-
-        /**
-         * \brief The keyboard's key modifier.
-         * */
-        class Modifier
-        {
-            private:
-                /**
-                 * \brief The raw modifier value.
-                 * */
-                const unsigned int modifier;
-
-            public:
-                /**
-                 * \brief Creates a Modifier.
-                 * \param modifier The raw value.
-                 * */
-                Modifier(unsigned int modifier):
-                    modifier(modifier)
-                {
-
-                }
-
-                /**
-                 * \brief Tells if "shift" is pressed.
-                 * \return \c True if it's pressed.
-                 * */
-                inline bool isShift() const noexcept
-                {
-                    return (modifier & 0x1) != 0;
-                }
-
-                /**
-                 * \brief Tells if "ctrl" is pressed.
-                 * \return \c True if it's pressed.
-                 * */
-                inline bool isCtrl() const noexcept
-                {
-                    return (modifier & 0x2) != 0;
-                }
-
-                /**
-                 * \brief Tells if "alt" is pressed.
-                 * \return \c True if it's pressed.
-                 */
-                inline bool isAlt() const noexcept
-                {
-                    return (modifier & 0x4) != 0;
-                }
-
-                /**
-                 * \brief Tells if "super" is pressed.
-                 * \return \c True if it's pressed.
-                 * */
-                inline bool isSuper() const noexcept
-                {
-                    return (modifier & 0x8) != 0;
-                }
-        };
-
-        /**
-         * \brief The keyboard key (press/release) event listener.
-         * */
-        class EventListener
-        {
-            public:
-                virtual ~EventListener() {}
-
-                /**
-                 * \brief Called when a key is pressed.
-                 * \param key The key that is pressed.
-                 * \param modifier The current modifier.
-                 * */
-                virtual void onKeyPress(Key key, const Modifier modifier) {}
-
-                /**
-                 * \brief Called when a key is released.
-                 * \param key The key that is pressed.
-                 * \param modifier The current modifier.
-                 * */
-                virtual void onKeyRelease(Key key, const Modifier modifier) {}
-        };
-
-        /**
-         * \brief An abstraction of the keyboard.
-         * */
-        class Keyboard
-        {
-            public:
-                virtual ~Keyboard() {};
-
-                /**
-                 * \brief Tells if a keyboard's key is pressed.
-                 * \param key The key to check.
-                 * \return \c True if key is pressed.
-                 * */
-                virtual bool isPressed(Key key) const = 0;
-
-                /**
-                 * \brief Add an EventListener to \c this keyboard.
-                 * \param listener The listener to add.
-                 * */
-                virtual void addEventListener(EventListener* listener) = 0;
-
-                /**
-                 * \brief Remove an EventListener to \c this keyboard.
-                 * \param listener The listener to remove.
-                 * */
-                virtual void removeEventListener(EventListener* listener) = 0;
-        };
     }
 }
-
 
 #endif

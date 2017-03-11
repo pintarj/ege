@@ -11,7 +11,7 @@ namespace ege
 }
 
 #include <set>
-#include <ege/keyboard.hxx>
+#include <ege/keyboard/keyboard.hxx>
 #include <private/ege/glfw/window.hxx>
 
 namespace ege
@@ -32,7 +32,7 @@ namespace ege
                 /**
                  * \brief The listeners that are listening on \c this keyboard.
                  * */
-                std::set<keyboard::EventListener*> listeners;
+                std::set<keyboard::Listener*> listeners;
 
             public:
                 /**
@@ -48,19 +48,19 @@ namespace ege
                  * \param key The key to check.
                  * \return \c True if key is pressed.
                  * */
-                virtual bool isPressed(keyboard::Key key) const;
+                virtual bool isPressed(keyboard::Key key) const override;
 
                 /**
-                 * \brief Add an EventListener to \c this keyboard.
+                 * \brief Add an keyboard::Listener to \c this keyboard.
                  * \param listener The listener to add.
                  * */
-                virtual void addEventListener(keyboard::EventListener* listener);
+                virtual void addListener(keyboard::Listener* listener) override;
 
                 /**
-                 * \brief Remove an EventListener to \c this keyboard.
+                 * \brief Remove a keyboard::Listener from \c this keyboard.
                  * \param listener The listener to remove.
                  * */
-                virtual void removeEventListener(keyboard::EventListener* listener);
+                virtual void removeListener(keyboard::Listener* listener) override;
         };
     }
 }

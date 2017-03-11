@@ -15,7 +15,7 @@ namespace ege
                     {
                         case GLFW_PRESS:
                         {
-                            for (keyboard::EventListener* listener : keyboard->listeners)
+                            for (keyboard::Listener* listener : keyboard->listeners)
                                 listener->onKeyPress((keyboard::Key) key, keyboard::Modifier((unsigned int) modifier));
 
                             break;
@@ -23,7 +23,7 @@ namespace ege
 
                         case GLFW_RELEASE:
                         {
-                            for (keyboard::EventListener* listener : keyboard->listeners)
+                            for (keyboard::Listener* listener : keyboard->listeners)
                                 listener->onKeyRelease((keyboard::Key) key, keyboard::Modifier((unsigned int) modifier));
 
                             break;
@@ -45,12 +45,12 @@ namespace ege
             return glfwGetKey(window.glfwWindowHandle, (int) key) == GLFW_PRESS;
         }
 
-        void Keyboard::addEventListener(keyboard::EventListener* listener)
+        void Keyboard::addListener(keyboard::Listener* listener)
         {
             listeners.insert(listener);
         }
 
-        void Keyboard::removeEventListener(keyboard::EventListener* listener)
+        void Keyboard::removeListener(keyboard::Listener* listener)
         {
             listeners.erase(listener);
         }

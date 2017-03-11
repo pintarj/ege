@@ -55,7 +55,7 @@ namespace ege
          *
          * The engine graphic Executor is available during engine execution (also at configuration).
          * */
-        flow::Executor& getGraphicExecutor();
+        flow::PriorityExecutor& getGraphicExecutor();
 
         /**
          * \brief Returns an interface to the connected keyboard.

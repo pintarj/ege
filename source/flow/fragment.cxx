@@ -14,25 +14,28 @@ namespace ege
             --outDatedDependenciesCounter;
 
             if (outDatedDependenciesCounter == 0)
-            {
-                auto executable = [this, &frame]()
-                    {
-                        this->performUpdate(frame);
-                        this->decreaseDependencyOfCounters(frame);
-                    };
-
-                if (requiresUpdateExecutionOnGraphicThread())
-                    engine::getGraphicExecutor().execute(executable);
-                else
-                    // TODO This should be replaced by centralized parallel execution.
-                    engine::getGraphicExecutor().execute(executable);
-            }
+                requireExecution(frame);
         }
 
         void Fragment::decreaseDependencyOfCounters(const Frame& frame)
         {
             for (Fragment* fragment : dependencyOf)
                 fragment->onDependencyUpdate(frame);
+        }
+
+        void Fragment::requireExecution(const Frame& frame)
+        {
+            std::function<void()> executable = [this, &frame]()
+                {
+                    this->performUpdate(frame);
+                    this->decreaseDependencyOfCounters(frame);
+                };
+
+            PriorityExecutor& executor = (PriorityExecutor&) (requiresUpdateExecutionOnGraphicThread()
+                ? engine::getGraphicExecutor()
+                : engine::getParallelNucleus());
+
+            executor.execute(executable);
         }
 
         void Fragment::performUpdate(const Frame& frame)
@@ -72,16 +75,7 @@ namespace ege
             if (!isUpdated())
             {
                 if (isLeaf())
-                {
-                    auto executable = [this, &frame]()
-                        {
-                            this->performUpdate(frame);
-                            this->decreaseDependencyOfCounters(frame);
-                        };
-
-                    // TODO This should be replaced by centralized parallel execution.
-                    engine::getGraphicExecutor().execute(executable);
-                }
+                    requireExecution(frame);
                 else
                 {
                     outDatedDependenciesCounter = (unsigned) dependencies.size();

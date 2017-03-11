@@ -42,13 +42,25 @@ namespace ege
 
                 /**
                  * \brief Decreases outDatedDependenciesCounter and eventually executes executable.
+                 * \param frame The frame that is updating.
                  * */
                 void onDependencyUpdate(const Frame& frame);
 
                 /**
                  * \brief Call onDependencyUpdate() method of objects stored in dependencyOf.
+                 * \param frame The frame that is updating.
                  * */
                 void decreaseDependencyOfCounters(const Frame& frame);
+
+                /**
+                 * \brief Require execution of performUpdate() followed by decreaseDependencyOfCounters()
+                 *     on an ThreadExecutor.
+                 * \param frame The frame that is updating.
+                 *
+                 * Depending on the result of requiresUpdateExecutionOnGraphicThread() the two functions
+                 * will be executed on graphic thread or on the ParallelNucleus in engine resources.
+                 * */
+                void requireExecution(const Frame& frame);
 
             protected:
                 /**

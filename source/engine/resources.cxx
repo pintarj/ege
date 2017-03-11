@@ -21,7 +21,7 @@ namespace ege
         static log::Logger logger;
         static const std::vector<std::unique_ptr<hardware::Monitor>>* monitors;
         static opengl::Context* openglContext;
-        static flow::Executor* graphicExecutor;
+        static flow::PriorityExecutor* graphicExecutor;
         static keyboard::Keyboard* keyboard;
         static std::shared_ptr<flow::Fragment> eventUpdateFragment;
         static flow::ParallelNucleus* parallelNucleus;
@@ -78,7 +78,7 @@ namespace ege
             return *monitors->at(0);
         }
 
-        flow::Executor& getGraphicExecutor()
+        flow::PriorityExecutor& getGraphicExecutor()
         {
             return *graphicExecutor;
         }

@@ -71,6 +71,8 @@ namespace ege
                  * \param priority The specified execution priority.
                  */
                 void execute(const std::function<void()>& function, Priority priority);
+
+                using Executor::execute;
         };
     }
 }

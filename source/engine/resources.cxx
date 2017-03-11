@@ -26,7 +26,7 @@ namespace ege
         static std::shared_ptr<flow::Fragment> eventUpdateFragment;
 
         static glfw::Window* window;
-        static flow::SyncExecutionQueue* graphicExecutionQueue;
+        static std::shared_ptr<flow::SyncExecutionQueue> graphicExecutionQueue;
         static engine::ControlThread* controlThread;
         static flow::OriginFragment* originFragment;
 
@@ -41,7 +41,7 @@ namespace ege
                     keyboard                = nullptr;
                     eventUpdateFragment     = std::shared_ptr<flow::Fragment>(nullptr);
                     window                  = nullptr;
-                    graphicExecutionQueue   = nullptr;
+                    graphicExecutionQueue   = std::shared_ptr<flow::SyncExecutionQueue>(nullptr);
                     controlThread           = nullptr;
                     originFragment          = nullptr;
                 }
@@ -53,7 +53,7 @@ namespace ege
                     delete window;
                     eventUpdateFragment = std::shared_ptr<flow::Fragment>(nullptr);
                     delete graphicExecutor;
-                    delete graphicExecutionQueue;
+                    graphicExecutionQueue = std::shared_ptr<flow::SyncExecutionQueue>(nullptr);
                     glfwTerminate();
                     opengl::checkError("OpenGL error during engine termination");
                 }
@@ -144,8 +144,8 @@ namespace ege
             {
                 initializeGLFW();
                 monitors                    = &glfw::Monitor::getMonitors();
-                graphicExecutionQueue       = new flow::SyncExecutionQueue();
-                graphicExecutor             = new flow::EnqueueExecutor(*graphicExecutionQueue);
+                graphicExecutionQueue       = std::shared_ptr<flow::SyncExecutionQueue>(new flow::SyncExecutionQueue());
+                graphicExecutor             = new flow::EnqueueExecutor(graphicExecutionQueue);
                 initializeWindow(configuration);
                 openglContext               = &window->getContext();
                 keyboard                    = &window->getKeyboard();

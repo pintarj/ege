@@ -6,54 +6,39 @@ namespace ege
 {
     namespace flow
     {
-        ExecutorThread::ExecutorThread():
+        ExecutorThread::ExecutorThread(std::shared_ptr<SyncExecutionQueue> queue):
+            EnqueueExecutor(queue),
+            queue(queue),
             shouldStop(false),
-            waiting(false),
             dismiss(false)
         {
 
         }
 
-        void ExecutorThread::execute(std::shared_ptr<Executable> executable, Priority priority)
+        ExecutorThread::ExecutorThread():
+            ExecutorThread(std::shared_ptr<SyncExecutionQueue>(new SyncExecutionQueue))
         {
-            std::lock_guard<std::mutex> lock(mutex);
-            queue.push(executable, priority);
 
-            if (waiting)
-                wakeUp.notify_one();
         }
 
         void ExecutorThread::execute()
         {
             while (true)
             {
-                std::shared_ptr<Executable> executable;
+                queue->getNotEmptySignalWaiter().wait(200);
 
-                {
-                    std::unique_lock<std::mutex> lock(mutex);
+                if (shouldStop && (dismiss || (!dismiss && queue->isEmpty())))
+                    break;
 
-                    waiting = true;
-                    wakeUp.wait(lock, [this]() -> bool { return !queue.isEmpty() || shouldStop; });
-                    waiting = false;
-
-                    if (shouldStop && (dismiss || (!dismiss && queue.isEmpty())))
-                        break;
-
-                    executable = queue.pop();
-                }
-
-                executable->execute();
+                queue->executeOne();
             }
         }
 
         void ExecutorThread::requireExecutionStop(bool dismiss)
         {
-            std::lock_guard<std::mutex> lock(mutex);
             this->dismiss = dismiss;
             shouldStop = true;
-
-            if (waiting)
-                wakeUp.notify_one();
+            queue->pushEmptyExecutable(true);
         }
 
         ExecutorThread::~ExecutorThread()

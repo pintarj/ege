@@ -3,9 +3,10 @@
 #define EGE_FLOW_EXECUTORTHREAD_HXX
 
 #include <condition_variable>
+#include <memory>
 #include <mutex>
+#include <ege/flow/enqueue-executor.hxx>
 #include <ege/flow/execution-queue.hxx>
-#include <ege/flow/executor.hxx>
 #include <ege/flow/thread.hxx>
 
 namespace ege
@@ -18,33 +19,18 @@ namespace ege
          * If an Executable is already executing on thread, then all executable that required execution
          * on this thread will be pushed in a queue (considering the priority).
          * */
-        class ExecutorThread: public PriorityExecutor, public Thread
+        class ExecutorThread: public Thread, public EnqueueExecutor
         {
             private:
                 /**
                  * \brief The queue where the Executable objects are stored.
                  * */
-                ExecutionQueue queue;
-
-                /**
-                 * \brief The mutex used to synchronize operations.
-                 * */
-                std::mutex mutex;
-
-                /**
-                 * \brief Variable used to wake up executor thread.
-                 * */
-                std::condition_variable wakeUp;
+                std::shared_ptr<SyncExecutionQueue> queue;
 
                 /**
                  * \brief Tells if the thread should stop.
                  * */
                 bool shouldStop;
-
-                /**
-                 * \brief Tells if the thread is currently waiting some executable to execute.
-                 * */
-                bool waiting;
 
                 /**
                  * \brief Tells if when stop is required all the remaining Executable objects have
@@ -60,24 +46,21 @@ namespace ege
 
             public:
                 /**
-                 * \brief Create an executor thread.
+                 * \brief Create an executor thread, that uses as queue his own queue.
                  * */
                 ExecutorThread();
+
+                /**
+                 * \brief Create an executor thread, that uses a specific execution queue.
+                 * \param queue The specified execution queue.
+                 * */
+                ExecutorThread(std::shared_ptr<SyncExecutionQueue> queue);
 
                 /**
                  * \brief During object destruction stop will be required.
                  * \sa requireExecutionStop()
                  * */
                 virtual ~ExecutorThread();
-
-                /**
-                 * \brief Execute the Executable on the thread considering the execution priority.
-                 * \param executable The Executable to execute on thread.
-                 * \param priority The execution priority to consider.
-                 * */
-                virtual void execute(std::shared_ptr<Executable> executable, Priority priority) override;
-
-                using PriorityExecutor::execute;
 
                 /**
                  * \brief Requires thread execution stop.

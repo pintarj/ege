@@ -17,11 +17,6 @@ namespace ege
         {
             private:
                 /**
-                 * \brief Stores the buffer swap Fragment.
-                 * */
-                std::shared_ptr<Fragment> bufferSwap;
-
-                /**
                  * \brief Stores current scene fragment.
                  * */
                 std::shared_ptr<Fragment> currentSceneFragment;

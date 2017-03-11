@@ -1,7 +1,7 @@
 #include <private/ege/flow/origin-fragment.hxx>
 #include <ege/engine/resources.hxx>
 #include <private/ege/engine/flow.hxx>
-#include <private/ege/flow/buffer-swap-fragment.hxx>
+#include <private/ege/engine/resources.hxx>
 
 namespace ege
 {
@@ -15,10 +15,10 @@ namespace ege
             }
 
             updatedSignal.getNotifier().notifyAll();
+            engine::getGLFWWindow().swapBuffers();
         }
 
         OriginFragment::OriginFragment(std::shared_ptr<Fragment> initialSceneFragment):
-            bufferSwap(new BufferSwapFragment()),
             currentSceneFragment(initialSceneFragment),
             lastUpdated(0),
             updating(0),
@@ -28,10 +28,8 @@ namespace ege
                 })
         {
             auto eventUpdate = engine::getEventUpdateFragment();
-            addDependency(bufferSwap);
             addDependency(eventUpdate);
-            bufferSwap->addDependency(eventUpdate);
-            bufferSwap->addDependency(initialSceneFragment);
+            addDependency(initialSceneFragment);
             this->currentSceneFragment = initialSceneFragment;
         }
 
@@ -43,9 +41,9 @@ namespace ege
 
         void OriginFragment::setCurrentSceneFragment(std::shared_ptr<Fragment> currentSceneFragment)
         {
-            bufferSwap->removeDependency(this->currentSceneFragment);
+            removeDependency(this->currentSceneFragment);
             this->currentSceneFragment = currentSceneFragment;
-            bufferSwap->addDependency(currentSceneFragment);
+            addDependency(currentSceneFragment);
         }
 
         SignalWaiter& OriginFragment::getUpdatedWaiter() const noexcept

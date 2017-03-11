@@ -7,6 +7,7 @@
 #include <ege/log.hxx>
 #include <ege/keyboard.hxx>
 #include <ege/flow/executor.hxx>
+#include <ege/flow/fragment.hxx>
 #include <ege/hardware/monitor.hxx>
 #include <ege/opengl/context.hxx>
 
@@ -62,6 +63,14 @@ namespace ege
          * The interface to connected keyboard is available AFTER engine configuration.
          * */
         keyboard::Keyboard& getKeyboard();
+
+        /**
+         * \brief Returns the event update fragment.
+         * \return The event update Fragment.
+         *
+         * The interface to connected keyboard is available AFTER engine configuration.
+         * */
+        std::shared_ptr<flow::Fragment> getEventUpdateFragment();
     }
 }
 

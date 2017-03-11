@@ -42,6 +42,7 @@ namespace ege
             engine::getControlThread().start();
             auto& queue = engine::getGraphicExecutionQueue();
 
+            // The loop that is executing Executable objects from graphic queue.
             while (true)
             {
                 while (!stopRequired && queue.executeOne());
@@ -73,7 +74,6 @@ namespace ege
                     iniFini::initialize();
                     initializeAndConfigure(configuration);
                     startLoop();
-                    destroy();
                     iniFini::terminate();
                     logger.log(log::Level::INFO, "engine stopped (uptime: %.3fs)", stamp.getElapsed());
 

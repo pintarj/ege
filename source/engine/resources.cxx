@@ -2,11 +2,13 @@
 #include <private/ege/engine/resources.hxx>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include <ege/exception.hxx>
 #include <ege/version.hxx>
+#include <ege/exception.hxx>
 #include <ege/flow/enqueue-executor.hxx>
 #include <private/ege/engine/control-thread.hxx>
+#include <private/ege/engine/ini-fini.hxx>
 #include <private/ege/flow/ege-start-scene.hxx>
+#include <private/ege/flow/event-update-fragment.hxx>
 #include <private/ege/glfw/monitor.hxx>
 #include <private/ege/glfw/window.hxx>
 #include <private/ege/opengl/error.hxx>
@@ -20,21 +22,42 @@ namespace ege
         static opengl::Context* openglContext;
         static flow::Executor* graphicExecutor;
         static keyboard::Keyboard* keyboard;
+        static std::shared_ptr<flow::Fragment> eventUpdateFragment;
 
         static glfw::Window* window;
         static flow::SyncExecutionQueue* graphicExecutionQueue;
         static engine::ControlThread* controlThread;
+        static flow::Fragment* originFragment;
 
-        static void clearPointers()
+        class IF: engine::IniFini
         {
-            monitors                = nullptr;
-            openglContext           = nullptr;
-            graphicExecutor         = nullptr;
-            keyboard                = nullptr;
-            window                  = nullptr;
-            graphicExecutionQueue   = nullptr;
-            controlThread           = nullptr;
+            public:
+                virtual void initialize() override
+                {
+                    monitors                = nullptr;
+                    openglContext           = nullptr;
+                    graphicExecutor         = nullptr;
+                    keyboard                = nullptr;
+                    eventUpdateFragment     = std::shared_ptr<flow::Fragment>(nullptr);
+                    window                  = nullptr;
+                    graphicExecutionQueue   = nullptr;
+                    controlThread           = nullptr;
+                    originFragment          = nullptr;
+                }
+
+                virtual void terminate() override
+                {
+                    delete originFragment;
+                    delete controlThread;
+                    delete window;
+                    eventUpdateFragment = std::shared_ptr<flow::Fragment>(nullptr);
+                    delete graphicExecutor;
+                    delete graphicExecutionQueue;
+                    glfwTerminate();
+                    opengl::checkError("OpenGL error during engine termination");
+                }
         }
+        static resourcesIniFini;
 
         log::Logger& getLogger()
         {
@@ -91,6 +114,12 @@ namespace ege
             }
         }
 
+        static inline void initializeOriginFragment()
+        {
+            originFragment = new flow::Fragment();
+            originFragment->addDependency(getEventUpdateFragment());
+        }
+
         static inline std::shared_ptr<flow::Scene> configureInitialScene(Configuration& configuration)
         {
             std::shared_ptr<flow::Scene> initial = configuration.createInitialScene();
@@ -118,7 +147,6 @@ namespace ege
             std::chrono::time_point<std::chrono::system_clock> start = std::chrono::system_clock::now();
 
             {
-                clearPointers();
                 initializeGLFW();
                 monitors                    = &glfw::Monitor::getMonitors();
                 graphicExecutionQueue       = new flow::SyncExecutionQueue();
@@ -127,6 +155,8 @@ namespace ege
                 openglContext               = &window->getContext();
                 keyboard                    = &window->getKeyboard();
                 controlThread               = new engine::ControlThread(configureInitialScene(configuration));
+                eventUpdateFragment         = std::shared_ptr<flow::Fragment>(new flow::EventUpdateFragment(*controlThread));
+                initializeOriginFragment();
                 opengl::checkError("OpenGL error during engine initialization");
                 printVersion();
                 engine::getGLFWWindow().show();
@@ -135,16 +165,6 @@ namespace ege
             std::chrono::duration<float> delta = std::chrono::system_clock::now() - start;
             logger.log(log::Level::INFO, "using main thread as graphic thread");
             logger.log(log::Level::INFO, "engine initialized and configured (in %.3fs)", delta.count());
-        }
-
-        void destroy()
-        {
-            delete controlThread;
-            delete window;
-            delete graphicExecutor;
-            delete graphicExecutionQueue;
-            glfwTerminate();
-            opengl::checkError("OpenGL error during engine termination");
         }
 
         glfw::Window& getGLFWWindow()
@@ -160,6 +180,16 @@ namespace ege
         engine::ControlThread& getControlThread()
         {
             return *controlThread;
+        }
+
+        flow::Fragment& getOriginFragment()
+        {
+            return *originFragment;
+        }
+
+        std::shared_ptr<flow::Fragment> getEventUpdateFragment()
+        {
+            return eventUpdateFragment;
         }
     }
 }

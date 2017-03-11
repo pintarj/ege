@@ -5,6 +5,7 @@
 #include <memory>
 #include <ege/engine/configuration.hxx>
 #include <ege/flow/execution-queue.hxx>
+#include <ege/flow/fragment.hxx>
 #include <ege/flow/scene.hxx>
 #include <private/ege/engine/control-thread.hxx>
 #include <private/ege/glfw/window.hxx>
@@ -18,11 +19,6 @@ namespace ege
          * \param configuration The configuration specified by user.
          * */
         void initializeAndConfigure(Configuration& configuration);
-
-        /**
-         * \brief Destroy the engine resources.
-         * */
-        void destroy();
 
         /**
          * \brief Returns the GLFW window created by engine.
@@ -41,6 +37,12 @@ namespace ege
          * \return The engine control thread.
          * */
         engine::ControlThread& getControlThread();
+
+        /**
+         * \brief Returns the origin fragment.
+         * \return The origin fragment.
+         * */
+        flow::Fragment& getOriginFragment();
     }
 }
 

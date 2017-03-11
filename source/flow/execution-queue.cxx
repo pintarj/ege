@@ -137,5 +137,11 @@ namespace ege
             executable->execute();
             return true;
         }
+
+        void SyncExecutionQueue::pushEmptyExecutable(bool notifyAll)
+        {
+            static auto emptyExecutable = std::shared_ptr<Executable>(new FunctionExecutable([](){}));
+            push(emptyExecutable, Priority::DEFAULT, notifyAll);
+        }
     }
 }

@@ -106,8 +106,8 @@ namespace ege
                  * \brief Push an Executable object to the queue.
                  * \param executable The executable object to push.
                  * \param priority The priority of object execution.
-                 * \param notifyAll If \c true, all the waiting threads will be notified (Signal::notifyAll()),
-                 *     otherwise only one (Signal::notifyOne()).
+                 * \param notifyAll If \c true, all the waiting threads will be notified (SignalNotifier::notifyAll()),
+                 *     otherwise only one (SignalNotifier::notifyOne()).
                  *
                  * This method will notify all waiting threads using associated signal. \n
                  * The method is synchronized using SyncExecutionQueue::mutex.
@@ -159,6 +159,15 @@ namespace ege
                  * \endcode
                  * */
                 virtual bool executeOne() override;
+
+                /**
+                 * \brief Push an empty Executable object on the queue.
+                 * \param notifyAll If \c true, all the waiting threads will be notified (SignalNotifier::notifyAll()),
+                 *     otherwise only one (SignalNotifier::notifyOne()). Default is true.
+                 *
+                 * Used to wake up waiting threads.
+                 * */
+                void pushEmptyExecutable(bool notifyAll = true);
         };
     }
 }

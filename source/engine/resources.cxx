@@ -9,6 +9,7 @@
 #include <private/ege/engine/ini-fini.hxx>
 #include <private/ege/flow/ege-start-scene.hxx>
 #include <private/ege/flow/event-update-fragment.hxx>
+#include <private/ege/flow/origin-fragment.hxx>
 #include <private/ege/glfw/monitor.hxx>
 #include <private/ege/glfw/window.hxx>
 #include <private/ege/opengl/error.hxx>
@@ -27,7 +28,7 @@ namespace ege
         static glfw::Window* window;
         static flow::SyncExecutionQueue* graphicExecutionQueue;
         static engine::ControlThread* controlThread;
-        static flow::Fragment* originFragment;
+        static flow::OriginFragment* originFragment;
 
         class IF: engine::IniFini
         {
@@ -114,12 +115,6 @@ namespace ege
             }
         }
 
-        static inline void initializeOriginFragment()
-        {
-            originFragment = new flow::Fragment();
-            originFragment->addDependency(getEventUpdateFragment());
-        }
-
         static inline std::shared_ptr<flow::Scene> configureInitialScene(Configuration& configuration)
         {
             std::shared_ptr<flow::Scene> initial = configuration.createInitialScene();
@@ -154,9 +149,10 @@ namespace ege
                 initializeWindow(configuration);
                 openglContext               = &window->getContext();
                 keyboard                    = &window->getKeyboard();
-                controlThread               = new engine::ControlThread(configureInitialScene(configuration));
+                auto initialScene           = configureInitialScene(configuration);
+                controlThread               = new engine::ControlThread(initialScene);
                 eventUpdateFragment         = std::shared_ptr<flow::Fragment>(new flow::EventUpdateFragment(*controlThread));
-                initializeOriginFragment();
+                originFragment              = new flow::OriginFragment(initialScene);
                 opengl::checkError("OpenGL error during engine initialization");
                 printVersion();
                 engine::getGLFWWindow().show();
@@ -182,7 +178,7 @@ namespace ege
             return *controlThread;
         }
 
-        flow::Fragment& getOriginFragment()
+        flow::OriginFragment& getOriginFragment()
         {
             return *originFragment;
         }

@@ -5,9 +5,9 @@
 #include <memory>
 #include <ege/engine/configuration.hxx>
 #include <ege/flow/execution-queue.hxx>
-#include <ege/flow/fragment.hxx>
 #include <ege/flow/scene.hxx>
 #include <private/ege/engine/control-thread.hxx>
+#include <private/ege/flow/origin-fragment.hxx>
 #include <private/ege/glfw/window.hxx>
 
 namespace ege
@@ -42,7 +42,7 @@ namespace ege
          * \brief Returns the origin fragment.
          * \return The origin fragment.
          * */
-        flow::Fragment& getOriginFragment();
+        flow::OriginFragment& getOriginFragment();
     }
 }
 

@@ -23,6 +23,7 @@ ADD_LIBRARY(ege-core SHARED
     source/flow/fragment.cxx
     source/flow/frame.cxx
     source/flow/origin-fragment.cxx
+    source/flow/parallel-nucleus.cxx
     source/flow/scene.cxx
     source/flow/signal.cxx
     source/flow/thread.cxx

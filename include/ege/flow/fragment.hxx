@@ -2,17 +2,8 @@
 #ifndef EGE_FLOW_FRAGMENT_HXX
 #define EGE_FLOW_FRAGMENT_HXX
 
-namespace ege
-{
-    namespace flow
-    {
-        class Fragment;
-    }
-}
-
 #include <memory>
 #include <set>
-#include <ege/flow/fragments-graph.hxx>
 #include <ege/flow/frame.hxx>
 
 namespace ege
@@ -26,11 +17,6 @@ namespace ege
         {
             private:
                 /**
-                 * \brief The graph that contains \c this fragment.
-                 * */
-                std::shared_ptr<FragmentsGraph> graph;
-
-                /**
                  * \brief The dependencies of \c this fragment.
                  * */
                 std::set<std::shared_ptr<Fragment>> dependencies;
@@ -39,12 +25,6 @@ namespace ege
                  * \brief Stores the id of the last frame at which \c this was updated.
                  * */
                 Frame::Id lastUpdatedFor;
-
-                /**
-                 * \brief Recursively sets the graph to \c this fragment and his dependencies.
-                 * \param graph The graph to spread.
-                 * */
-                void spreadGraph(std::shared_ptr<FragmentsGraph>& graph);
 
             protected:
                 /**
@@ -81,14 +61,9 @@ namespace ege
                 virtual ~Fragment() {}
 
                 /**
-                 * \brief Tells if \c this fragment is the graph's origin.
-                 * \return \c True if it's the origin, \c false otherwise.
-                 * */
-                bool isOrigin() const noexcept;
-
-                /**
                  * \brief Add a dependency fragment to \c this.
                  * \param dependency The dependency fragment.
+                 * \sa removeDependency()
                  *
                  * The dependency fragments are updated before \c this fragment while
                  * updating fragments graph.
@@ -96,11 +71,11 @@ namespace ege
                 void addDependency(std::shared_ptr<Fragment> dependency);
 
                 /**
-                 * \brief Returns the graph that contains \c this fragment.
-                 * \return The graph reference.
-                 * Note that, the reference is valid only until \c this object exists. \n
+                 * \brief Remove a dependency fragment from \c this.
+                 * \param dependency The dependency fragment.
+                 * \sa addDependency()
                  * */
-                FragmentsGraph& getGraph() const noexcept;
+                void removeDependency(std::shared_ptr<Fragment> dependency);
 
                 /**
                  * \brief Tells if \c this is updated.

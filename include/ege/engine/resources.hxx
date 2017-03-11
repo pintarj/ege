@@ -8,6 +8,7 @@
 #include <ege/keyboard.hxx>
 #include <ege/flow/executor.hxx>
 #include <ege/flow/fragment.hxx>
+#include <ege/flow/parallel-nucleus.hxx>
 #include <ege/hardware/monitor.hxx>
 #include <ege/opengl/context.hxx>
 
@@ -71,6 +72,14 @@ namespace ege
          * The interface to connected keyboard is available AFTER engine configuration.
          * */
         std::shared_ptr<flow::Fragment> getEventUpdateFragment();
+
+        /**
+         * \brief Returns the parallel nucleus.
+         * \return The parallel nucleus.
+         *
+         * The engine graphic Executor is available during engine execution (also at configuration).
+         * */
+        flow::ParallelNucleus& getParallelNucleus();
     }
 }
 

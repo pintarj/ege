@@ -24,6 +24,7 @@ namespace ege
         static flow::Executor* graphicExecutor;
         static keyboard::Keyboard* keyboard;
         static std::shared_ptr<flow::Fragment> eventUpdateFragment;
+        static flow::ParallelNucleus* parallelNucleus;
 
         static glfw::Window* window;
         static std::shared_ptr<flow::SyncExecutionQueue> graphicExecutionQueue;
@@ -40,6 +41,7 @@ namespace ege
                     graphicExecutor         = nullptr;
                     keyboard                = nullptr;
                     eventUpdateFragment     = std::shared_ptr<flow::Fragment>(nullptr);
+                    parallelNucleus         = nullptr;
                     window                  = nullptr;
                     graphicExecutionQueue   = std::shared_ptr<flow::SyncExecutionQueue>(nullptr);
                     controlThread           = nullptr;
@@ -51,6 +53,7 @@ namespace ege
                     delete originFragment;
                     delete controlThread;
                     delete window;
+                    delete parallelNucleus;
                     eventUpdateFragment = std::shared_ptr<flow::Fragment>(nullptr);
                     delete graphicExecutor;
                     graphicExecutionQueue = std::shared_ptr<flow::SyncExecutionQueue>(nullptr);
@@ -152,6 +155,7 @@ namespace ege
                 auto initialScene           = configureInitialScene(configuration);
                 controlThread               = new engine::ControlThread(initialScene);
                 eventUpdateFragment         = std::shared_ptr<flow::Fragment>(new flow::EventUpdateFragment(*controlThread));
+                parallelNucleus             = new flow::ParallelNucleus;
                 originFragment              = new flow::OriginFragment(initialScene);
                 opengl::checkError("OpenGL error during engine initialization");
                 printVersion();
@@ -186,6 +190,11 @@ namespace ege
         std::shared_ptr<flow::Fragment> getEventUpdateFragment()
         {
             return eventUpdateFragment;
+        }
+
+        flow::ParallelNucleus& getParallelNucleus()
+        {
+            return *parallelNucleus;
         }
     }
 }

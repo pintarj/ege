@@ -1,136 +1,133 @@
+#include <ege/math/vector.hxx>
 #include <cmath>
 #include <cstddef>
+#include <cstring>
 
-
-template < unsigned N, typename T >
-ege::math::Vector< N, T >::Vector()
+namespace ege
 {
-        for ( unsigned i = 0; i < N; ++i )
-                raw[ i ] = 0;
-}
+    namespace math
+    {
+        template<unsigned N, typename T>
+        Vector<N, T>::Vector(T value) noexcept
+        {
+            for (unsigned i = 0; i < N; ++i)
+                components[i] = value;
+        }
+        
+        template<unsigned N, typename T>
+        Vector<N, T>::Vector(T (& components)[N]) noexcept
+        {
+            for (unsigned i = 0; i < N; ++i)
+                this->components[i] = components[i];
+        }
 
+        template<unsigned N, typename T>
+        Vector<N, T>::Vector(std::initializer_list<T> list) noexcept
+        {
+            auto iterator = list.begin();
+            unsigned n = n = std::min((std::size_t) N, list.size());
 
-template < unsigned N, typename T >
-ege::math::Vector< N, T >::Vector( T ( & raw )[ N ] )
-{
-        for ( unsigned i = 0; i < N; ++i )
-                this->raw[ i ] = raw[ i ];
-}
+            for (unsigned i = 0; i < n; ++i)
+                this->components[i] = *iterator++;
 
+            for (unsigned i = n; i < N; ++i)
+                this->components[i] = 0;
+        }
 
-template < unsigned N, typename T >
-ege::math::Vector< N, T >::Vector( std::initializer_list< T > list )
-{
-        auto iterator = list.begin();
+        template<unsigned N, typename T>
+        T Vector<N, T>::length() const noexcept
+        {
+            return std::sqrt(dotProduct(*this, *this));
+        }
 
-        for ( unsigned i = 0, n = std::min( ( std::size_t ) N, list.size() ); i < n; ++i )
-                this->raw[ i ] = *iterator++;
-}
+        template<unsigned N, typename T>
+        Vector<N, T> Vector<N, T>::normalized() const noexcept
+        {
+            return *this / length();
+        }
 
+        template<unsigned N, typename T>
+        T& Vector<N, T>::operator [](unsigned index) noexcept
+        {
+            return components[index];
+        }
 
-template < unsigned N, typename T >
-T ege::math::Vector< N, T >::length() const
-{
-        return std::sqrt( ege::math::vector::dotProduct( *this, *this ) );
-}
+        template<unsigned N, typename T>
+        const T& Vector<N, T>::operator [](unsigned index) const noexcept
+        {
+            return components[index];
+        }
 
+        template<unsigned N, typename T>
+        Vector<N, T> operator +(const Vector<N, T>& left, const Vector<N, T>& right) noexcept
+        {
+            T components[N];
 
-template < unsigned N, typename T >
-ege::math::Vector< N, T > ege::math::Vector< N, T >::normalized() const
-{
-        return ( 1 / length() ) * ( *this );
-}
+            for (unsigned i = 0; i < N; ++i)
+                components[i] = left[i] + right[i];
 
+            return Vector<N, T>(components);
+        }
 
-template < unsigned N, typename T >
-T& ege::math::Vector< N, T >::operator [] ( unsigned index )
-{
-        return raw[ index ];
-}
+        template<unsigned N, typename T>
+        Vector<N, T> operator -(const Vector<N, T>& vector) noexcept
+        {
+            T components[N];
 
+            for (unsigned i = 0; i < N; ++i)
+                components[i] = -vector[i];
 
-template < unsigned N, typename T >
-T const& ege::math::Vector< N, T >::operator [] ( unsigned index ) const
-{
-        return raw[ index ];
-}
+            return Vector<N, T>(components);
+        }
 
+        template<unsigned N, typename T>
+        Vector<N, T> operator -(const Vector<N, T>& left, const Vector<N, T>& right) noexcept
+        {
+            return left + (-right);
+        }
 
-template < unsigned N, typename T = float >
-ege::math::Vector< N, T > ege::math::operator + ( ege::math::Vector< N, T > const& left, ege::math::Vector< N, T > const& right )
-{
-        T raw[ N ];
+        template<unsigned N, typename T>
+        Vector<N, T> operator *(T scalar, Vector<N, T> const& vector) noexcept
+        {
+            T components[N];
 
-        for ( unsigned i = 0; i < N; ++i )
-                raw[ i ] = left[ i ] + right[ i ];
+            for (unsigned i = 0; i < N; ++i)
+                components[i] = scalar * vector[i];
 
-        return ege::math::Vector< N, T >( raw );
-}
+            return Vector<N, T>(components);
+        }
 
+        template<unsigned N, typename T>
+        Vector<N, T> operator *(Vector<N, T> const& vector, T scalar) noexcept
+        {
+            return scalar * vector;
+        }
 
-template < unsigned N, typename T = float >
-ege::math::Vector< N, T > ege::math::operator - ( ege::math::Vector< N, T > const& vector )
-{
-        T raw[ N ];
+        template<unsigned N, typename T>
+        Vector<N, T> operator /(Vector<N, T> const& vector, T scalar) noexcept
+        {
+            return (1 / scalar) * vector;
+        }
 
-        for ( unsigned i = 0; i < N; ++i )
-                raw[ i ] = -vector[ i ];
+        template<unsigned N, typename T>
+        T dotProduct(const Vector<N, T>& left, const Vector<N, T>& right) noexcept
+        {
+            T sum = 0;
 
-        return ege::math::Vector< N, T >( raw );
-}
+            for (unsigned i = 0; i < N; ++i)
+                sum += left[i] * right[i];
 
+            return sum;
+        }
 
-template < unsigned N, typename T = float >
-ege::math::Vector< N, T > ege::math::operator - ( ege::math::Vector< N, T > const& left, ege::math::Vector< N, T > const& right )
-{
-        return left + ( -right );
-}
-
-
-template < unsigned N, typename T = float >
-ege::math::Vector< N, T > ege::math::operator * ( T scalar, ege::math::Vector< N, T > const& vector )
-{
-        T raw[ N ];
-
-        for ( unsigned i = 0; i < N; ++i )
-                raw[ i ] = scalar * vector[ i ];
-
-        return ege::math::Vector< N, T >( raw );
-}
-
-
-template < unsigned N, typename T = float >
-ege::math::Vector< N, T > ege::math::operator * ( ege::math::Vector< N, T > const& vector, T scalar )
-{
-        return scalar * vector;
-}
-
-
-template < unsigned N, typename T = float >
-ege::math::Vector< N, T > ege::math::operator / ( ege::math::Vector< N, T > const& vector, T scalar )
-{
-        return ( 1 / scalar ) * vector;
-}
-
-
-template < unsigned N, typename T = float >
-T ege::math::vector::dotProduct( ege::math::Vector< N, T > const& left, ege::math::Vector< N, T > const& right )
-{
-        T sum = 0;
-
-        for ( unsigned i = 0; i < N; ++i )
-                sum += left[ i ] * right[ i ];
-
-        return sum;
-}
-
-
-template < typename T = float >
-ege::math::Vector< 3, T > ege::math::vector::crossProduct( ege::math::Vector< 3, T > const& left, ege::math::Vector< 3, T > const& right )
-{
-        T raw[ 3 ];
-        raw[ 0 ] = left[ 1 ] * right[ 2 ] - left[ 2 ] * right[ 1 ];
-        raw[ 1 ] = left[ 2 ] * right[ 0 ] - left[ 0 ] * right[ 2 ];
-        raw[ 2 ] = left[ 0 ] * right[ 1 ] - left[ 1 ] * right[ 0 ];
-        return ege::math::Vector< 3, T >( raw );
+        template<typename T>
+        Vector<3, T> crossProduct(const Vector<3, T>& left, const Vector<3, T>& right) noexcept
+        {
+            T components[3];
+            components[0] = left[1] * right[2] - left[2] * right[1];
+            components[1] = left[2] * right[0] - left[0] * right[2];
+            components[2] = left[0] * right[1] - left[1] * right[0];
+            return Vector<3, T>(components);
+        }
+    }
 }

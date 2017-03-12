@@ -5,6 +5,7 @@
 #include <memory>
 #include <ege/engine/configuration.hxx>
 #include <ege/flow/execution-queue.hxx>
+#include <ege/flow/fps-analyzer.hxx>
 #include <ege/flow/scene.hxx>
 #include <private/ege/engine/control-thread.hxx>
 #include <private/ege/flow/origin-fragment.hxx>
@@ -43,6 +44,12 @@ namespace ege
          * \return The origin fragment.
          * */
         flow::OriginFragment& getOriginFragment();
+
+        /**
+         * \brief Returns the FPS analyzer (non-const reference).
+         * \return The FPS analyzer (non-const reference).
+         * */
+        flow::FPSAnalyzer& getNonConstFPSAnalyzer();
     }
 }
 

@@ -25,6 +25,7 @@ namespace ege
         static keyboard::Keyboard* keyboard;
         static std::shared_ptr<flow::Fragment> eventUpdateFragment;
         static flow::ParallelNucleus* parallelNucleus;
+        static flow::FPSAnalyzer* fpsAnalyzer;
 
         static glfw::Window* window;
         static std::shared_ptr<flow::SyncExecutionQueue> graphicExecutionQueue;
@@ -42,6 +43,7 @@ namespace ege
                     keyboard                = nullptr;
                     eventUpdateFragment     = std::shared_ptr<flow::Fragment>(nullptr);
                     parallelNucleus         = nullptr;
+                    fpsAnalyzer             = nullptr;
                     window                  = nullptr;
                     graphicExecutionQueue   = std::shared_ptr<flow::SyncExecutionQueue>(nullptr);
                     controlThread           = nullptr;
@@ -53,6 +55,7 @@ namespace ege
                     delete originFragment;
                     delete controlThread;
                     delete window;
+                    delete fpsAnalyzer;
                     delete parallelNucleus;
                     eventUpdateFragment = std::shared_ptr<flow::Fragment>(nullptr);
                     delete graphicExecutor;
@@ -152,10 +155,11 @@ namespace ege
                 initializeWindow(configuration);
                 openglContext               = &window->getContext();
                 keyboard                    = &window->getKeyboard();
+                parallelNucleus             = new flow::ParallelNucleus;
+                fpsAnalyzer                 = new flow::FPSAnalyzer;
                 auto initialScene           = configureInitialScene(configuration);
                 controlThread               = new engine::ControlThread(initialScene);
                 eventUpdateFragment         = std::shared_ptr<flow::Fragment>(new flow::EventUpdateFragment(*controlThread));
-                parallelNucleus             = new flow::ParallelNucleus;
                 originFragment              = new flow::OriginFragment(initialScene);
                 opengl::checkError("OpenGL error during engine initialization");
                 printVersion();
@@ -195,6 +199,16 @@ namespace ege
         flow::ParallelNucleus& getParallelNucleus()
         {
             return *parallelNucleus;
+        }
+
+        const flow::FPSAnalyzer& getFPSAnalyzer()
+        {
+            return getNonConstFPSAnalyzer();
+        }
+
+        flow::FPSAnalyzer& getNonConstFPSAnalyzer()
+        {
+            return *fpsAnalyzer;
         }
     }
 }

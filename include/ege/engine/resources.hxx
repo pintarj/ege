@@ -6,6 +6,7 @@
 #include <vector>
 #include <ege/log.hxx>
 #include <ege/flow/executor.hxx>
+#include <ege/flow/fps-analyzer.hxx>
 #include <ege/flow/fragment.hxx>
 #include <ege/flow/parallel-nucleus.hxx>
 #include <ege/hardware/monitor.hxx>
@@ -77,9 +78,17 @@ namespace ege
          * \brief Returns the parallel nucleus.
          * \return The parallel nucleus.
          *
-         * The engine graphic Executor is available during engine execution (also at configuration).
+         * The engine parallel nucleus is available during engine execution (also at configuration).
          * */
         flow::ParallelNucleus& getParallelNucleus();
+
+        /**
+         * \brief Returns the FPS analyzer.
+         * \return The FPS analyzer.
+         *
+         * The FPS analyzer is available during engine execution (also at configuration).
+         * */
+        const flow::FPSAnalyzer& getFPSAnalyzer();
     }
 }
 

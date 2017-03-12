@@ -43,11 +43,14 @@ namespace ege
         {
             currentFrame = std::unique_ptr<flow::Frame>(new flow::Frame(updateTime, lastFrameUpdate));
             lastFrameUpdate = updateTime;
+            engine::getNonConstFPSAnalyzer().frameUpdated(*currentFrame);
             getOriginFragment().update(*currentFrame);
         }
 
         void ControlThread::execute()
         {
+            lastFrameUpdate = std::chrono::steady_clock::now();
+
             while (true)
             {
                 if (engine::isStopRequired())

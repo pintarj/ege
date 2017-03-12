@@ -8,84 +8,70 @@ namespace ege
 {
     namespace math
     {
+        /**
+         * \brief Represent a mathematical matrix.
+         * \param M The vertical dimension of matrix.
+         * \param N The horizontal dimension of matrix.
+         * \param T The type of the vector's components.
+         * */
         template<unsigned M, unsigned N = M, typename T = float>
         class Matrix
         {
             private:
-                T raw[M][N];
+                /**
+                 * \brief Here are stored components of the matrix.
+                 * */
+                T components[M][N];
 
             public:
-                Matrix();
+                /**
+                 * \brief Creates a matrix initializing all components with a specific value.
+                 * \param value The specific value. Default is 0.
+                 * */
+                Matrix(T value = 0) noexcept;
 
-                Matrix(T (& raw)[M][N]);
+                /**
+                 * \brief Creates a matrix initializing components from an array.
+                 * \param array The array from which values will be copied.
+                 * */
+                Matrix(T (& array)[M][N]) noexcept;
 
-                T* operator [](unsigned index);
+                /**
+                 * \brief Access the matrix's row at a specific index.
+                 * \param index The index of the row.
+                 * */
+                T* operator [](unsigned index) noexcept;
 
-                const T* operator [](unsigned index) const;
+                /**
+                 * \brief Access the matrix's row at a specific index.
+                 * \param index The index of the row.
+                 * */
+                const T* operator [](unsigned index) const noexcept;
         };
 
-        template<unsigned M, unsigned N, unsigned P, typename T = float>
-        Matrix<M, P, T> operator *(Matrix<M, N, T> const& left, Matrix<N, P, T> const& right);
+        /**
+         * \brief Multiply two matrices.
+         * \param left The left matrix of the operation.
+         * \param right The right matrix of the operation.
+         * \return The result matrix of the operation.
+         * */
+        template<unsigned M, unsigned N, unsigned P, typename T>
+        Matrix<M, P, T> operator *(Matrix<M, N, T> const& left, Matrix<N, P, T> const& right) noexcept;
 
-        template<unsigned M, unsigned N, unsigned P, typename T = float>
-        Matrix<M, P, T>& operator *=(Matrix<M, N, T>& left, Matrix<N, P, T> const& right);
+        /**
+         * \brief Multiply two matrices and stores result in the first one.
+         * \param left The left matrix of the operation.
+         * \param right The right matrix of the operation.
+         * \return The left matrix with the result stored in it.
+         * */
+        template<unsigned M, unsigned N, unsigned P, typename T>
+        Matrix<M, P, T>& operator *=(Matrix<M, N, T>& left, Matrix<N, P, T> const& right) noexcept;
 
-        namespace matrix
-        {
-            template<unsigned M = 4, typename T = float>
-            Matrix<M, M, T> identity();
-
-            template<typename T = float>
-            Matrix<4, 4, T> scale(T x, T y, T z);
-
-            template<typename T = float>
-            Matrix<4, 4, T> scale(Vector<3, T> const& vector);
-
-            template<typename T = float>
-            Matrix<4, 4, T> translate(T x, T y, T z);
-
-            template<typename T = float>
-            Matrix<4, 4, T> translate(Vector<3, T> const& vector);
-
-            template<typename T = float>
-            Matrix<4, 4, T> rotateX(T radians);
-
-            template<typename T = float>
-            Matrix<4, 4, T> rotateY(T radians);
-
-            template<typename T = float>
-            Matrix<4, 4, T> rotateZ(T radians);
-
-            template<typename T = float>
-            Matrix<4, 4, T> rotate(T radians, T vx, T vy, T vz, bool normalize = true);
-
-            template<typename T = float>
-            Matrix<4, 4, T> rotate(T radians, Vector<3, T> const& vector, bool normalize = true);
-
-            template<typename T = float>
-            Matrix<4, 4, T> frustum(T left, T right, T bottom, T top, T near, T far);
-
-            template<typename T = float>
-            Matrix<4, 4, T> perspective(T radians, T ratio, T near, T far);
-
-            template<typename T = float>
-            Matrix<4, 4, T> ortho(T left, T right, T bottom, T top, T near, T far);
-
-            template<typename T = float>
-            Matrix<4, 4, T> ortho2D(T left, T right, T bottom, T top);
-
-            template<typename T = float>
-            Matrix<4, 4, T> fromOriginLookAt(T centerX, T centerY, T centerZ, T upX, T upY, T upZ);
-
-            template<typename T = float>
-            Matrix<4, 4, T> fromOriginLookAt(Vector<3, T> const& center, Vector<3, T> const& up);
-
-            template<typename T = float>
-            Matrix<4, 4, T> lookAt(T eyeX, T eyeY, T eyeZ, T centerX, T centerY, T centerZ, T upX, T upY, T upZ);
-
-            template<typename T = float>
-            Matrix<4, 4, T> lookAt(Vector<3, T> const& eye, Vector<3, T> const& center, Vector<3, T> const& up);
-        }
+        /**
+         * \brief Create an identity matrix.
+         * */
+        template<unsigned M, typename T = float>
+        Matrix<M, M, T> identity() noexcept;
     }
 }
 

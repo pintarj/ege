@@ -1,7 +1,7 @@
 #include <ege/engine/flow.hxx>
 #include <ege/engine/resources.hxx>
-#include <ege/math/matrix.hxx>
 #include <ege/opengl/all.hxx>
+#include <ege/opengl/util/matrix.hxx>
 
 using namespace ege;
 
@@ -87,11 +87,11 @@ class MainScene: public flow::Scene
             opengl::DefaultFramebuffer& dfbo = engine::getOpenglContext().getDefaultFramebuffer();
             auto size = dfbo.getSize();
             radians += 3.14f * frame.delta;
-            math::Matrix<4, 4> mvp = math::matrix::identity();
-            mvp *= math::matrix::perspective(45.0f, ((float) size.first) / ((float) size.second), 0.01f, 100.0f);
-            mvp *= math::matrix::translate(0.0f, 0.0f, -2.4f);
-            mvp *= math::matrix::rotateY(radians / 6.0f);
-            mvp *= math::matrix::rotateZ(radians / 2.0f);
+            math::Matrix<4, 4> mvp = math::identity<4>();
+            mvp *= opengl::util::perspective(45.0f, ((float) size.first) / ((float) size.second), 0.01f, 100.0f);
+            mvp *= opengl::util::translate(0.0f, 0.0f, -2.4f);
+            mvp *= opengl::util::rotateY(radians / 6.0f);
+            mvp *= opengl::util::rotateZ(radians / 2.0f);
             program->uniformMatrix4x4(mvpLocation, 1, true, &mvp[0][0]);
             opengl::viewport(0, 0, size.first, size.second);
             opengl::clear(opengl::FBOBuffer::COLOR);

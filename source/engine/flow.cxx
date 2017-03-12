@@ -54,6 +54,7 @@ namespace ege
                 queue.getNotEmptySignalWaiter().wait(200);
             }
 
+            glFinish();
             engine::getControlThread().join();
             engine::getLogger().log(log::Level::INFO, "engine loop stopped");
         }

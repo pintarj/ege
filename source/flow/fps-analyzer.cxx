@@ -7,15 +7,14 @@ namespace ege
 {
     namespace flow
     {
-        FPSAnalyzer::FPSAnalyzer(std::chrono::microseconds expectedFPS)
+        FPSAnalyzer::FPSAnalyzer(std::chrono::microseconds expectedFPS):
+            index(0),
+            samples(new std::chrono::microseconds[N_OF_SAMPLES]),
+            sum(N_OF_SAMPLES * expectedFPS),
+            FPS(((float) (N_OF_SAMPLES * 1000000)) / (float) sum.count())
         {
-            samples = new std::chrono::microseconds[N_OF_SAMPLES];
-            sum = N_OF_SAMPLES * expectedFPS;
-
             for (unsigned i = 0; i < N_OF_SAMPLES; ++i)
                 samples[i] = std::chrono::microseconds(expectedFPS);
-
-            FPS = ((float) (N_OF_SAMPLES * 1000000)) / (float) sum.count();
         }
 
         FPSAnalyzer::~FPSAnalyzer()

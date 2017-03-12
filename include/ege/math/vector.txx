@@ -58,7 +58,7 @@ namespace ege
             return components[index];
         }
 
-        template<unsigned N, typename T>
+        template<unsigned N, typename T = float>
         Vector<N, T> operator +(const Vector<N, T>& left, const Vector<N, T>& right) noexcept
         {
             T components[N];
@@ -69,7 +69,7 @@ namespace ege
             return Vector<N, T>(components);
         }
 
-        template<unsigned N, typename T>
+        template<unsigned N, typename T = float>
         Vector<N, T> operator -(const Vector<N, T>& vector) noexcept
         {
             T components[N];
@@ -80,13 +80,13 @@ namespace ege
             return Vector<N, T>(components);
         }
 
-        template<unsigned N, typename T>
+        template<unsigned N, typename T = float>
         Vector<N, T> operator -(const Vector<N, T>& left, const Vector<N, T>& right) noexcept
         {
             return left + (-right);
         }
 
-        template<unsigned N, typename T>
+        template<unsigned N, typename T = float>
         Vector<N, T> operator *(T scalar, Vector<N, T> const& vector) noexcept
         {
             T components[N];
@@ -97,19 +97,19 @@ namespace ege
             return Vector<N, T>(components);
         }
 
-        template<unsigned N, typename T>
+        template<unsigned N, typename T = float>
         Vector<N, T> operator *(Vector<N, T> const& vector, T scalar) noexcept
         {
             return scalar * vector;
         }
 
-        template<unsigned N, typename T>
+        template<unsigned N, typename T = float>
         Vector<N, T> operator /(Vector<N, T> const& vector, T scalar) noexcept
         {
             return (1 / scalar) * vector;
         }
 
-        template<unsigned N, typename T>
+        template<unsigned N, typename T = float>
         T dotProduct(const Vector<N, T>& left, const Vector<N, T>& right) noexcept
         {
             T sum = 0;
@@ -120,7 +120,7 @@ namespace ege
             return sum;
         }
 
-        template<typename T>
+        template<typename T = float>
         Vector<3, T> crossProduct(const Vector<3, T>& left, const Vector<3, T>& right) noexcept
         {
             T components[3];

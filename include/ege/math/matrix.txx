@@ -54,14 +54,14 @@ namespace ege
             return Matrix<M, P, T>(components);
         }
 
-        template<unsigned M, unsigned N, unsigned P, typename T>
+        template<unsigned M, unsigned N, unsigned P, typename T = float>
         Matrix<M, P, T>& operator *=(Matrix<M, N, T>& left, Matrix<N, P, T> const& right) noexcept
         {
             Matrix<M, P, T> tmp = left * right;
             left = tmp;
         }
 
-        template<unsigned M, typename T>
+        template<unsigned M, typename T = float>
         Matrix<M, M, T> identity() noexcept
         {
             T matrix[M][M];

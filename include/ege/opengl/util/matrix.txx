@@ -6,7 +6,7 @@ namespace ege
     {
         namespace util
         {
-            template<typename T>
+            template<typename T = float>
             math::Matrix<4, 4, T> scale(T x, T y, T z) noexcept
             {
                 T matrix[4][4];
@@ -34,13 +34,13 @@ namespace ege
                 return math::Matrix<4, 4, T>(matrix);
             }
 
-            template<typename T>
+            template<typename T = float>
             math::Matrix<4, 4, T> scale(const math::Vector<3, T>& vector) noexcept
             {
                 return scale(vector[0], vector[1], vector[2]);
             }
 
-            template<typename T>
+            template<typename T = float>
             math::Matrix<4, 4, T> translate(T x, T y, T z) noexcept
             {
                 T matrix[4][4];
@@ -68,13 +68,13 @@ namespace ege
                 return math::Matrix<4, 4, T>(matrix);
             }
 
-            template<typename T>
+            template<typename T = float>
             math::Matrix<4, 4, T> translate(const math::Vector<3, T>& vector) noexcept
             {
                 return translate(vector[0], vector[1], vector[2]);
             }
 
-            template<typename T>
+            template<typename T = float>
             math::Matrix<4, 4, T> rotateX(T radians) noexcept
             {
                 T matrix[4][4];
@@ -105,7 +105,7 @@ namespace ege
                 return math::Matrix<4, 4, T>(matrix);
             }
 
-            template<typename T>
+            template<typename T = float>
             math::Matrix<4, 4, T> rotateY(T radians) noexcept
             {
                 T matrix[4][4];
@@ -136,7 +136,7 @@ namespace ege
                 return math::Matrix<4, 4, T>(matrix);
             }
 
-            template<typename T>
+            template<typename T = float>
             math::Matrix<4, 4, T> rotateZ(T radians) noexcept
             {
                 T matrix[4][4];
@@ -167,7 +167,7 @@ namespace ege
                 return math::Matrix<4, 4, T>(matrix);
             }
 
-            template<typename T>
+            template<typename T = float>
             math::Matrix<4, 4, T> rotate(T radians, T x, T y, T z, bool normalize) noexcept
             {
                 T matrix[4][4];
@@ -217,7 +217,7 @@ namespace ege
                 return math::Matrix<4, 4, T>(matrix);
             }
 
-            template<typename T>
+            template<typename T = float>
             math::Matrix<4, 4, T> rotate(T radians, const math::Vector<3, T>& vector, bool normalize) noexcept
             {
                 if (normalize)
@@ -229,7 +229,7 @@ namespace ege
                     return rotate(radians, vector[0], vector[1], vector[2], false);
             }
 
-            template<typename T>
+            template<typename T = float>
             math::Matrix<4, 4, T> frustum(T left, T right, T bottom, T top, T near, T far) noexcept
             {
                 T matrix[4][4];
@@ -262,7 +262,7 @@ namespace ege
                 return math::Matrix<4, 4, T>(matrix);
             }
 
-            template<typename T>
+            template<typename T = float>
             math::Matrix<4, 4, T> perspective(T radians, T ratio, T near, T far) noexcept
             {
                 T matrix[4][4];
@@ -293,7 +293,7 @@ namespace ege
                 return math::Matrix<4, 4, T>(matrix);
             }
 
-            template<typename T>
+            template<typename T = float>
             math::Matrix<4, 4, T> ortho(T left, T right, T bottom, T top, T near, T far) noexcept
             {
                 T matrix[4][4];
@@ -325,7 +325,7 @@ namespace ege
                 return math::Matrix<4, 4, T>(matrix);
             }
 
-            template<typename T>
+            template<typename T = float>
             math::Matrix<4, 4, T> ortho2D(T left, T right, T bottom, T top) noexcept
             {
                 T matrix[4][4];
@@ -356,7 +356,7 @@ namespace ege
                 return math::Matrix<4, 4, T>(matrix);
             }
 
-            template<typename T>
+            template<typename T = float>
             math::Matrix<4, 4, T> fromOriginLookAt(T centerX, T centerY, T centerZ, T upX, T upY, T upZ) noexcept
             {
                 T matrix[4][4];
@@ -396,13 +396,13 @@ namespace ege
                 return math::Matrix<4, 4, T>(matrix);
             }
 
-            template<typename T>
+            template<typename T = float>
             math::Matrix<4, 4, T> fromOriginLookAt(const math::Vector<3, T>& center, const math::Vector<3, T>& up) noexcept
             {
                 return fromOriginLookAt(center[0], center[1], center[2], up[0], up[1], up[2]);
             }
 
-            template<typename T>
+            template<typename T = float>
             math::Matrix<4, 4, T> lookAt(T eyeX, T eyeY, T eyeZ, T centerX, T centerY, T centerZ, T upX, T upY, T upZ) noexcept
             {
                 math::Matrix<4, 4, T> left = fromOriginLookAt<T>(centerX, centerY, centerZ, upX, upY, upZ);
@@ -410,7 +410,7 @@ namespace ege
                 return left * right;
             }
 
-            template<typename T>
+            template<typename T = float>
             math::Matrix<4, 4, T> lookAt(const math::Vector<3, T>& eye, const math::Vector<3, T>& center, const math::Vector<3, T>& up) noexcept
             {
                 return lookAt(eye[0], eye[1], eye[2], center[0], center[1], center[2], up[0], up[1], up[2]);

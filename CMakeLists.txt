@@ -19,6 +19,7 @@ ADD_LIBRARY(ege-core SHARED
     source/flow/execution-queue.cxx
     source/flow/executor.cxx
     source/flow/executor-thread.cxx
+    source/flow/fps-analyzer.cxx
     source/flow/fragment.cxx
     source/flow/frame.cxx
     source/flow/origin-fragment.cxx

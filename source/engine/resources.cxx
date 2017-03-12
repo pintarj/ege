@@ -157,9 +157,9 @@ namespace ege
                 keyboard                    = &window->getKeyboard();
                 parallelNucleus             = new flow::ParallelNucleus;
                 fpsAnalyzer                 = new flow::FPSAnalyzer;
+                eventUpdateFragment         = std::shared_ptr<flow::Fragment>(new flow::EventUpdateFragment);
                 auto initialScene           = configureInitialScene(configuration);
                 controlThread               = new engine::ControlThread(initialScene);
-                eventUpdateFragment         = std::shared_ptr<flow::Fragment>(new flow::EventUpdateFragment(*controlThread));
                 originFragment              = new flow::OriginFragment(initialScene);
                 opengl::checkError("OpenGL error during engine initialization");
                 printVersion();

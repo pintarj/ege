@@ -3,7 +3,6 @@
 #define EGE_FLOW_EVENTUPDATEFRAGMENT_HXX
 
 #include <ege/flow/fragment.hxx>
-#include <private/ege/engine/control-thread.hxx>
 
 namespace ege
 {
@@ -14,12 +13,6 @@ namespace ege
          * */
         class EventUpdateFragment: public Fragment
         {
-            private:
-                /**
-                 * \brief Stores reference to the control thread.
-                 * */
-                engine::ControlThread& controlThread;
-
             protected:
                 /**
                  * \brief Update events.
@@ -29,10 +22,9 @@ namespace ege
 
             public:
                 /**
-                 * \brief Create an event update fragment, that fetch current scene from specified control thread.
-                 * \param controlThread The specified control thread.
+                 * \brief Create an event update fragment.
                  * */
-                EventUpdateFragment(engine::ControlThread& controlThread);
+                EventUpdateFragment();
 
                 virtual ~EventUpdateFragment() {}
         };

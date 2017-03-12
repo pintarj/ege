@@ -7,8 +7,7 @@ namespace ege
 {
     namespace flow
     {
-        EventUpdateFragment::EventUpdateFragment(engine::ControlThread& controlThread):
-            controlThread(controlThread)
+        EventUpdateFragment::EventUpdateFragment()
         {
 
         }
@@ -19,7 +18,7 @@ namespace ege
             glfwPollEvents(); // solve bug: glfw perform a key repressed after key repeating
 
             if (engine::getGLFWWindow().shouldClose())
-                controlThread.getCurrentScene().shouldClose();
+                engine::getControlThread().getCurrentScene().shouldClose();
         }
     }
 }

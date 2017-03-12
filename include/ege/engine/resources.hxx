@@ -70,7 +70,7 @@ namespace ege
          * \brief Returns the event update fragment.
          * \return The event update Fragment.
          *
-         * The interface to connected keyboard is available AFTER engine configuration.
+         * The engine parallel nucleus is available during engine execution (also at configuration).
          * */
         std::shared_ptr<flow::Fragment> getEventUpdateFragment();
 

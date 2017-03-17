@@ -45,7 +45,7 @@ namespace ege
 
         void Framebuffer::clearColor(unsigned index, const float* values)
         {
-            glClearNamedFramebufferfv(id, GL_COLOR, index, values);
+            glClearNamedFramebufferfv(id, GL_COLOR, index, (GLfloat*) values);
         }
 
         void Framebuffer::clearColor(unsigned index, float r, float g, float b, float a)

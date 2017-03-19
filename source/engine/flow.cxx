@@ -8,6 +8,7 @@
 #include <ege/time/time-stamp.hxx>
 #include <private/ege/engine/ini-fini.hxx>
 #include <private/ege/engine/resources.hxx>
+#include <private/ege/flow/thread.hxx>
 #include <private/ege/opengl/error.hxx>
 
 namespace ege
@@ -65,36 +66,44 @@ namespace ege
 
         void start(Configuration& configuration)
         {
-            auto& logger = engine::getLogger();
-
-            try
-            {
-                if (started.exchange(true))
-                    ege::exception::throwNew("an attempt to start engine was done, but engine is already started");
-
-                while (true)
+            auto graphicExecutableBody = [&configuration]()
                 {
-                    time::TimeStamp<float> stamp;
-                    logger.log(log::Level::INFO, "engine started");
-                    iniFini::initialize();
-                    initializeAndConfigure(configuration);
-                    startLoop();
-                    iniFini::terminate();
-                    logger.log(log::Level::INFO, "engine stopped (uptime: %.3fs)", stamp.getElapsed());
+                    auto& logger = engine::getLogger();
 
-                    if (!restartRequired)
-                        break;
+                    try
+                    {
+                        if (started.exchange(true))
+                            ege::exception::throwNew("an attempt to start engine was done, but engine is already started");
 
-                    logger.log(log::Level::INFO, "engine restarting");
-                }
+                        while (true)
+                        {
+                            time::TimeStamp<float> stamp;
+                            logger.log(log::Level::INFO, "engine started");
+                            iniFini::initialize();
+                            initializeAndConfigure(configuration);
+                            startLoop();
+                            iniFini::terminate();
+                            logger.log(log::Level::INFO, "engine stopped (uptime: %.3fs)", stamp.getElapsed());
 
-                started = false;
-            }
-            catch (ege::Exception e)
-            {
-                e.consume();
-                logger.log(log::Level::ERROR, "engine has ended in unexpected way (unhandled exception)");
-            }
+                            if (!restartRequired)
+                                break;
+
+                            logger.log(log::Level::INFO, "engine restarting");
+                        }
+
+                        started = false;
+                    }
+                    catch (ege::Exception e)
+                    {
+                        e.consume();
+                        logger.log(log::Level::ERROR, "engine has ended in unexpected way (unhandled exception)");
+                    }
+                };
+
+            auto executable = std::shared_ptr<flow::Executable>(new flow::FunctionExecutable(graphicExecutableBody));
+            flow::Thread graphicThread(executable, "ege-graphic");
+            graphicThread.start();
+            graphicThread.join();
         }
 
         void requireStop() noexcept

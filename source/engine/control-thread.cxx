@@ -11,6 +11,7 @@ namespace ege
     namespace engine
     {
         ControlThread::ControlThread(std::shared_ptr<flow::Scene> initialScene):
+            Thread("ege-control"),
             currentScene(initialScene)
         {
 

@@ -1,8 +1,13 @@
 #include <ege/flow/thread.hxx>
+#include <private/ege/flow/thread.hxx>
 #include <mutex>
 #include <unordered_map>
 #include <ege/exception.hxx>
 #include <ege/engine/resources.hxx>
+
+#ifdef __unix__
+#include <pthread.h>
+#endif
 
 namespace ege
 {
@@ -107,6 +112,16 @@ namespace ege
         {
             std::unique_lock<std::mutex> lock(mutex);
             return (unsigned) threads.size();
+        }
+
+        bool changeThisThreadName(const std::string& name)
+        {
+#ifdef __unix__
+            pthread_setname_np(pthread_self(), name.c_str());
+            return true;
+#else
+            return false;
+#endif
         }
     }
 }

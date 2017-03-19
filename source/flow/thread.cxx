@@ -1,5 +1,6 @@
 #include <ege/flow/thread.hxx>
 #include <private/ege/flow/thread.hxx>
+#include <private/ege/flow/thread.hxx>
 #include <mutex>
 #include <unordered_map>
 #include <ege/exception.hxx>
@@ -15,27 +16,48 @@ namespace ege
     {
         static std::unordered_map<std::thread::id, Thread*> threads;
         static std::mutex mutex;
+        static unsigned number = 0;
+
+        static inline std::string generateAThreadName()
+        {
+            return "ege-thread-" + std::to_string(number++);
+        }
 
         void Thread::execute()
         {
 
         }
 
-        Thread::Thread(std::shared_ptr<Executable> executable):
+        Thread::Thread(std::shared_ptr<Executable> executable, const std::string& name):
             executable(executable),
             toExecute(*executable),
             started(false),
-            joined(false)
+            joined(false),
+            running(false),
+            name(name)
+        {
+
+        }
+
+        Thread::Thread(std::shared_ptr<Executable> executable):
+            Thread(executable, generateAThreadName())
+        {
+
+        }
+
+        Thread::Thread(const std::string& name):
+            executable(nullptr),
+            toExecute(*this),
+            started(false),
+            joined(false),
+            running(false),
+            name(name)
         {
 
         }
 
         Thread::Thread():
-            executable(nullptr),
-            toExecute(*this),
-            started(false),
-            joined(false),
-            running(false)
+            Thread(generateAThreadName())
         {
 
         }
@@ -65,6 +87,7 @@ namespace ege
                         threads[id] = this;
                     }
 
+                    flow::changeThisThreadName(this->name);
                     this->running = true;
                     this->toExecute.execute();
                     this->running = false;

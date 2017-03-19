@@ -58,9 +58,15 @@ namespace ege
 
             public:
                 /**
+                 * \brief The name of the thread.
+                 * */
+                const std::string name;
+
+                /**
                  * \brief Create a thread.
                  *
-                 * The thread will execute the protected method Thread::execute().
+                 * The name of the thread will be automatically assigned. \n
+                 * The thread will execute the protected method Thread::execute(). \n
                  * Creating the Thread wouldn't start executing the Executable object.
                  * Method Thread::start() has to be invoked.
                  * */
@@ -68,11 +74,33 @@ namespace ege
 
                 /**
                  * \brief Create a thread with the specified Executable to execute.
+                 * \param executable The executable.
                  *
+                 * The name of the thread will be automatically assigned. \n
                  * Creating the Thread wouldn't start executing the Executable object.
                  * Method Thread::start() has to be invoked.
                  * */
                 Thread(std::shared_ptr<Executable> executable);
+
+                /**
+                 * \brief Create a thread with the specified name.
+                 * \param name The name of the thread.
+                 *
+                 * The thread will execute the protected method Thread::execute(). \n
+                 * Creating the Thread wouldn't start executing the Executable object.
+                 * Method Thread::start() has to be invoked.
+                 * */
+                Thread(const std::string& name);
+
+                /**
+                 * \brief Create a thread with the specified name.
+                 * \param executable The executable.
+                 * \param name The name of the thread.
+                 *
+                 * Creating the Thread wouldn't start executing the Executable object.
+                 * Method Thread::start() has to be invoked.
+                 * */
+                Thread(std::shared_ptr<Executable> executable, const std::string& name);
 
                 /**
                  * \brief Destroys the thread.

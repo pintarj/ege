@@ -38,7 +38,9 @@ namespace ege
 
         static inline void startLoop()
         {
-            engine::getLogger().log(log::Level::INFO, "engine loop started");
+            auto& logger = engine::getLogger();
+            auto& controlThread = engine::getControlThread();
+            logger.log(log::Level::INFO, "engine loop started");
             engine::getControlThread().start();
             auto& queue = engine::getGraphicExecutionQueue();
 
@@ -47,16 +49,18 @@ namespace ege
             {
                 while (queue.executeOne());
 
-                if (stopRequired)
+                if (stopRequired && !controlThread.isRunning())
                     break;
 
                 opengl::checkError("OpenGL error during engine execution");
-                queue.getNotEmptySignalWaiter().wait(200);
+                queue.getNotEmptySignalWaiter().wait(100);
             }
 
             glFinish();
-            engine::getControlThread().join();
-            engine::getLogger().log(log::Level::INFO, "engine loop stopped");
+            logger.log(log::Level::DEBUG, "graphic execution stopped");
+            controlThread.join();
+            logger.log(log::Level::DEBUG, "control thread joined");
+            logger.log(log::Level::INFO, "engine loop stopped");
         }
 
         void start(Configuration& configuration)

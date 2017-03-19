@@ -43,6 +43,11 @@ namespace ege
                  * */
                 std::atomic_bool joined;
 
+                /**
+                 * \brief Tells if the thread is running.
+                 * */
+                std::atomic_bool running;
+
             protected:
                 /**
                  * \brief If no executable is specified in constructor, this method will be executed on thread.
@@ -101,6 +106,12 @@ namespace ege
                  * \return \c True if has been joined.
                  * */
                 bool isJoined() const noexcept;
+
+                /**
+                 * \brief Tells if the thread is running.
+                 * \return \c True if is running, false otherwise.
+                 * */
+                bool isRunning() const noexcept;
         };
 
         /**

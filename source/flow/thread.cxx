@@ -29,7 +29,8 @@ namespace ege
             executable(nullptr),
             toExecute(*this),
             started(false),
-            joined(false)
+            joined(false),
+            running(false)
         {
 
         }
@@ -59,7 +60,9 @@ namespace ege
                         threads[id] = this;
                     }
 
+                    this->running = true;
                     this->toExecute.execute();
+                    this->running = false;
 
                     {
                         std::unique_lock<std::mutex> lock(mutex);
@@ -93,6 +96,11 @@ namespace ege
         bool Thread::isJoined() const noexcept
         {
             return joined;
+        }
+
+        bool Thread::isRunning() const noexcept
+        {
+            return running;
         }
 
         unsigned getExecutingThreadCount() noexcept

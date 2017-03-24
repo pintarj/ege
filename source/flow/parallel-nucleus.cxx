@@ -41,5 +41,10 @@ namespace ege
 
             delete threads;
         }
+
+        unsigned ParallelNucleus::getNumberOfThreads() const noexcept
+        {
+            return numberOfThreads;
+        }
     }
 }

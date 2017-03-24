@@ -55,6 +55,8 @@ namespace ege
                  * what is remaining inside the queue.
                  * */
                 virtual ~ParallelNucleus();
+
+                unsigned getNumberOfThreads() const noexcept;
         };
     }
 }

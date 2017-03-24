@@ -32,7 +32,7 @@ namespace ege
         static engine::ControlThread* controlThread;
         static flow::OriginFragment* originFragment;
 
-        class IF: engine::IniFini
+        class ResourcesIniFini: engine::IniFini
         {
             public:
                 virtual void initialize() override

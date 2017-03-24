@@ -22,7 +22,7 @@ namespace ege
         static bool stopRequired;
         static bool restartRequired;
 
-        class IF: IniFini
+        class FlowIniFini: IniFini
         {
             public:
                 virtual void initialize() override

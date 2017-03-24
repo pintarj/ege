@@ -167,7 +167,6 @@ namespace ege
             }
 
             std::chrono::duration<float> delta = std::chrono::system_clock::now() - start;
-            logger.log(log::Level::INFO, "using main thread as graphic thread");
             logger.log(log::Level::INFO, "engine initialized and configured (in %.3fs)", delta.count());
         }
 

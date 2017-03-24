@@ -11,6 +11,8 @@
 #include <private/ege/flow/thread.hxx>
 #include <private/ege/opengl/error.hxx>
 
+#define EGE_GRAPHIC_ON_MAIN_THREAD (false)
+
 namespace ege
 {
     namespace engine
@@ -100,10 +102,15 @@ namespace ege
                     }
                 };
 
+#if EGE_GRAPHIC_ON_MAIN_THREAD
+            graphicExecutableBody();
+#else
             auto executable = std::shared_ptr<flow::Executable>(new flow::FunctionExecutable(graphicExecutableBody));
+            engine::getLogger().log(log::Level::INFO, "using main thread as graphic thread");
             flow::Thread graphicThread(executable, "ege-graphic");
             graphicThread.start();
             graphicThread.join();
+#endif
         }
 
         void requireStop() noexcept

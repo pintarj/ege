@@ -2,6 +2,7 @@
 #ifndef EGE_FLOW_FRAGMENT_HXX
 #define EGE_FLOW_FRAGMENT_HXX
 
+#include <atomic>
 #include <memory>
 #include <set>
 #include <ege/flow/executable.hxx>
@@ -38,7 +39,7 @@ namespace ege
                  *
                  * When this counter reach zero: it can be executed.
                  * */
-                unsigned outDatedDependenciesCounter;
+                std::atomic_uint outDatedDependenciesCounter;
 
                 /**
                  * \brief Decreases outDatedDependenciesCounter and eventually executes executable.

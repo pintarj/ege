@@ -12,7 +12,9 @@ namespace ege
     {
         ControlThread::ControlThread(std::shared_ptr<flow::Scene> initialScene):
             Thread("ege-control"),
-            currentScene(initialScene)
+            currentScene(initialScene),
+            preparingGraphExecution(false),
+            graphPreparedSignal(graphPreparationMutex, [this]() { return !preparingGraphExecution; })
         {
 
         }
@@ -42,10 +44,28 @@ namespace ege
 
         void ControlThread::requireNextFrameRendering(flow::Frame::TimePoint updateTime)
         {
-            currentFrame = std::unique_ptr<flow::Frame>(new flow::Frame(updateTime, lastFrameUpdate));
-            lastFrameUpdate = updateTime;
-            engine::getNonConstFPSAnalyzer().frameUpdated(*currentFrame);
-            getOriginFragment().update(*currentFrame);
+            std::shared_ptr<flow::Executable> waitCode(new flow::FunctionExecutable([this]()
+                {
+                    graphPreparedSignal.getWaiter().wait();
+                }));
+
+            {
+                std::lock_guard<std::mutex> lock(graphPreparationMutex);
+                preparingGraphExecution = true;
+
+                engine::getGraphicExecutor().execute(waitCode);
+                auto& nucleus = engine::getParallelNucleus();
+                for (unsigned i = 0, n = nucleus.getNumberOfThreads(); i < n; ++i)
+                    nucleus.execute(waitCode);
+
+                currentFrame = std::unique_ptr<flow::Frame>(new flow::Frame(updateTime, lastFrameUpdate));
+                lastFrameUpdate = updateTime;
+                engine::getNonConstFPSAnalyzer().frameUpdated(*currentFrame);
+                getOriginFragment().update(*currentFrame);
+                preparingGraphExecution = false;
+            }
+
+            graphPreparedSignal.getNotifier().notifyAll();
         }
 
         void ControlThread::execute()

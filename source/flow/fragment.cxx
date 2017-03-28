@@ -11,9 +11,7 @@ namespace ege
 
         void Fragment::onDependencyUpdate(const Frame& frame)
         {
-            --outDatedDependenciesCounter;
-
-            if (outDatedDependenciesCounter == 0)
+            if (--outDatedDependenciesCounter == 0)
                 requireExecution(frame);
         }
 

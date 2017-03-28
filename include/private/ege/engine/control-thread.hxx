@@ -8,6 +8,7 @@
 #include <ege/flow/executable.hxx>
 #include <ege/flow/frame.hxx>
 #include <ege/flow/scene.hxx>
+#include <ege/flow/signal.hxx>
 #include <ege/flow/thread.hxx>
 
 namespace ege
@@ -36,6 +37,21 @@ namespace ege
                  * \brief Contains the frame that is currently rendering/updating.
                  * */
                 std::unique_ptr<flow::Frame> currentFrame;
+
+                /**
+                 * \brief Tells if the control thread is currently preparing graph execution.
+                 * */
+                bool preparingGraphExecution;
+
+                /**
+                 * \brief Mutex used to synchronize access to graph.
+                 * */
+                std::mutex graphPreparationMutex;
+
+                /**
+                 * \brief Signals the moment when the graph is prepared.
+                 * */
+                flow::Signal graphPreparedSignal;
 
                 /**
                  * \brief Check if next scene is available, and eventually make it current.

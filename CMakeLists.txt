@@ -38,6 +38,7 @@ ADD_LIBRARY(ege-core SHARED
     source/opengl/drawing.cxx
     source/opengl/error.cxx
     source/opengl/framebuffer.cxx
+    source/opengl/hint.cxx
     source/opengl/program.cxx
     source/opengl/renderbuffer.cxx
     source/opengl/shader.cxx

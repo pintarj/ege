@@ -8,6 +8,7 @@
 #include <ege/opengl/drawing.hxx>
 #include <ege/opengl/error.hxx>
 #include <ege/opengl/framebuffer.hxx>
+#include <ege/opengl/hint.hxx>
 #include <ege/opengl/object.hxx>
 #include <ege/opengl/program.hxx>
 #include <ege/opengl/renderbuffer.hxx>

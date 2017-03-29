@@ -40,6 +40,7 @@ ADD_LIBRARY(ege-core SHARED
     source/opengl/framebuffer.cxx
     source/opengl/hint.cxx
     source/opengl/program.cxx
+    source/opengl/rasterization.cxx
     source/opengl/renderbuffer.cxx
     source/opengl/shader.cxx
     source/opengl/vertex-array.cxx

@@ -11,6 +11,7 @@
 #include <ege/opengl/hint.hxx>
 #include <ege/opengl/object.hxx>
 #include <ege/opengl/program.hxx>
+#include <ege/opengl/rasterization.hxx>
 #include <ege/opengl/renderbuffer.hxx>
 #include <ege/opengl/sampler.hxx>
 #include <ege/opengl/shader.hxx>

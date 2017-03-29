@@ -34,6 +34,7 @@ ADD_LIBRARY(ege-core SHARED
     source/glfw/window.cxx
     source/hardware/monitor.cxx
     source/opengl/buffer.cxx
+    source/opengl/blending.cxx
     source/opengl/drawing.cxx
     source/opengl/error.cxx
     source/opengl/framebuffer.cxx

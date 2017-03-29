@@ -3,6 +3,7 @@
 #define EGE_OPENGL_OPENGL_HXX
 
 #include <ege/opengl/buffer.hxx>
+#include <ege/opengl/blending.hxx>
 #include <ege/opengl/context.hxx>
 #include <ege/opengl/drawing.hxx>
 #include <ege/opengl/error.hxx>

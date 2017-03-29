@@ -9,7 +9,7 @@
 
 #define EGE_VERSION_MAJOR   (0)
 #define EGE_VERSION_MINOR   (2)
-#define EGE_VERSION_BUILD   (0)
+#define EGE_VERSION_BUILD   (1)
 
 namespace ege
 {

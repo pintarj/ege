@@ -56,3 +56,7 @@ TARGET_LINK_LIBRARIES(0-hello-world ege-core)
 ADD_EXECUTABLE(1-triangle demo/1-triangle.cxx)
 SET_PROPERTY(TARGET 1-triangle PROPERTY CXX_STANDARD 14)
 TARGET_LINK_LIBRARIES(1-triangle ege-core)
+
+ADD_EXECUTABLE(2-wired-ocean demo/2-wired-ocean.cxx)
+SET_PROPERTY(TARGET 2-wired-ocean PROPERTY CXX_STANDARD 14)
+TARGET_LINK_LIBRARIES(2-wired-ocean ege-core GL)

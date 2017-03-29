@@ -23,6 +23,7 @@ namespace ege
         static opengl::Context* openglContext;
         static flow::PriorityExecutor* graphicExecutor;
         static keyboard::Keyboard* keyboard;
+        static mouse::Mouse* mouse;
         static std::shared_ptr<flow::Fragment> eventUpdateFragment;
         static flow::ParallelNucleus* parallelNucleus;
         static flow::FPSAnalyzer* fpsAnalyzer;
@@ -41,6 +42,7 @@ namespace ege
                     openglContext           = nullptr;
                     graphicExecutor         = nullptr;
                     keyboard                = nullptr;
+                    mouse                   = nullptr;
                     eventUpdateFragment     = std::shared_ptr<flow::Fragment>(nullptr);
                     parallelNucleus         = nullptr;
                     fpsAnalyzer             = nullptr;
@@ -94,6 +96,11 @@ namespace ege
         keyboard::Keyboard& getKeyboard()
         {
             return *keyboard;
+        }
+
+        mouse::Mouse& getMouse()
+        {
+            return *mouse;
         }
 
         static inline void initializeGLFW()
@@ -155,6 +162,7 @@ namespace ege
                 initializeWindow(configuration);
                 openglContext               = &window->getContext();
                 keyboard                    = &window->getKeyboard();
+                mouse                       = &window->getMouse();
                 parallelNucleus             = new flow::ParallelNucleus;
                 fpsAnalyzer                 = new flow::FPSAnalyzer;
                 eventUpdateFragment         = std::shared_ptr<flow::Fragment>(new flow::EventUpdateFragment);

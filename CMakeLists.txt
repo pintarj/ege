@@ -29,6 +29,7 @@ ADD_LIBRARY(ege-core SHARED
     source/flow/thread.cxx
     source/glfw/keyboard.cxx
     source/glfw/monitor.cxx
+    source/glfw/mouse.cxx
     source/glfw/opengl-context.cxx
     source/glfw/opengl-default-fbo.cxx
     source/glfw/window.cxx
@@ -59,4 +60,4 @@ TARGET_LINK_LIBRARIES(1-triangle ege-core)
 
 ADD_EXECUTABLE(2-wired-ocean demo/2-wired-ocean.cxx)
 SET_PROPERTY(TARGET 2-wired-ocean PROPERTY CXX_STANDARD 14)
-TARGET_LINK_LIBRARIES(2-wired-ocean ege-core GL)
+TARGET_LINK_LIBRARIES(2-wired-ocean ege-core)

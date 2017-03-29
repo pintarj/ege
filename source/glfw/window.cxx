@@ -39,6 +39,7 @@ namespace ege
 
             glfwSetWindowUserPointer(glfwWindowHandle, this);
             keyboard = std::unique_ptr<glfw::Keyboard>(new glfw::Keyboard(*this));
+            mouse = std::unique_ptr<glfw::Mouse>(new glfw::Mouse(*this));
             context = std::unique_ptr<OpenGLContext>(new OpenGLContext(*this));
             context->makeCurrentOnThisThread();
             glfwSwapInterval(1);
@@ -90,14 +91,19 @@ namespace ege
             glfwShowWindow(glfwWindowHandle);
         }
 
-        OpenGLContext& Window::getContext() const
+        OpenGLContext& Window::getContext() const noexcept
         {
             return *context.get();
         }
 
-        glfw::Keyboard& Window::getKeyboard() const
+        glfw::Keyboard& Window::getKeyboard() const noexcept
         {
             return *keyboard.get();
+        }
+
+        glfw::Mouse& Window::getMouse() const noexcept
+        {
+            return *mouse.get();
         }
 
         bool Window::shouldClose() const

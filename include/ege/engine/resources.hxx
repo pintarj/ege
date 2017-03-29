@@ -11,6 +11,7 @@
 #include <ege/flow/parallel-nucleus.hxx>
 #include <ege/hardware/monitor.hxx>
 #include <ege/keyboard/keyboard.hxx>
+#include <ege/mouse/mouse.hxx>
 #include <ege/opengl/context.hxx>
 
 namespace ege
@@ -65,6 +66,14 @@ namespace ege
          * The interface to connected keyboard is available AFTER engine configuration.
          * */
         keyboard::Keyboard& getKeyboard();
+
+        /**
+         * \brief Returns an interface to the connected mouse.
+         * \return The interface to the connected mouse.
+         *
+         * The interface to connected mouse is available AFTER engine configuration.
+         * */
+        mouse::Mouse& getMouse();
 
         /**
          * \brief Returns the event update fragment.

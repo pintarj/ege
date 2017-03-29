@@ -15,6 +15,7 @@ namespace ege
 #include <GLFW/glfw3.h>
 #include <ege/hardware/monitor.hxx>
 #include <private/ege/glfw/keyboard.hxx>
+#include <private/ege/glfw/mouse.hxx>
 #include <private/ege/glfw/opengl-context.hxx>
 
 namespace ege
@@ -36,6 +37,11 @@ namespace ege
                  * \brief The keyboard associated with the window.
                  * */
                 std::unique_ptr<glfw::Keyboard> keyboard;
+
+                /**
+                 * \brief The mouse associated with the window.
+                 * */
+                std::unique_ptr<glfw::Mouse> mouse;
 
                 /**
                  * \brief Common sub-constructor for all public constructors.
@@ -81,13 +87,19 @@ namespace ege
                  * \brief Get the OpenGL context associated with \c this Window.
                  * \return The OpenGL context.
                  * */
-                OpenGLContext& getContext() const;
+                OpenGLContext& getContext() const noexcept;
 
                 /**
                  * \brief Get the keyboard associated with \c this Window.
                  * \return The keyboard.
                  * */
-                glfw::Keyboard& getKeyboard() const;
+                glfw::Keyboard& getKeyboard() const noexcept;
+
+                /**
+                 * \brief Get the mouse associated with \c this Window.
+                 * \return The mouse.
+                 * */
+                glfw::Mouse& getMouse() const noexcept;
 
                 /**
                  * \brief Tells if Window should be closed.

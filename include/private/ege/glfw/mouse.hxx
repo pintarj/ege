@@ -56,6 +56,12 @@ namespace ege
                  * \param listener The listener to remove.
                  * */
                 virtual void removePositionListener(mouse::PositionListener* listener) override;
+
+                /**
+                 * \brief Set the mode of the cursor.
+                 * \param mode The specified cursor mode.
+                 * */
+                virtual void setCursorMode(mouse::CursorMode mode) override;
         };
     }
 }

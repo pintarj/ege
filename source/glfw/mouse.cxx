@@ -39,5 +39,10 @@ namespace ege
         {
             positionListeners.erase(listener);
         }
+
+        void Mouse::setCursorMode(mouse::CursorMode mode)
+        {
+            glfwSetInputMode(window.glfwWindowHandle, GLFW_CURSOR, (unsigned) mode);
+        }
     }
 }

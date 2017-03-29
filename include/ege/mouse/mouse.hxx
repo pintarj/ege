@@ -2,6 +2,7 @@
 #ifndef EGE_MOUSE_MOUSE_HXX
 #define EGE_MOUSE_MOUSE_HXX
 
+#include <ege/mouse/cursor-mode.hxx>
 #include <ege/mouse/position-listener.hxx>
 
 namespace ege
@@ -33,6 +34,12 @@ namespace ege
                  * \param listener The listener to remove.
                  * */
                 virtual void removePositionListener(PositionListener* listener) = 0;
+
+                /**
+                 * \brief Set the mode of the cursor.
+                 * \param mode The specified cursor mode.
+                 * */
+                virtual void setCursorMode(CursorMode mode) = 0;
         };
     }
 }

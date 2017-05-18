@@ -1,6 +1,7 @@
 #include <ege/engine/flow.hxx>
 #include <private/ege/engine/flow.hxx>
 #include <atomic>
+#include <csignal>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <ege/exception.hxx>
@@ -19,8 +20,15 @@ namespace ege
     {
         static std::atomic_bool started(false);
         static std::shared_ptr<flow::Scene> currentScene;
-        static bool stopRequired;
+        static volatile bool sigTermReceived;
+        static volatile bool stopRequired;
         static bool restartRequired;
+
+        static void sigTermHandler(int x)
+        {
+            sigTermReceived = true;
+            requireStop();
+        }
 
         class FlowIniFini: IniFini
         {
@@ -28,8 +36,10 @@ namespace ege
                 virtual void initialize() override
                 {
                     currentScene    = std::shared_ptr<flow::Scene>(nullptr);
+                    sigTermReceived = false;
                     stopRequired    = false;
                     restartRequired = false;
+                    std::signal(SIGTERM, sigTermHandler);
                 }
 
                 virtual void terminate() override
@@ -115,6 +125,9 @@ namespace ege
 
         void requireStop() noexcept
         {
+            if (sigTermReceived)
+                engine::getLogger().log(log::Level::INFO, "SIGTERM received");
+
             stopRequired = true;
             engine::getLogger().log(log::Level::INFO, "engine stop required");
         }

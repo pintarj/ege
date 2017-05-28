@@ -39,7 +39,7 @@ namespace ege
                 delete threads[i];
             }
 
-            delete threads;
+            delete[] threads;
         }
 
         unsigned ParallelNucleus::getNumberOfThreads() const noexcept

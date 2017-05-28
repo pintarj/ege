@@ -19,7 +19,7 @@ namespace ege
 
         FPSAnalyzer::~FPSAnalyzer()
         {
-            delete samples;
+            delete[] samples;
         }
 
         void FPSAnalyzer::frameUpdated(const Frame& frame)

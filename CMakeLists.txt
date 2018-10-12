@@ -60,3 +60,7 @@ TARGET_LINK_LIBRARIES(1-triangle ege-core)
 ADD_EXECUTABLE(2-wired-ocean demo/2-wired-ocean.cxx)
 SET_PROPERTY(TARGET 2-wired-ocean PROPERTY CXX_STANDARD 14)
 TARGET_LINK_LIBRARIES(2-wired-ocean ege-core GL)
+
+ADD_EXECUTABLE(3-mandelbrot demo/3-mandelbrot.cxx)
+SET_PROPERTY(TARGET 3-mandelbrot PROPERTY CXX_STANDARD 14)
+TARGET_LINK_LIBRARIES(3-mandelbrot ege-core)
